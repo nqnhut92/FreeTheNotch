@@ -1,0 +1,351 @@
+# FreeTheNotch: Technical Design
+
+This is how the app is built and why. The user-facing feature guide is in [FEATURES.md](FEATURES.md); installation and a quick overview are in [README.md](../README.md). Rules for working on the code (for people and coding agents) are in [AGENTS.md](../AGENTS.md).
+
+- **Last updated:** 2026-10-15 (version 0.1.0)
+- **Stack:** Swift 5, SwiftUI hosted in AppKit windows. Deployment target macOS 14, arm64 only, hardened runtime, not sandboxed.
+- **License:** GPL-3.0-or-later (`LICENSE`), the same as Atoll and Vorssaint. Notices for the MIT, BSD and Apache-2.0 projects it builds on are in `THIRD_PARTY_NOTICES.md`; add one there for any new project.
+- **Dependencies:** `lottie-ios` (Swift Package Manager, source package). A vendored Zstandard v1.5.7 decoder handles Claude Desktop cache compression (BSD-3-Clause). The remaining dependencies are Apple frameworks, plus a few private symbols loaded at runtime (listed in [Private API use](#6-private-api-use)).
+
+---
+
+## 1. Goals and constraints
+
+| Goal / constraint | Consequence |
+|---|---|
+| Local only, no account, no telemetry | No backend. Settings live in `UserDefaults`; clipboard images and imported animations live in Application Support. The only network calls are Open-Meteo (weather/AQI), a user-started Cloudflare speed test, ZenQuotes when Quote of the Day uses the online source (§3.5.2), and AI Usage provider quota polled for enabled providers every 60 seconds, plus public OpenRouter prices refreshed at most daily (§3.5.3). |
+| Feel like the iPhone Dynamic Island | One black shape that morphs with springs. Hover opens, leaving closes; there is no click-to-pin. |
+| Behaviour matches Atoll / Vorssaint | The notch, HUD, lock screen, media and calendar follow [Atoll](https://github.com/Ebullioscopic/Atoll). The menu bar panel follows [Vorssaint](https://github.com/vorssaint/vorssaint-utils). Both are GPL-3.0-or-later. Ported files carry an attribution header. |
+| No permission the user would find creepy | No screen recording, no system-audio capture, no microphone. The waveform is simulated for this reason. |
+| Built locally from source in Xcode | One app target and a non-hosted test target; no build tools beyond Xcode. A shell build phase compiles the media bridge. |
+
+---
+
+## 2. Process and window architecture
+
+Application sources live under `Sources/`, with feature folders for `Core`, `Modules`, `Notch`, `MenuBar` and `LockScreen`. The Xcode `Sources` group maps to that directory; both targets share the same production file references. The media bridge build phase and Zstandard bridging header use paths under `Sources/Modules/`. The non-hosted `Tests/` bundle, assets, configuration and project remain at the repository root.
+
+The app is an `LSUIElement` agent (no Dock icon). While Settings is open it switches to `.regular` so it has a Dock icon (Vorssaint's `WindowActivationPolicy`), and back to `.accessory` in `windowWillClose`; a Dock-icon click brings Settings forward. It has one process and a single owner object, `AppDelegate` in `Sources/FreeTheNotchApp.swift`. `AppDelegate` creates every service and controller and injects the services into SwiftUI as `@EnvironmentObject`s.
+
+```
+AppDelegate (services: Settings, Media, Clipboard, Bluetooth, Calendar, System, Disk,
+             Process, Timer, HUD, BatteryHUD, CapsLock, KeepAwake, Cleaning, SpeedTest)
+ ├── NotchWindowController   one KeyablePanel per display  → NotchRootView
+ ├── MenuBarController       status item (right-click menu only)
+ ├── SideNotchWindowController side-edge panel per screen → SideNotchView, DuoGlyphCombinedPopover, DuoBluetoothPopover, MenuBarPanelView
+ ├── LockScreenManager       lock-screen windows           → LockScreenView, lock notch
+ ├── Settings window          plain NSWindow                → SettingsView
+ └── ScreenCaptureVisibility sets sharingType on overlay windows
+```
+
+| Window | Type / level | Notes |
+|---|---|---|
+| Notch | `KeyablePanel` (borderless, non-activating), level 27 (above the menu bar), all Spaces, full-screen auxiliary | Set `isFloatingPanel` **before** `level`; the setter resets the level to 3. The frame is fixed at 740 × (closed-island height + `NotchPage.tallest` + 24) pt, `tallest` = 422 (6-week month 280 + battery strip 102 + quote line 40), and never resizes. Only the SwiftUI shape morphs. |
+| System panel (`MenuBarPanelView`) | `NSPopover` from a Side Notch section icon or the menu bar cup when Side Notch is off, `.applicationDefined`, full-size content on macOS 26+, dark appearance inherited from the Side Notch window; nothing is drawn behind the content (unless Reduce Transparency is on), so it is the system's dark glass like the Side Notch's other popovers. It does not follow the Liquid Glass setting, which is for the notch only | Closes on app resign and on outside clicks via `OutsideClickMonitor` (global monitor for other apps + local monitor for our own windows; a global monitor alone missed those). A click in the Settings window closes it too (2026-10-12; Vorssaint closes only when the two overlap). |
+| Side Notch | Borderless non-activating `NSPanel` per screen, `.statusBar`, all Spaces, stationary, `darkAqua` | Sized to the shape; rebuilt, never resized while shown. Its popovers inherit the dark appearance: the dark system glass. |
+| Lock screen | Small transparent windows moved into a SkyLight space at absolute level 400 | Shown while `CGSSessionScreenIsLocked` is true. They are not a full-screen overlay. |
+| Settings | Titled `NSWindow`, `isReleasedWhenClosed = false`, reused | Releasing it on close caused a crash when it was reopened. |
+
+**Displays** (Settings → General, card picker `DisplayScopeCards`) is one setting, `displayScopeRaw`, for both the notch and the Side Notch; `DisplayGeometry.targetScreens(for:)` resolves it. **Built-in** (raw `mainOnly`, kept for stored settings) is `DisplayGeometry.builtInScreen()`: the notch screen, else the built-in panel; with the lid closed there is none and nothing is shown (it used to fall back to the main display, which put both on the external monitor). **Main display** is `NSScreen.screens[0]`, the one with the menu bar (`NSScreen.main` follows the key window). **All displays** is every screen.
+
+### 2.1 Notch window mechanics (`Sources/Notch/NotchWindowController.swift`, `NotchRootView.swift`)
+
+- **Geometry** (`Sources/Core/DisplayGeometry.swift`)
+  - The closed width is the camera housing, taken from `auxiliaryTopLeftArea` / `auxiliaryTopRightArea`. Screens without a notch get a 210 pt pill.
+  - On notch displays the height is the camera cutout (`safeAreaInsets.top`, Atoll's `matchRealNotchSize`); the pill on other displays uses the menu-bar height (`frame.maxY - visibleFrame.maxY`).
+  - The open width is 720 pt. Live activities add 62 pt on each side.
+- **Hit testing**
+  - `NotchHostingView` returns nil outside the current shape, so clicks fall through to apps underneath. The shape size is `hitSize`, which mirrors the SwiftUI math.
+  - The view is flipped, so the incoming point is converted from superview coordinates before testing.
+  - `acceptsFirstMouse` is true.
+- **Hover**
+  - Hover is detected by polling `NSEvent.mouseLocation` every 50 ms with 10 pt of slack. `NSTrackingArea` did not fire reliably.
+  - Popovers opened from the notch set `NotchPopoverTracker.isOpen` so the island stays open.
+- **One height source**
+  - `NotchPage.bodyHeight(for:media:settings:calendar:)` gives the open height (it reads the live state and calls the plain-value overload in `Sources/Notch/NotchPage.swift`, which the tests cover): player 176, +30 for Up next, a standalone month of 208/244/280, +102 for the battery strip, and +40 for the Quote of the Day line (8 pt gap + 22 pt line + 10 pt spacing; `homeQuote`). `NotchPage.tallest` includes the quote line, so the fixed window has room for all of them.
+  - Both the shape (`NotchRootView`) and the hit area (`applyHitSize`) use it. Any new input that changes the height needs a Combine sink in `NotchWindowController` (`homeQuote` and `homeBatteryStrip` have one).
+  - The closed island's width follows the same rule: `NotchRootView.widensForLiveActivity` (Now Playing, Caps Lock, timer, AI sessions) is used by both the shape and `applyHitSize`. The Bluetooth connection popup drops below the island and does not widen it. Each of those inputs has a sink.
+- **Page icons** (`Sources/Notch/NotchPageIcon.swift`): SF Symbols, except Calculator, which is drawn (`CalculatorGlyph`): SF Symbols has no calculator and the old `plusminus.circle` did not read as one. Used by the notch's icon row and Settings → Notch Tabs.
+- **Shape**
+  - `NotchShape` has a flat top, rounded bottom corners and animatable radii.
+  - With Liquid Glass on, the open fill fades to 55% black over the bottom 30%.
+
+### 2.2 Closed-island priority (`CollapsedNotchView.swift`, `NotchRootView.swift`)
+
+Volume/keyboard-backlight HUD → AI quota HUD → Caps Lock → AI session → Now Playing → timer → empty. Lock and unlock are not shown on the island: its panels are hidden while locked, and the lock notch (§3.7) plays the padlock.
+
+The battery HUD (`BatteryHUDController`) overrides all of these while the island is closed. The Bluetooth connect card is a separate layer drawn below the island.
+
+---
+
+## 3. Subsystems
+
+### 3.1 Now Playing (`Sources/Modules/MediaRemoteAdapter.swift`, `MediaBridge.c`, `media-bridge.pl`)
+
+- On macOS 15.4+, MediaRemote returns nil to ordinary processes. A small C dylib (`MediaBridge.c`, compiled by the **Bundle media bridge** build phase) is loaded by `/usr/bin/perl media-bridge.pl`. That process is allowed to read Now Playing info. It works like Atoll's mediaremote-adapter.
+- The bridge registers for Now Playing notifications and prints one JSON line per change, plus one per second for elapsed time. `MediaRemoteAdapter.apply` parses the line.
+- Commands are written to the bridge's stdin: `toggle`, `next`, `prev`, `shuffle N`, `repeat N`.
+- `PlaybackClock` owns the seek bar. It is re-synced on track change, on play/pause, and when a newly published elapsed time differs from it by more than 3 s.
+- **Apple Music extras.** These use AppleScript on a serial `scriptQueue`, with Automation permission:
+  - Shuffle and repeat are polled every 1 s. Music does not publish them through MediaRemote.
+  - **Up next:** the next track of `current playlist`. For the Library (album or Songs playback), it is the next track of the current album by disc/track number. Repeat one returns the current track. Up next is hidden while shuffled. A failed read is retried and never cached.
+  - **BPM:** `bpm of current track`, read once per track, for the skin dance.
+  - **AirPlay:** Music's AirPlay devices, with multi-room selection and per-device volume (`AppleMusicAirPlayManager` in `AudioRouteManager.swift`).
+- Other sources use the CoreAudio output list (`AudioRouteManager`) for the output picker.
+- **Waveform** (`WaveformView`): sine-driven capsules tinted with the artwork's average colour. It is **not** driven by audio, because that needs the System Audio Recording permission and its indicator. A tempo/level-meter variant was tried and rejected.
+
+### 3.2 Calendar (`Sources/Modules/CalendarStore.swift`, `Sources/Modules/AgendaEvent.swift`, `Sources/Notch/Calendar/`)
+
+- EventKit loads events (a three-month window around the shown month) and reminders (incomplete, with a due date).
+- It reloads on `.EKEventStoreChanged` (debounced 0.3 s) and every time the notch opens or the screen locks.
+- **Player layout:** Atoll's `CalendarView`, which is a week wheel picker plus an event list. **Standalone layout** (nothing playing): a month grid plus event cards with conference Join buttons, ported from Atoll's `DynamicIslandCalendar`.
+- **Lunar date** (`Sources/Modules/LunarCalendar.swift`):
+  - Our own implementation of the traditional rules at **UTC+7**: months start on the civil day of the new moon, the 11th month holds the December solstice, and in a 13-month year the first month without a principal solar term is the leap month.
+  - The astronomy is Jean Meeus, *Astronomical Algorithms* (2nd ed.): the full new-moon series (chapter 49, with the planetary terms), the Sun's apparent longitude (chapter 25), the solstice iteration (chapter 27), and the Espenak–Meeus ΔT polynomials. Errors are a few minutes for 1900–2200.
+  - It replaced a port of Hồ Ngọc Đức's `amlich` JavaScript, whose licence allows only non-commercial use and so is incompatible with the GPL. The new code shares no code with it; the rules and Meeus's formulas are public. Compared day by day over 1900–2199, about 2 % of days differ, all at month boundaries where a new moon falls near midnight; spot checks against published new-moon times (2008-11-27, 2015-11-11, 2026-08-12) and the 2020 (leap 4) and 2023 (leap 2) calendars favour the new code.
+  - `Tests/LunarCalendarTests.swift` pins Meeus's worked examples, the April 2024 eclipse new moon, the 2026 solstice, Tết 1968–2027 (1968, 1985 and 2007 differ from China), leap months, and day-to-day consistency for 1950–2100.
+  - `Calendar(identifier: .chinese)` is deliberately not used. It computes in UTC+8 and disagrees with the Vietnamese calendar in some years (for example Tết 1985 and 2007).
+
+### 3.3 Batteries (`Sources/Modules/SystemMonitor.swift`, `BluetoothMonitor.swift`, `Sources/Notch/Tabs/BatteryStripView.swift`, `Sources/Notch/Tabs/BatteryTiles.swift`)
+
+- **Mac battery:** IOPowerSources every 2 s. `isCharging` is `kIOPSIsChargingKey` and `isPluggedIn` is AC power; plugged in and not charging is "Charging On Hold" (it used to count as charging, so a held 80 % showed a bolt). The lock-screen ring always shows the percentage, with charge time / Charging / On hold / Fully charged / MacBook underneath (Atoll's `LockScreenWeatherWidget` wording). Health comes from `system_profiler SPPowerDataType` every 30 min (Vorssaint's `MaxCapacityProbe`). Watts and temperature come from the SMC.
+- **Bluetooth devices:** IOBluetooth paired devices on the main thread every 5 s, with in-process battery lookups (IORegistry HID services, Bluetooth preferences).
+  - Devices those lookups miss are re-read on a background queue every 20 s, using `system_profiler SPBluetoothDataType -json` and `pmset -g accps`. The pipe is read before waiting, and the tool is killed after 5 s.
+  - Running these on the main thread used to freeze the app after wake.
+- **AirPods:** left, right and case levels come from system_profiler (`BTDevice.parts`). Atoll keeps only the maximum of the three.
+- **Nearby devices:** system_profiler lists AirPods resting in an open case under `device_connected` even though IOBluetooth reports them disconnected. AirPods in a closed case are under `device_not_connected` but keep their bud and case levels (the macOS Batteries widget shows them); from that list only entries with per-part levels are taken. Not in Atoll, which reads `device_connected` only. These become `nearbyDevices`: shown in the Home battery strip, and used by the Side Notch Bluetooth menu to keep their rows undimmed.
+
+### 3.4 Skins (`Sources/Notch/NotchSkin.swift`, `Sources/Notch/SkinPets.swift`, `Sources/Notch/SkinDecorationView.swift`, `Sources/Modules/IdleAnimationManager.swift`, `Sources/Core/SkinSettingsSection.swift`)
+
+- Settings → **Skins** (its own page since 2026-10-12; was under Appearance). `NotchSkin` = optional **decoration** + optional **pet**. `NotchSkinLayer` draws two parts around the island shape:
+  - **Behind the island:** the pet. Any part of the pet that overlaps the island is hidden behind it.
+  - **Above the island:** the decoration.
+  - Both use `allowsHitTesting(false)`, so the island's hit area is unchanged.
+- **Decorations** (vines, Christmas lights, blossoms):
+  - Drawn with `Canvas` inside a `TimelineView` at 30 fps, in a canvas 16 pt wider on each side and 90 pt taller than the island.
+  - No image assets are used.
+  - Paused when Reduce Motion is on. The previews in Settings also pause while the Settings window is inactive (`controlActiveState`).
+- **Pets:**
+  - Lottie files: four bundled LottieFiles animations under the Lottie Simple License, credited in `THIRD_PARTY_NOTICES.md`: Orange Cat Peeping by Kanika (Cozy Cat), Reindeer by Bashir (Christmas), Tiger Happy by Ludovic (Jungle swing) and Moody Dog by Bashir (Sakura, walking in place on the left). Or a `.json` the user imports into `~/Library/Application Support/FreeTheNotch/IdleAnimations`. An import named like a bundled pet is refused (it would be hidden behind the bundled one).
+  - Atoll bundles the cat, the reindeer and Moody Dog too. On 2026-10-12 they were re-downloaded from the LottieFiles originals and checked to be the same drawings, so they do not depend on Atoll. Atoll's Dog waiting and `lowbattery.mp3` were removed: no original source was found.
+  - Bundled files are vector only; LottieFiles animations with image assets do not load from a bare `.json`.
+  - `CroppedLottie` shows only the part of the canvas that holds the drawing; most files leave much of their canvas empty.
+  - Crops for the peeking cat and the reindeer were measured (they keep only part of the drawing). Other pets, bundled or imported, use `IdleAnimationManager.contentBounds`, which renders 10 frames of a `LottieAnimationLayer` (main-thread engine) at 200 px and scans the alpha channel. The result is cached per name, and the built-in pets' crops are `static let`s, so it runs once per pet.
+  - A bare `LottieAnimationLayer` keeps its inner layer centred on the origin, so the render is translated by half the canvas.
+- **Placements:** upside down hanging from the edge, a swing (ropes and a plank), or upright under the edge.
+- **Dance:** while music plays, `BeatDance` bobs and nods the pet once per beat, using Music's BPM or 112 by default. The swing swings once per beat.
+
+### 3.5 System panel (`Sources/MenuBar/*`, Vorssaint port)
+
+- `MenuBarController` owns the cup and right-click menu. Left click forwards through `AppDelegate` to `SideNotchWindowController.toggleMenuBarPanel` only while Side Notch is off. The same controller owns both entry points, closes on outside clicks including Settings, and caps height using the anchor screen. Menu bar presentation follows Vorssaint's `Sources/Vorssaint/App/AppDelegate.swift.showPopover` (show below the button, make key, activate).
+- `MenuBarPanelView.fixedTab` presents one section without the cup header, tab bar or Settings/Quit footer for Side Notch icons; a nil value presents the full six-tab panel. Each icon has its own cached content controller, so its state survives reopening. "Remember last tab" only affects the full panel. The direct icon stack has no reference equivalent.
+- Six tabs: Keep Awake, System, Network, Disks, Power, Utilities. Each tab is a section view fed by these data sources:
+
+| Source | Provides |
+|---|---|
+| `SystemMonitor` | CPU and per-core usage (`host_processor_info`), memory and pressure, GPU (IOAccelerator), network counters, battery |
+| `SMCClient` | Temperatures and watts. Ported verbatim from Vorssaint, including CPU sensor selection per chip generation. |
+| `ProcessMonitor` | Per-app CPU, memory, GPU and energy (`proc_pid_rusage`), and network (`nettop`, sampled only while the tab is visible). Helper processes are billed to their app with `responsibility_get_pid_responsible_for_pid`. |
+| `DiskMonitor` | Volumes (URL resource values, `diskutil` as fallback), I/O counters from the physical APFS store, NVMe SMART, eject |
+| `SpeedTest` | Cloudflare latency, download and upload |
+
+- **Keep Awake** (`KeepAwakeController`):
+  - An IOPM assertion with timers.
+  - Pauses while the screen is locked, and stops below 20% battery.
+  - Optional pointer nudge: a synthetic mouse move posted to the HID event tap.
+- **Cleaning Mode** (`CleaningModeController`): an active `.cghidEventTap` swallows keyboard events, and optionally pointer events. Five presses of Esc within 6 s exit.
+- **Smooth mouse scrolling** (`SmoothScrollService`, `SmoothScrollSupport`, `MouseScrollTarget`): Utilities → Mouse Scrolling, disabled by default. Adapted from Vorssaint's `Services/SmoothScrollService.swift`, `Services/SmoothScrollSupport.swift`, `Services/ScrollWheelSupport.swift`, `Services/MouseExceptions/MouseAppExceptions.swift` and `UI/Settings/MouseSettings.swift`. An Accessibility-gated head HID tap replaces mouse-wheel ticks with eased pixel events, tagged to avoid feeding the replay back into the engine. Touch gesture phases and momentum pass through, as does Control-scroll zoom; Shift redirects discrete vertical ticks horizontally. Continuous mouse drivers use pixel distance, with fixed-point lines as fallback.
+  - The Foundation-only engine uses elapsed-time decay, reverses an axis by replacing its old tail, carries fractional pixels between frames, and clamps frame gaps after stalls. Defaults are speed 40 (20–100), response 65 (0–100) and coast 0 (0–100). A display link follows the pointer's display; a cancellable task provides a fallback cadence.
+  - `AppDelegate` owns the service. Published settings feed cached tap parameters immediately, while `SettingsStore` persists `ftn.smoothScrollEnabled`, `ftn.smoothScrollStep`, `ftn.smoothScrollResponse`, `ftn.smoothScrollCoast` and `ftn.smoothScrollExcludedApps`. No settings or permission reads run in the tap callback. A permission task checks Accessibility while enabled; disabling the feature, Cleaning Mode, lock, sleep, inactive user session or quit removes the tap and cancels the glide.
+  - Exclusions store bundle identifiers. Source process IDs are cached outside the tap. Pointer targets come from window metadata queried asynchronously, without screen capture; unknown targets preserve raw wheel events while resolution completes. A 250 ms cache refreshes without cutting off a glide in the same window. Crossing into an excluded or unresolved target stops the pending tail. Swift Testing covers motion distance, reversal, fractional carry, display cadence, touch classification, pointer cache and persistence; physical wheel behavior requires owner verification.
+
+### 3.5.1 Side Notch (`Sources/Notch/SideNotchShape.swift`, `Sources/Notch/SideNotchView.swift`, `Sources/Notch/SideNotchWindowController.swift`, `Sources/Notch/DockSide.swift`, `Sources/Modules/OutputVolumeMonitor.swift`, `Sources/MenuBar/DuoGlyph*.swift`; shape from CodeNotch, glyph patterns from DuoBar)
+
+**Controller and window**
+
+- `SideNotchWindowController` (owned by `AppDelegate`) shows one borderless non-activating `NSPanel` per target screen (the notch's `displayScopeRaw`) while `settings.sideNotchEnabled` is on. Level `.statusBar`, all Spaces, stationary, not shown over full-screen apps, `animationBehavior = .none`, appearance `darkAqua`. Hidden while the screen is locked (`AppDelegate.setNotchHidden`).
+- Frame: the shape's bounding box including the flares, rounded outward to whole points like CodeNotch `NotchGeometry.panelFrame`. The drawing receives those exact bounds so AppKit rounding cannot leave a strip at the screen edge; x on `screen.frame.maxX - width` (right) or `minX` (left), y centred on `screen.frame.midY`. The transparent flare corners stay inside the window (a small dead zone; CodeNotch's `ignoresMouseEvents` toggling was not ported).
+- Panels are rebuilt (not resized) on screen changes and when scope, zoom, edge, cell order or Dock side change. The top notch's "never resizes" rule is about its hover morph and does not apply here.
+- The Wi-Fi and volume monitors and the Dock timer run only while the Side Notch is on.
+- History: the DuoGlyph was a second `NSStatusItem`, then a floating corner panel, then the first cell of the Side Notch. `ftn.duoGlyphEnabled` / `ftn.duoGlyphZoom` are migrated once in `SettingsStore.load()`; `ftn.duoGlyphCorner` is deleted.
+
+**Shape and size** (`SideNotchShape`, `SideNotchLayout`)
+
+- CodeNotch's `SideNotchShape` reduced to the plain side case: a pill flush to the edge with inverse flares at both ends (`fluidTurn`, ramp 0.5) and circular corners. Written for the right edge, mirrored for the left.
+- CodeNotch's sizes (`px(x) = x × 44/117`): depth 70, flare 38.7, corner 29.6, ring 44, end padding 26.1, ring-to-ring 10.5 pt (compact spacing for seven cells). No labels under the cells, so bottom padding equals top. Always open: CodeNotch's resting pill and hover tracking are not ported.
+- Zoom: `sideNotchZoom` is 1× or 2×, default 1×, multiplied by `SideNotchLayout.baseScale` = 0.75. Seven cells are about 52 × 376 pt at 1×. The controller caps the drawing scale against each screen's visible height. Everything is drawn as vectors at that scale. Stored zoom values normalize to the closest choice at load; values above 2× become 2×.
+
+**Content and clicks** (`SideNotchView`, `SideNotchClickView`)
+
+- Cell order: `SideNotchCell` (`duo`, `bluetooth`, `keepAwake`, `system`, `network`, `disk`, `power`), saved top to bottom in `ftn.sideNotchOrder` (comma-separated; `SettingsStore.sideNotchOrder` drops unknown values and appends missing ones, like `notchTabOrder`; the legacy `panel` token expands to the five system cells in its old position). `SideNotchView` places cell *i* at `cellCenterY(i)` and `SideNotchClickView` maps anchor *i* to the same cell, so a popover follows its cell. No reference equivalent (CodeNotch's cells are fixed). The positions below are for the default order.
+- Black shape under a click-through hosting view. Cell 0: `DuoGlyphView` at `ringDiameter / 18.6` × zoom, placed by the ring's centre (the canvas's ring centre is (12, 12) in a 24 × 22 frame). Cell 1: `BluetoothCellGlyph`, a drawn rune (`BluetoothRune`; SF Symbols has none), system blue while `BluetoothMonitor.isPoweredOn`, 30 % white while off. Cells 2–6: SF Symbols at 68% of the ring diameter (matching Bluetooth), orange/purple/teal/grey/green for Keep Awake, System, Network, Disks and Power. The DuoGlyph stays white apart from its status colours.
+- `SideNotchClickView` (`acceptsFirstMouse`) routes a left click by cell; one anchor `NSView` per cell, so each popover points at its own cell. Right and Control-clicks are swallowed (one click per cell). DuoGlyph → the Wi-Fi | Battery | Sound popover, Bluetooth → the Bluetooth menu, system icon → its fixed section (§3.5). Popovers open away from the bezel (`.minX` on the right edge, `.maxX` on the left), close through `OutsideClickMonitor` and on app resign (`.transient` alone stayed open for the inactive agent app), and a click within 0.25 s of the same popover closing does not reopen it. The popover is shown and made key before `NSApp.activate` (Vorssaint's order); each open uses a new `NSPopover` around the same content view controller (SwiftUI state such as the panel's tab survives), with `popoverDidShow` making it key again if needed. A reopened popover's window reached the screen only after the open animation, so `makeKey()` was ignored, key stayed on the notch's `KeyablePanel`, and the cup panel flashed the inactive look (grey switches, pale glass); a first open never did.
+
+**Dock rule** (`DockSide`)
+
+- `orientation` from the `com.apple.dock` preferences (`CFPreferencesCopyAppValue`; works for an auto-hiding Dock). Left or right forces the opposite edge; bottom leaves the setting alone. Re-read on screen changes, app activation and a 5 s timer while the Side Notch is on. Settings greys out the blocked card and explains why.
+
+**Settings page** (`SettingsSection.sideNotch`): Show Side Notch, Left/Right cards (`SideNotchEdgeCards`), Cells (drag rows by ≡, same `ReorderDropDelegate` as Notch Tabs; `SideNotchOrderPreview` beside them redraws the notch in the new order on the effective edge), Show on, Zoom. The sidebar icon (`SideNotchSidebarIcon`) and the cards are drawn with `SideNotchShape`.
+
+**DuoGlyph glyph** (`DuoGlyphCanvas`, 24 × 22 pt `Canvas`)
+
+- Battery ring with a 96° bottom gap, five volume dots on the same circle inside the gap, battery number over a `.clear` cut in the top of the ring. The gap is wider than the ~70° first planned because five 1.5 pt dots need it. The `wifi` symbol is an overlay view whose font size follows the scale; variable values are DuoBar's 0.25 / 0.62 / 1 (an exact 2/3 lights only one arc).
+- Colours: ring, number and bolt green while charging; plugged in but not charging (macOS "Charging On Hold") shows `powerplug.portrait.fill` instead of the bolt and stays uncoloured; ring red below 20 % on battery.
+- Data: `BatteryHUDController.level` / `isCharging` / `isPluggedIn` (`@Published`); volume from `OutputVolumeMonitor`, which re-reads `HUDController.outputVolume()` on CoreAudio listeners (default output device, volume scalar and mute on elements main/1/2), so changes from Control Center count too.
+
+**DuoGlyph popover** (`DuoGlyphCombinedPopover`, no reference equivalent for the tabs)
+
+- A segmented switch Wi-Fi | Battery | Sound over three menus laid out like the macOS ones. The tab lives in `DuoGlyphPopoverState`, owned by the controller: the popover reopens on the last tab, and the controller refreshes the tab that shows (on open and on switch): Wi-Fi scan, `energy.refresh()`, or `AudioRouteManager.refreshDevices()`.
+- **Wi-Fi tab** (`DuoGlyphPopover`): Wi-Fi switch, Ethernet line (`SCNetworkInterfaceGetLocalizedDisplayName` + BSD name of the wired `NWPath` interface), Known Networks (current network in blue, then scanned SSIDs found in `CWConfiguration.networkProfiles`), a fold-out Other Networks list, Network Settings… and Wi-Fi Settings…. Personal Hotspot has no public API and is left out. Opening it activates the app, so the one-time Location prompt can appear. Joining a saved secured network first tries `associate` with no password; CoreWLAN does not read the System keychain, so on failure the row opens its password field (`passwordNeededSSID`).
+- `WiFiMonitor`: CoreWLAN reads on a background queue, triggered by `NWPathMonitor` plus a 15 s timer for RSSI. RSSI → bars: ≥ −67 dBm 3, ≥ −75 2, else 1. Without Location authorization the SSID is nil; RSSI then counts as "connected" and there is no scan. Scans run when the tab shows; the last result is cached so the list shows at once. `associate(to:password:)` is best effort.
+- **Battery tab** (`DuoBatteryPopover`): power source, status line, Energy Mode, "Using Significant Energy" (`ProcessMonitor.topEnergy`, CPU + GPU ≥ 20 % of one core, top 5), Battery Settings…. `EnergyModeController` (in `BatteryHUDController.swift`) reads `pmset -g` (`powermode` 0/1/2 on High-Power-capable Macs, else `lowpowermode`) and writes `pmset -c|-b` for the current power source through `osascript … with administrator privileges` (Vorssaint's AdminShell). "Charge to Full Now" has no public API and is left out.
+- **Sound tab** (`DuoSoundPopover`): volume slider (`HUDController.setVolume`, unmutes above 0; dimmed when `OutputVolumeMonitor.canSetVolume` is false, i.e. the default device has no settable main-element volume scalar), Output list, Sound Settings….
+  - The list comes from `AudioRouteManager` (Atoll port), sorted built-in first then by name so rows do not jump. Outputs with `kAudioDevicePropertyDeviceCanBeDefaultDevice` = 0 (Microsoft Teams Audio) are left out, as in the macOS menu; monitors use the `display` symbol. Both rules also apply to the player's output picker.
+  - AirPlay receivers macOS has not connected to (HomePod, an AirPlay TV such as a Samsung M7) are not CoreAudio devices and are not listed. Tried and rejected: `AVRoutePickerView` only routes an app's own `AVPlayer`; the private `AVOutputContext.sharedSystemAudioContext` returns nil and `AVOutputDeviceDiscoverySession` finds nothing for a third-party process on macOS 27.
+
+**Bluetooth popover** (`DuoBluetoothPopover`, laid out like the macOS Bluetooth menu; no Atoll equivalent)
+
+- Header switch, paired devices with no section title (connected first), Bluetooth Settings…. The device list is hidden while Bluetooth is off.
+- Filtered like macOS to accessories: a not-connected device shows only if system_profiler gives it a `device_minorType` (`BluetoothMonitor.accessoryTypes`; iCloud-paired iPhone, iPad, Watch, HomePod and Apple TV have none). Until the first system_profiler run, names containing iphone/ipad/watch/homepod/apple tv are hidden instead. An empty result never replaces a good one.
+- The same type fills in `BTDevice.kind` when IOBluetooth's class of device gives `.generic` (empty for BLE devices and ones not seen for a while; an AKKO keyboard showed the generic icon).
+- Connected rows: blue `CircleIcon`, battery `NN%` + battery symbol only when a level exists (AirPods: the lower bud; Keychron: none, never faked). Not connected: grey icon; text dimmed unless the device is in `nearbyDevices`. Clicking a row calls `toggle(_:)` and spins until the next `devices` publish.
+- Power state: `IOBluetoothHostController.default()?.powerState` (Atoll's check), read in `BluetoothMonitor.refresh()` on the existing 5 s poll.
+- Power switch: private `IOBluetoothPreferenceSetControllerPowerState` (see §6), called on a background queue; re-read after 1 s, and if unchanged it logs and opens Bluetooth settings. Symbol missing → the switch opens Bluetooth settings.
+
+### 3.5.2 Quote of the Day (`Sources/Modules/QuoteOfTheDay.swift`, no reference equivalent)
+
+- `QuoteStore.shared` (configured in `AppDelegate`) holds the current quote. It runs only while `homeQuote` is on: a 5 min timer compares dates, and Home calls `refreshIfDue()` when it appears. A new quote shows when `quoteIntervalHours` (1/2/4/8/24) has passed since the last one, on click, or when the source or interval changes.
+- **Online source** (`quoteSourceRaw = online`, default): `GET https://zenquotes.io/api/quotes` (50 quotes) on `URLSession`, off the main thread. Quotes over 110 characters (more than one line) and the API's rate-limit notice (author `zenquotes.io`) are dropped; the rest are cached in `UserDefaults` (`ftn.quoteBatch`) and used one at a time, so it makes about one request per 50 quotes. Free tier: 5 requests per 30 s per IP and attribution with a link back, shown in Settings and the README credits. On failure it logs, shows a built-in quote and waits at least 60 s before the next try.
+- **Built-in source**: 33 quotes from public-domain authors and proverbs (also the offline fallback).
+- The current quote and its time (`ftn.quoteCurrent`, `ftn.quoteShownAt`) persist across launches.
+
+### 3.5.3 AI Usage (`Sources/Modules/AIUsage/`, `Sources/Notch/AIUsage/AIUsageTabView.swift`)
+
+- `AIUsageMonitor`, owned by `AppDelegate` and shared across displays, refreshes each enabled provider at startup and every 60 seconds, as well as on page opening (throttled) or an explicit refresh. Background polling enables quota warnings while closed; this extends Atoll's `LLMUsageManager` and `NotchLLMUsageView`. Providers disabled in settings are skipped, in-flight work cancelled and queued warnings removed.
+- `AIUsageService` is a background actor. Codex quota uses `chatgpt.com/backend-api/wham/usage` (`rate_limit.primary_window` / `secondary_window`); Claude uses `api.anthropic.com/api/oauth/usage` (`five_hour` / `seven_day`). Percentages are used quota, with optional provider reset dates. These are provider endpoints used by Atoll, not guaranteed public APIs; unsupported payloads show an unavailable state.
+- Credentials follow Atoll's file-first lookup: `CODEX_HOME/auth.json` or `~/.codex/auth.json` / `~/.config/codex/auth.json`, then Keychain `Codex Auth`; Claude uses `CLAUDE_CONFIG_DIR/.credentials.json` or `~/.claude/.credentials.json`, then the freshest `Claude Code-credentials*` Keychain item, fetched by persistent reference so older duplicates cannot win a second lookup. An explicit Connect can fall back to `/usr/bin/security` with the selected service/account, as in Atoll and CodeNotch. Silent reads use a noninteractive `LAContext`; only **Connect** allows an access prompt. Tokens are used only for their provider request, not logged, persisted or sent to pricing services. Expired logins are renewed by the provider's app/CLI rather than rotating a shared refresh token in FreeTheNotch.
+- `AIUsageLogParser` streams JSONL records with 64 KB reads and a 1 MB per-record limit. `turn_context` supplies Codex model IDs; repeated cumulative token reports are skipped. Codex input already includes cache reads; Claude uncached input, cache reads and writes are disjoint. Claude streaming records collapse by request ID with per-counter maxima, following CodeNotch `Sources/Costs/CostIndexer.swift` and `CostStore.swift`. Only usage counters are retained. Local totals cover the configured profile logs rather than an authenticated-account filter. Today uses the injected calendar; 7 days is a rolling 168 hours, excluding future timestamps.
+- `AIUsagePricing` reads the public OpenRouter models endpoint at most daily, sharing one in-flight request across cards, like CodeNotch `Sources/Costs/Pricing.swift`. Provider prefixes, date suffixes and Claude version spelling are normalized as in Atoll's `ModelPricingManager`. Token/cache prices yield a USD API-equivalent estimate; unknown models are explicitly unpriced. The estimate is not a subscription charge, and does not include tool charges, service-tier multipliers or provider-specific long-context pricing overrides. Quota and local totals fail independently.
+- `ClaudeDesktopUsageCache` adapts CodeNotch `Sources/Providers/ClaudeDesktopUsageCache.swift`: newest viewed Desktop usage, labeled with its capture time. The 30-minute threshold marks the reading as old instead of rejecting it; historical percentages/reset dates remain unchanged. `AIUsageService` keeps the newest Desktop reading in memory if the file disappears or regresses, replacing it only when a newer capture is available. This retention extends CodeNotch’s dated cache approach; it is not a live connection or automatic token renewal. It examines up to 400 recent Chromium Simple Cache entries, reads only header/key bytes for unrelated entries, and decodes bodies only for the exact `claude.ai/api/organizations/<id>/usage` path. Entry bodies are capped at 512 KB and decoded output at 256 KB. The captured HTTP Date is preferred over file modification time. The single Claude card represents the most recently viewed Desktop usage; it does not claim an OAuth account match. A display email is read from `.claude.json` only when its `oauthAccount.organizationUuid` matches the cached usage organization. Codex labels come from local ID-token claims, used only as display metadata, not as proof of authentication. Names/emails are never logged or sent to the price service. No cookies or tokens are read on the Desktop cache path, and local log totals do not represent every Desktop chat. Zstandard v1.5.7's original decode-only C amalgamation is linked into app/tests via `AIUsageZstd.h`; its BSD notice is in THIRD_PARTY_NOTICES.
+- Settings → AI Usage (`SettingsView+AIUsage.swift`) offers tab visibility, provider connection status, Connect and Refresh with a visible checking state. `ftn.codexUsageEnabled` / `ftn.claudeUsageEnabled` select the provider cards; disabling both hides AI Usage and re-enabling either restores it. Both views share `AIUsageMonitor`; Keychain failures and quota HTTP statuses are logged without credential contents.
+- `NotchPage.aiUsage` has a fixed 290 pt body height through the existing height model. Legacy saved tab orders insert AI Usage after Clipboard. `ftn.hiddenNotchTabs` stores only hidden raw values; ordering is separate. Home is permanently shown and normalized to the first position, with no toggle, drag handle or drop target. `NotchWindowController` observes order and visibility to move a hidden current page to the first visible page, with the existing page sink updating the hit area. This visibility model has no reference equivalent.
+- `AIActivityReader` is a separate background actor based on CodeNotch `CodexActivityMonitor.swift`, `ClaudeTranscript.swift`, `ClaudeSessionRecord.swift` and `ProcessLiveness.swift`. It decodes at most 1 MB of changed tails, discovers recent transcript files every 15 seconds and inspects Codex open rollout descriptors every 2 seconds. `task_started`/`task_complete` are authoritative, child `item_completed` is ignored, aborted turns disappear and helper rollouts are excluded. If the lifecycle start has left the bounded tail, open descriptors or recent writes supply CodeNotch’s busy fallback; silence still never implies completion. Claude recognizes user/tool/end-turn transcript records, ignores sidechains and bookkeeping, and consults live PID registries for permission waits and long quiet Desktop-hosted Code turns. An explicit idle registry hides working activity; a terminal transcript newer than a busy/waiting registry prevents that stale record from resurrecting the turn. PID reuse is checked against process start time when available. A stale quiet rollout is hidden, never inferred complete. Regular Claude Desktop chat has no supported activity source.
+- `AIActivityMonitor` publishes activity changes every 2 seconds and cancels polling when `ftn.aiLiveActivitiesEnabled` or both providers are off. Cancelling a preview clears its task state so real polling resumes after re-enabling. The compact view uses system text/symbols, not provider asset files. Closed-notch priority is volume/backlight HUD → AI quota HUD → Caps Lock → AI turn → media → timer; battery notifications keep their existing top priority. Done lasts 4 seconds. `NotchWindowController` observes both activity and quota-HUD publications so the hit area matches the widened shape; windows never resize.
+- `AIQuotaAlertPolicy` warns at ≥80% independently per provider/account/reset window for Session and Week. Keys use typed provider/window values and the display identity. Reset times within 120 seconds are the same window, absorbing relative timestamp jitter. History is bounded to 14 days in memory and resets at app restart. Expired windows, failed reads and ≥30-minute Desktop cache snapshots stay silent. `AIUsageMonitor` queues simultaneous warnings for 4 seconds each, controlled by `ftn.aiQuotaHUDEnabled`. Settings → Live Activities and HUD provide actual UI test buttons; previews do not alter quota or warning history. There is no equivalent AI quota HUD in the reference; presentation follows the app's existing Atoll-style expanded battery HUD geometry (camera band plus 75 pt body, camera width plus 150 pt).
+- `AIUsageDirectories` resolves the configured Codex/Claude profile paths once for each owner; quota and activity use the same definitions. Models (`AIUsageProvider`, `AIUsageLimit`, `AIUsageTotals`, `AIUsageSnapshot`) and parsers (`AIUsageQuotaParser`, `AIActivityParser`) each have a file named after the main type.
+- Foundation-only parsing, quota, credential decoding, pricing and service request code are compiled directly into the non-hosted test target. Fixtures cover cache arithmetic, streaming duplicates, dates, unavailable quota, credential routing without network/Keychain, tab visibility/persistence, preview cancellation, registry/transcript precedence, and quota warning deduplication.
+
+### 3.6 HUDs (`Sources/Modules/HUDController.swift`, `BatteryHUDController.swift`)
+
+AI quota warnings use `AIUsageMonitor` / `AIUsageHUDView` (§3.5.3), with a four-second expanded notification.
+
+- An active CGEvent tap catches media keys (system-defined events, subtype 8) on **its own thread**.
+  - It re-enables itself after a timeout, except after a second timeout within 60 s: then it stays off for 120 s (macOS handles the keys and shows its own OSD). Not in Atoll. Re-enabling at once kept a slow Mac stalling, because special-key events, and the input queued behind them, wait for the tap.
+  - It never builds an `NSEvent`: `NSEvent(cgEvent:)` must run on the main thread on macOS 27 and crashed the app on the tap thread when Caps Lock was pressed (Caps Lock also sends a system-defined event). Subtype and `data1` are read from undocumented `CGEvent` fields 99 and 149 instead; a round-trip check at setup (`verifyRawSystemDefinedFields`) turns swallowing off, with a log line, if a macOS update moves them.
+  - It hops to the main thread only to update the UI.
+  - Running it on the main run loop let a main-thread stall freeze all input.
+  - The callback does no CoreAudio work (Atoll's `MediaKeyInterceptor` rule): it decides to swallow the key and queues the volume/mute/backlight change on a serial `keyWorkQueue`. Doing it inline let a slow coreaudiod or a busy Mac hold the session input queue; on 2026-10-10 the tap timed out ~20 times in 15 min and the whole Mac stalled until a logout.
+- Volume is read and written through CoreAudio. Keyboard brightness changes only an estimate, because the real hardware value is not readable.
+- **Battery HUD:** ported from Atoll's `BatteryActivityManager`. It shows charging, low battery (with the user's alert sound, `NSSound.beep()`; Atoll's `lowbattery.mp3` is its own asset and is not bundled) and full-charge animations, 3 s each.
+
+### 3.7 Lock screen (`Sources/LockScreen/*`)
+
+- **Files:** `LockScreenManager` (lock/unlock detection, the widget window, the lock notch window, the artwork switch), `LockScreenLayout` (all positions as plain geometry, shared with the preview and the tests), `SkyLightLockSpace` (the SkyLight space and `LockScreenLevel`), `LockNotch` (model, view, timings), `LockScreenView` / `LockScreenMediaCard` / `LockScreenReminderWidget` / `UniformRing` (the widgets), `LockScreenFormat` (labels, colours and symbols as plain values), and for the artwork wallpaper `LockArtworkWallpaper` (main-thread orchestration), `ArtworkWallpaperFiles` (the file work and the Index.plist patch, with injectable paths), `LockWallpaperTransition` (the cover), `LockArtworkImage` and `LockArtworkClickWindow`.
+- **Detection:** distributed notifications `com.apple.screenIsLocked` / `screenIsUnlocked`, confirmed with `CGSSessionScreenIsLocked`. The unlock notification is trusted immediately, as Atoll does. A session poll and a wake re-check are fallbacks.
+- **Windows:** created at `CGShieldingWindowLevel()+1`, then moved into a SkyLight space (`SLSSpaceAddWindowsAndRemoveFromSpaces`) so macOS 27 does not cover them.
+- **Position:** `LockScreenLayout.widgetFrame(in:)`, shared with the preview. 460 pt wide, top at `max(340, 30% of screen height)` under the clock, down to 320 pt above the bottom edge (`loginAreaHeight`, left for macOS's user picture, name and password field; measured: the picture starts ~295 pt up), at least 220 pt tall: 322 pt on a 14" screen. 220 pt of login room let the artwork controls cover the picture. It was a fixed 460 × 220 until 2026-10-11, which cut off the timer and player when rings, event and reminders were showing. The extra height is transparent. One widget window, on the main display only (`NSScreen.lockScreenMain`, `CGMainDisplayID`; 2026-10-11, since macOS draws the clock and password field there). Until then every screen got one. Atoll also uses one screen (built-in, else main: `LockScreenDisplayContextProvider`). The lock notch stays on the notch screen. **Display changes while locked** (lid opened, a display plugged in or out, another main display): the frames used to be computed once at lock, so after closing the lid on display A, unplugging it and opening the lid on display B the widgets sat beside or off macOS's clock (2026-10-12). `realignForScreenChange` now moves the widget window, the artwork click window and the lock notch onto the current screens on `didChangeScreenParametersNotification` and `screensDidWakeNotification`, like Atoll's `handleScreenGeometryChange` (`LockScreenPanelManager`, `LockScreenLiveActivityWindowManager`).
+- **Artwork wallpaper** (`lockArtworkWallpaper`, `ftn.lockArtworkWallpaper`, default off; Settings → Lock Screen → Cards), ported from Atoll's `FullScreenArtworkWindowManager`: while locked, the playing artwork becomes the real wallpaper (desktop and lock screen). `LockArtworkWallpaper` backs up `~/Library/Application Support/com.apple.wallpaper/Store/Index.plist` once, writes an image block (Atoll's `makeImageWallpaperBlock`) into `Desktop` and `Idle` of every entry (`patchWallpaperEntries`), and runs `killall WallpaperAgent`. The image is `LockArtworkImage`: Atoll's blurred fill with the artwork sharp in the middle at ≤ 1 image pixel per screen pixel (Atoll uses the raw artwork, which pixelates), saved as a PNG per song in `~/Library/Application Support/FreeTheNotch/ArtworkWallpaper`. `LockScreenManager` watches the per-lock `LockArtworkSwitch` (starts from the setting; a click on the card's artwork thumbnail turns it on, a click on the wallpaper's artwork turns it off), `media.isPlaying` and `media.artwork`, debounced 0.3 s: on + playing + Media on → apply; anything else → restore. Unlock restores. **Superseded switches:** every apply and restore bumps `ArtworkApplyGeneration`; the cover's fade-in completion (main thread) and the backup/patch/kill block (file queue) both check it, so pausing or switching off during the 0.35 s fade-in never applies the artwork afterwards. **Crash safety** (not in Atoll, whose backup sits in the temp folder): the backup lives in that Application Support folder and its existence means "restore me"; `applicationDidFinishLaunching` restores it if found (crash, force quit, restart while locked), `applicationWillTerminate` restores synchronously, and a failed restore keeps the backup for the next try. All file work and the `killall` run on a serial queue. `killall WallpaperAgent` blanks the wallpaper for a moment, and the respawned agent shows the new one within a second. (A cover timed to go up 1–2 s after the respawn, read off the agent's 1.6–2.2 s "export" log lines, was too late and flashed. The blink comes right after the kill; the export only matters on the way back, see below.) So `LockWallpaperTransition` covers first: going to the artwork, a still of it fades in (0.35 s); going back, the same still goes up at once (it matches the screen). Then the plist swap and the kill run. **To the artwork** the cover lifts (0.5 s fade) 0.7 s after a new `WallpaperAgent` PID appears (libproc, polled every 50 ms, 2 s cap; `NSWorkspace.runningApplications` lagged). **Back to the user's wallpaper on the lock screen** a timed lift does not work: the lock screen's wallpaper is a remote layer that loginwindow gets from WallpaperAgent (`com.apple.wallpaper:framework` "Take Assertion … Reply(contextID:)"). After the kill loginwindow logs "Reconnecting 2 assertion(s)" and gets no new contextID until the next lock, so it keeps showing the killed agent's last picture (the artwork) and swaps in the user's wallpaper later with its own crossfade, although the agent and the aerial extension draw the aerial within 0.4 s. With lifts at 0.8, 1.5 and 2.5 s after the respawn the artwork was still there, with the clock and widgets over it (tested 2026-10-11). So at backup time `LockArtworkWallpaper` copies macOS's export of the user's wallpaper (`/private/var/db/Wallpapers/<GeneratedUID>/Wallpaper.png`, world-readable, written by wallpaperexportd; `mbr_uid_to_uuid` via `dlsym`) to `user-wallpaper.png` beside the backup. Unless the export is already ours, left by a crash, that copy is the real picture even for an aerial (`desktopImageURL` reports aerials as the default aerial's file). On the way back the cover crossfades (0.5 s) from the artwork to that still right after the kill, and the widgets return with it. It then waits for macOS to re-export the user's wallpaper (`Metadata.plist` modified and no longer pointing at our folder, polled every 0.1 s off the main thread, 4 s cap). That takes ~1 s after the respawn (11 restores, 2026-10-11), and the cover lifts (0.5 s fade) right then: by that point the lock screen shows the user's wallpaper, and the clock and password field are back ~1.5 s after the click. Lifting 2.5 s after the export also looked right, but it hid the clock ~4 s, which was too long (tested 2026-10-11). Without a saved still the old timed lift is the fallback (0.8 s, or 2.5 s for an aerial). **After unlock** the desktop is the agent's own window, so the cover crossfades to the still and lifts 0.8 s after the respawn; a lock-screen cover still up at unlock is removed at once. While the cover is up it hides macOS's clock and password field. On the lock screen the cover is in our SkyLight space under the widgets and lock notch; after unlock it is Atoll's desktop-level window. The widgets follow `LockArtworkSwitch.presentation`: a click hides them at once (`switching`), the artwork controls appear once the artwork cover is fully up (`artwork`), and the usual widgets return as the cover crossfades to the still of the user's wallpaper (`widgets`). **Artwork mode:** while the switch is on and the player shows, `LockScreenView(artworkMode:)` hides every other widget and replaces the card with `LockScreenArtworkControls` at `artworkControlsTop(in:)` (20 pt under the largest artwork, kept inside the widget window): no panel or thumbnail, centred title/artist (long ones scroll), thin seek bar, shuffle · previous · play/pause · next · repeat. A click on the artwork turns it off: `LockArtworkClickWindow` is a window of its own (level +2, in the SkyLight space) over exactly the sharp artwork (`LockArtworkImage.visibleRect`, the geometry `render` uses, with its rounded corners), up only while `presentation == .artwork`. It is nearly clear (alpha 0.001; a fully clear window passes clicks through to the lock screen). The widget window can't do it: it starts under macOS's clock, below the artwork's top half. The Settings preview has the same tap area. Pausing the music also turns the artwork off: the controls go at once (`switching`), and the widgets, without the player, which hides while paused, return with the user's wallpaper. `LockArtworkImage` puts the artwork at ≤ 34 % of the screen height, centred 36 % down (the clock sits over its top), to leave that room above the login area.
+- **Rings:** use `UniformRing`.
+- **Weather and AQI:** `WeatherService` uses Core Location, then Open-Meteo. There is no default city.
+- **Notch panels on lock:** hidden while locked. A lock-notch window shows a padlock (Atoll's `LockScreenLiveActivityWindowManager`).
+- **Media card:** `LockScreenMediaCard` (in `LockScreenView.swift`), the notch player's layout (`MediaTabView`) at lock-screen size: 76 pt artwork with the app badge, title + `WaveformView`, blue artist (both `MarqueeText` in a fixed-height `GeometryReader`, as in the notch; static while `lockAnimationsPaused`), `PlaybackClock` seek bar (never snapped to bridge samples), shuffle/repeat/previous/play-pause/next. Below the timer. Shown only while `media.isPlaying` (paused = hidden). `LockMediaInfo` carries live or sample values; sample buttons do nothing and the sample bar loops.
+- **Event row:** `LockScreenEventRow`, from Atoll's `LockScreenCalendarEventRow`: `calendar.badge` in the calendar colour, white text, Atoll's content shadow, 19 pt to match the reminder widget. All widgets are white. The "Dark text" switch (`ftn.lockDarkText`) only ever recoloured the old event line and was removed 2026-10-11; `load()` deletes the key. Atoll has a Dark/Light appearance, but macOS's own lock-screen clock is always white, so there is no automatic switch either.
+- **Settings preview** (`Sources/LockScreen/LockScreenPreview.swift`, idea from Atoll's `LockScreenWidgetPreviewManager` / `LockScreenPreviewScene`): pinned above the Lock Screen page's scroll view (in `SettingsView`, not inside the section), not a window (the old menu-bar preview window was removed on request). The scene is laid out in the lock-notch screen's points (wallpaper from `NSWorkspace.desktopImageURL`, downsampled with ImageIO off the main thread; gradient if unreadable), then scaled into the card, so widgets sit exactly where `LockScreenLayout.widgetFrame(in:)` puts them. It renders the real `LockScreenView` with `fillsWithSamples` (Atoll-style mock values only for widgets with no data: AirPods 74 %, mouse 58 %, 21° in 16–27°, AQI 42, a song, timer 24:13, an event and a reminder) and the real `LockNotchView` with its own `LockNotchModel`. With two or more displays a menu over the picture's top-right corner picks the display (by `NSScreenNumber`, refreshed on `didChangeScreenParametersNotification`): its size and wallpaper, with widgets, clock and login only on the main display and a note on the others; the lock notch is drawn only on the lock-notch screen, as on the real lock screen. The controls row keeps the same shape on every page and does not animate (`transaction { animation = nil }`); the non-main-display note is a capsule over the picture. **Render budget:** no `drawingGroup()` (2026-10-11 hang: it re-rasterised the screen-sized scene, 5120 × 2880 px with a 1440p main display, on every seek-bar frame; FreeTheNotch ~47 % and WindowServer ~55 % CPU, the media-key tap timed out and the Mac stalled). The preview sets `lockAnimationsPaused` while Settings is not the key window (seek bars and `WaveformView` stop) and `lockFrameInterval` 0.25 s for the seek bars. "Widgets" animates the crop to the top of the widget window at the screen's aspect ratio (the scene is moved by one `GeometryEffect`, `LockPreviewFocus`, that interpolates the crop rect; separate `scaleEffect` + `offset` animations stuttered); in Widgets a drag pans the crop (`pan` + `dragShift`, kept on screen), Screen resets it. The pinned block is `fixedSize(vertical:)` so the card takes the full width; Clicking the artwork (Screen or Widgets) flips the preview's own `LockArtworkSwitch` (it follows the setting) and crossfades the preview wallpaper to the same `LockArtworkImage`, with the widgets in artwork mode; it never touches the real wallpaper. The Screen | Widgets control is drawn in SwiftUI at a fixed size (the AppKit segmented control stretched and snapped back on redraws). The stand-in login uses the measured sizes and distances from the bottom (picture 80 pt at 255 pt up, name at 200, 220 × 34 field at 160). For an aerial wallpaper the preview shows macOS's default aerial still, because that is what `desktopImageURL` returns. The stand-in clock and login are drawn on the main display (`CGMainDisplayID`) only, where macOS draws them (Atoll's single lock screen is likewise built-in/main). "Lock & unlock" replays LockScreenManager's timings (spring in, shackle opens, 1.2 s hold, shrink). The clock and login field are drawn stand-ins for macOS's own. Settings gets `system`, `media`, `timerStore`, `bluetooth` and `calendar` as environment objects for it.
+
+### 3.8 Other modules
+
+| Module | Design |
+|---|---|
+| `ClipboardManager` | Shown by `Sources/Notch/Tabs/ClipboardTabView.swift` as Atoll's card grid (`NotchClipboardView`: adaptive `LazyVGrid`, 200 pt minimum = 3 columns; type from the item: image, http(s) URL, else text). Polls `NSPasteboard.changeCount`. Text is stored in `UserDefaults`. Images are saved as PNG files (up to 25 MB) in Application Support. Retention: keep, clear on quit, 1 day, 3 days. |
+| `TimerStore` | A countdown. A paused timer still counts as a live activity. |
+| `CapsLockManager` | Local and global `.flagsChanged` monitors. |
+| `QRGenerator` | Core Image `CIQRCodeGenerator`, fully offline. |
+| `CommandBarMath` | Strict expression parser from Vorssaint, used by the Calculator page. `CalculatorModel.shared` keeps its state when you switch pages. |
+| `ScreenCaptureVisibility` | Sets `sharingType = .none` on every untitled app window when its occlusion state changes. The Settings window stays capturable. |
+
+---
+
+## 4. State and persistence
+
+- **`SettingsStore`** (`Sources/Core/SettingsStore.swift`):
+  - One `@MainActor` `ObservableObject` of `@Published` properties, each listed once in the `persisted` key table (`PersistedSetting`: key without the prefix, key path; the stored type is the property's own).
+  - Loaded from `UserDefaults` at launch (injectable; the tests use a throwaway suite), after the migrations (DuoGlyph keys copied to Side Notch without overwriting, then removed; `lockDarkText` removed). Loading never schedules a save. Keys are prefixed `ftn.`. (A few menu-bar panel view states use `@AppStorage` without the prefix: `panel.keepAwakeUntilTime`, `panelNetworkSpeedInBits`, `panelSystemCPUAppsExpanded`.)
+  - Saved 0.3 s after the last change (any `objectWillChange`); `flush()` writes a pending change at once and runs in `applicationWillTerminate`.
+  - Typed accessors wrap the raw stored values, for example `notchSkin`, `sideNotchEdge`, `quoteSource`, `notchTabOrder` and `displayScope`; Settings binds to those. Their fallback for an unknown raw value is the stored default (`displayScope` → All displays).
+- **Launch at login** (Settings → General) is not in `SettingsStore`: `LaunchAtLogin` in `Sources/Core/LaunchAtLogin.swift` reads and sets `SMAppService.mainApp` directly, ported from sindresorhus/LaunchAtLogin-Modern, the package Atoll uses. macOS owns the state, so removing the app in System Settings → Login Items turns the switch off. It registers the bundle that is running, so it should be turned on from the `/Applications` copy, not the Xcode build.
+- **Files** in `~/Library/Application Support/FreeTheNotch/`: `Clipboard/` (images) and `IdleAnimations/` (imported Lottie files).
+- **No database and no Keychain use.**
+
+---
+
+## 5. Build and versioning
+
+- **Single target** `FreeTheNotch`, bundle ID `com.freethenotch.app`.
+- **Build phases:** Sources, Frameworks (Lottie), Resources (`Assets.xcassets`, the `LottieAnimations/` folder reference), and **Bundle media bridge**.
+- **Bundle media bridge** is a shell phase that runs on every build. It:
+  1. compiles `MediaBridge.dylib` with `clang`, with an `@rpath` install name so the bundle carries no build-machine path;
+  2. copies `media-bridge.pl`;
+  3. stamps `CFBundleVersion` with the local build time, `date +%Y%m%d.%H%M%S` (a dot, not a dash: `CFBundleVersion` may only hold digits and dots).
+- **Version:**
+  - `CFBundleShortVersionString` = `$(MARKETING_VERSION)`, currently 0.1.0.
+  - About shows `Version <marketing> (build-<YYYYMMDD.HHMMSS>)`.
+- **Releases:** `scripts/release.sh` archives an unsigned Release build, signs it with a self-signed "FreeTheNotch Release" certificate and zips it for GitHub Releases. A personal Apple Development certificate would put the Apple ID's email address in every signature. The self-signed certificate keeps the designated requirement (`certificate leaf = H"…"`) the same across releases, so macOS keeps users' permissions when they update; an ad-hoc signature would change with every build. The script stops if the bundle contains a `/Users/<user>/` path or the signature contains an email address. The app is not notarized, so the first launch needs **Open Anyway**.
+- **Entitlements:** hardened runtime, no sandbox, Apple Events, Calendars, Location (like DuoBar). Without the Location entitlement, locationd silently drops the permission prompt under the hardened runtime ("doesn't have the entitlement, not sending #AuthPrompt"), so Wi-Fi names and local weather never get access.
+- **Usage strings** in `Info.plist`: Calendars, Reminders, Bluetooth, Apple Events, Location.
+- **Project file:** it does not use synchronized folders. Each new file needs its `PBXFileReference`, `PBXBuildFile`, group entry and build-phase entry. See AGENTS.md.
+
+---
+
+## 6. Private API use
+
+These are loaded with `dlsym` or `@_silgen_name` (or, for the lock state, read as an undocumented key), and each has a fallback. They may break with macOS updates.
+
+| Symbol / API | Where | Why |
+|---|---|---|
+| MediaRemote (via the perl bridge) | `MediaBridge.c` | Now Playing info and commands |
+| `CGSSessionScreenIsLocked` key of the public `CGSessionCopyCurrentDictionary` | `LockScreenManager` | Reliable lock state |
+| SkyLight: `SLSMainConnectionID`, `SLSSpaceCreate`, `SLSSpaceSetAbsoluteLevel`, `SLSShowSpaces`, `SLSSpaceAddWindowsAndRemoveFromSpaces` | `SkyLightLockSpace` | Show widgets above the lock screen |
+| AppleSMC user client | `SMCClient` | Temperatures and power |
+| `responsibility_get_pid_responsible_for_pid` | `ProcessMonitor` | Bill helper processes to their app |
+| `IOBluetoothPreferenceSetControllerPowerState` (IOBluetooth, `dlsym`) | `BluetoothMonitor.setPower` | Bluetooth on/off switch in the Side Notch menu (what `blueutil` calls); fallback opens Bluetooth settings |
+
+---
+
+## 7. Decisions that were tried and reverted
+
+Keep these in mind before "improving" the following areas.
+
+| Area | Rejected approach | Why |
+|---|---|---|
+| Notch window | Resizing the window to the island (Atoll's way) | Instant `setFrame` fought the SwiftUI spring and broke the expand animation |
+| Hover | `NSTrackingArea` | Did not fire reliably for this panel |
+| Interaction | Click-to-pin | Hover only, by design |
+| Player text width | Measuring the text column (preference key, then `onGeometryChange`) and feeding it back to the marquee | The first approach stuck at the default width; the second caused a layout loop that hung the app. Now each marquee sits in a fixed-height `GeometryReader`. |
+| Waveform | System-audio tap (Atoll's `AudioTap`) | Needs the recording permission and its purple indicator |
+| Waveform | Tempo-driven level meter | The original motion read better |
+| Pets | Atoll's 30×20 in-notch pet | Too small. Replaced by skins. |
+| Skins | Mix and match (pick decoration and pet separately) | Fixed combos chosen instead |
+| Skins | Winter, Autumn, Night, Ocean and Valentine skins (snow, leaves, fireflies, bubbles, hearts) | Rejected; removed the same day (2026-10-12) |
+| Pets | LottieFiles replacements (Lurking Cat, Happy Corgi, Lazy Cat, Happy Cat) | The original set was kept |
+| Pets | Sakura's dog walking back and forth under the island | It walks in place, on the left, instead |
+| Liquid Glass panel | `.glassEffect` inside `NSPopover`; `NSGlassEffectView` in a shadowed panel | Rendered opaque white or showed a grey box edge |
+| Liquid Glass panel (2) | Transparent borderless `GlassMenuPanel` with a hand-drawn arrow silhouette and `.glassEffect(.clear.tint(black 70 %))` | Never looked like the system glass; replaced by a plain `darkAqua` `NSPopover` (2026-10-10) |
+| Lunar date | `Calendar(.chinese)` | UTC+8; wrong for Vietnam in some years |
+| Screen Time page | Reading macOS Screen Time data | No public API |
+
+---
+
+## 8. Known gaps and cleanup
+
+- **Nearby AirPods away from the Mac (unchecked).** Not verified whether system_profiler keeps stale bud/case levels under `device_not_connected` once the AirPods are out of range; if it does, the Home battery strip would still show them.
+- **Tests cover the plain logic only.** `Tests/` is a non-hosted Swift Testing target (geometry, formats, parsers, `SettingsStore`, the wallpaper plist patch and backup rules); windows, the lock screen and the artwork switch's timing are checked on screen. Debug builds also run `MainThreadWatchdog`, which writes a `sample` to `~/Library/Logs/FreeTheNotch/hang-*.txt` after a 3 s main-thread stall.

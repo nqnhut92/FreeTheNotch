@@ -1,0 +1,1307 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F1E2D3C4B5A69788776659A3 /* ClaudeDesktopUsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788776659A2 /* ClaudeDesktopUsageCache.swift */; };
+		F1E2D3C4B5A69788776659A4 /* ClaudeDesktopUsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788776659A2 /* ClaudeDesktopUsageCache.swift */; };
+		F1E2D3C4B5A69788776659A7 /* zstddeclib.c in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788776659A6 /* zstddeclib.c */; };
+		F1E2D3C4B5A69788776659A8 /* zstddeclib.c in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788776659A6 /* zstddeclib.c */; };
+		F1E2D3C4B5A69788776659A1 /* SettingsView+AIUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788776659A0 /* SettingsView+AIUsage.swift */; };
+		F1E2D3C4B5A6978877665961 /* AIUsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665960 /* AIUsageSnapshot.swift */; };
+		F1E2D3C4B5A6978877665962 /* AIUsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665960 /* AIUsageSnapshot.swift */; };
+		F1E2D3C4B5A6978877665964 /* AIUsagePricing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665963 /* AIUsagePricing.swift */; };
+		F1E2D3C4B5A6978877665965 /* AIUsagePricing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665963 /* AIUsagePricing.swift */; };
+		F1E2D3C4B5A6978877665967 /* AIUsageLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665966 /* AIUsageLogParser.swift */; };
+		F1E2D3C4B5A6978877665968 /* AIUsageLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665966 /* AIUsageLogParser.swift */; };
+		F1E2D3C4B5A697887766596A /* AIUsageCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665969 /* AIUsageCredentials.swift */; };
+		F1E2D3C4B5A697887766596B /* AIUsageCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665969 /* AIUsageCredentials.swift */; };
+		F1E2D3C4B5A697887766596D /* AIUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766596C /* AIUsageService.swift */; };
+		F1E2D3C4B5A697887766596E /* AIUsageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766596C /* AIUsageService.swift */; };
+		F1E2D3C4B5A6978877665970 /* AIUsageCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766596F /* AIUsageCredentialStore.swift */; };
+		F1E2D3C4B5A6978877665972 /* AIUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665971 /* AIUsageMonitor.swift */; };
+		F1E2D3C4B5A6978877665975 /* AIUsageTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665974 /* AIUsageTabView.swift */; };
+		F1E2D3C4B5A6978877665978 /* AIUsageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665977 /* AIUsageTests.swift */; };
+		F1E2D3C4B5A6978877665945 /* LockPreviewGeometryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665944 /* LockPreviewGeometryTests.swift */; };
+		F1E2D3C4B5A6978877665943 /* SettingsSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665942 /* SettingsSupportTests.swift */; };
+		F1E2D3C4B5A6978877665941 /* LockScreenFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665940 /* LockScreenFormatTests.swift */; };
+		F1E2D3C4B5A697887766593F /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766593E /* SettingsStoreTests.swift */; };
+		F1E2D3C4B5A697887766593D /* ArtworkWallpaperFilesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766593C /* ArtworkWallpaperFilesTests.swift */; };
+		F1E2D3C4B5A697887766593B /* WallpaperIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766593A /* WallpaperIndexTests.swift */; };
+		F1E2D3C4B5A6978877665939 /* LockArtworkImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665938 /* LockArtworkImageTests.swift */; };
+		F1E2D3C4B5A6978877665937 /* LockScreenLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665936 /* LockScreenLayoutTests.swift */; };
+		F1E2D3C4B5A6978877665935 /* DisplayGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C8EB5BB682575EC87A171A /* DisplayGeometry.swift */; };
+		F1E2D3C4B5A6978877665934 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A32C3BB81E3C29B621792 /* SettingsStore.swift */; };
+		F1E2D3C4B5A6978877665933 /* LockPreviewGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665931 /* LockPreviewGeometry.swift */; };
+		F1E2D3C4B5A6978877665932 /* LockPreviewGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665931 /* LockPreviewGeometry.swift */; };
+		F1E2D3C4B5A6978877665930 /* LockScreenMediaCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766592F /* LockScreenMediaCard.swift */; };
+		F1E2D3C4B5A697887766592E /* LockNotch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766592D /* LockNotch.swift */; };
+		F1E2D3C4B5A697887766592C /* LockArtworkClickWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766592B /* LockArtworkClickWindow.swift */; };
+		F1E2D3C4B5A697887766592A /* LockArtworkWallpaper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665929 /* LockArtworkWallpaper.swift */; };
+		F1E2D3C4B5A6978877665928 /* SkyLightLockSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665927 /* SkyLightLockSpace.swift */; };
+		F1E2D3C4B5A6978877665926 /* LockWallpaperTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665925 /* LockWallpaperTransition.swift */; };
+		F1E2D3C4B5A6978877665924 /* ArtworkWallpaperFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665922 /* ArtworkWallpaperFiles.swift */; };
+		F1E2D3C4B5A6978877665923 /* ArtworkWallpaperFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665922 /* ArtworkWallpaperFiles.swift */; };
+		F1E2D3C4B5A6978877665921 /* LockScreenFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766591F /* LockScreenFormat.swift */; };
+		F1E2D3C4B5A6978877665920 /* LockScreenFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766591F /* LockScreenFormat.swift */; };
+		F1E2D3C4B5A697887766591E /* LockArtworkImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766591C /* LockArtworkImage.swift */; };
+		F1E2D3C4B5A697887766591D /* LockArtworkImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766591C /* LockArtworkImage.swift */; };
+		F1E2D3C4B5A697887766591B /* LockScreenLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665919 /* LockScreenLayout.swift */; };
+		F1E2D3C4B5A697887766591A /* LockScreenLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665919 /* LockScreenLayout.swift */; };
+		F1E2D3C4B5A6978877665918 /* SettingsView+About.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665917 /* SettingsView+About.swift */; };
+		F1E2D3C4B5A6978877665916 /* SettingsView+LockScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665915 /* SettingsView+LockScreen.swift */; };
+		F1E2D3C4B5A6978877665914 /* SettingsView+Modules.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665913 /* SettingsView+Modules.swift */; };
+		F1E2D3C4B5A6978877665912 /* SettingsView+SideNotch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665911 /* SettingsView+SideNotch.swift */; };
+		F1E2D3C4B5A6978877665910 /* SettingsView+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766590F /* SettingsView+Appearance.swift */; };
+		F1E2D3C4B5A697887766590E /* SettingsView+General.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766590D /* SettingsView+General.swift */; };
+		F1E2D3C4B5A697887766590C /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766590A /* AppInfo.swift */; };
+		F1E2D3C4B5A697887766590B /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766590A /* AppInfo.swift */; };
+		F1E2D3C4B5A6978877665909 /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665908 /* LaunchAtLogin.swift */; };
+		F1E2D3C4B5A6978877665907 /* SettingsIllustrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665906 /* SettingsIllustrations.swift */; };
+		F1E2D3C4B5A6978877665905 /* SettingsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665903 /* SettingsComponents.swift */; };
+		F1E2D3C4B5A6978877665904 /* SettingsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665903 /* SettingsComponents.swift */; };
+		F1E2D3C4B5A6978877665902 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665900 /* Log.swift */; };
+		F1E2D3C4B5A6978877665901 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665900 /* Log.swift */; };
+		F1E2D3C4B5A6978877665846 /* CalculatorModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665845 /* CalculatorModelTests.swift */; };
+		F1E2D3C4B5A6978877665844 /* AgendaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665843 /* AgendaTests.swift */; };
+		F1E2D3C4B5A6978877665842 /* ConferenceProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665841 /* ConferenceProviderTests.swift */; };
+		F1E2D3C4B5A6978877665840 /* BatteryTileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766583F /* BatteryTileTests.swift */; };
+		F1E2D3C4B5A697887766583E /* MarqueeTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766583D /* MarqueeTextTests.swift */; };
+		F1E2D3C4B5A697887766583C /* NotchSkinTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766583B /* NotchSkinTests.swift */; };
+		F1E2D3C4B5A697887766583A /* NotchGeometryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665839 /* NotchGeometryTests.swift */; };
+		F1E2D3C4B5A6978877665838 /* NotchPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665837 /* NotchPageTests.swift */; };
+		F1E2D3C4B5A6978877665836 /* BatteryTiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665834 /* BatteryTiles.swift */; };
+		F1E2D3C4B5A6978877665835 /* BatteryTiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665834 /* BatteryTiles.swift */; };
+		F1E2D3C4B5A6978877665833 /* CalculatorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665831 /* CalculatorModel.swift */; };
+		F1E2D3C4B5A6978877665832 /* CalculatorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665831 /* CalculatorModel.swift */; };
+		F1E2D3C4B5A6978877665830 /* MainScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766582E /* MainScheduler.swift */; };
+		F1E2D3C4B5A697887766582F /* MainScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766582E /* MainScheduler.swift */; };
+		F1E2D3C4B5A697887766582D /* OutputVolumeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766582C /* OutputVolumeMonitor.swift */; };
+		F1E2D3C4B5A697887766582B /* AgendaEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665829 /* AgendaEvent.swift */; };
+		F1E2D3C4B5A697887766582A /* AgendaEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665829 /* AgendaEvent.swift */; };
+		F1E2D3C4B5A6978877665828 /* EventLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665827 /* EventLists.swift */; };
+		F1E2D3C4B5A6978877665826 /* StandaloneCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665825 /* StandaloneCalendarView.swift */; };
+		F1E2D3C4B5A6978877665824 /* WeekCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665823 /* WeekCalendarView.swift */; };
+		F1E2D3C4B5A6978877665822 /* WeekWheelLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665820 /* WeekWheelLayout.swift */; };
+		F1E2D3C4B5A6978877665821 /* WeekWheelLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665820 /* WeekWheelLayout.swift */; };
+		F1E2D3C4B5A697887766581F /* Conference.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766581D /* Conference.swift */; };
+		F1E2D3C4B5A697887766581E /* Conference.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766581D /* Conference.swift */; };
+		F1E2D3C4B5A697887766581A /* MarqueeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D3D4E5F60718293A4B02 /* MarqueeText.swift */; };
+		F1E2D3C4B5A6978877665819 /* SideNotchShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766552C /* SideNotchShape.swift */; };
+		F1E2D3C4B5A6978877665818 /* SkinSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665817 /* SkinSettingsSection.swift */; };
+		F1E2D3C4B5A6978877665816 /* SkinDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665814 /* SkinDecorationView.swift */; };
+		F1E2D3C4B5A6978877665815 /* SkinDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665814 /* SkinDecorationView.swift */; };
+		F1E2D3C4B5A6978877665813 /* NotchSkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665811 /* NotchSkin.swift */; };
+		F1E2D3C4B5A6978877665812 /* NotchSkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665811 /* NotchSkin.swift */; };
+		F1E2D3C4B5A6978877665810 /* SideNotchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766580F /* SideNotchView.swift */; };
+		F1E2D3C4B5A697887766580E /* DockSide.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766580C /* DockSide.swift */; };
+		F1E2D3C4B5A697887766580D /* DockSide.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766580C /* DockSide.swift */; };
+		F1E2D3C4B5A697887766580B /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766580A /* WaveformView.swift */; };
+		F1E2D3C4B5A6978877665809 /* NotchShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665807 /* NotchShape.swift */; };
+		F1E2D3C4B5A6978877665808 /* NotchShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665807 /* NotchShape.swift */; };
+		F1E2D3C4B5A6978877665806 /* NotchStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665805 /* NotchStyle.swift */; };
+		F1E2D3C4B5A6978877665804 /* NotchPageIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665803 /* NotchPageIcon.swift */; };
+		F1E2D3C4B5A6978877665802 /* NotchPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665800 /* NotchPage.swift */; };
+		F1E2D3C4B5A6978877665801 /* NotchPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665800 /* NotchPage.swift */; };
+		F1E2D3C4B5A6978877665602 /* CalendarDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665601 /* CalendarDay.swift */; };
+		F1E2D3C4B5A6978877665606 /* LunarCalendarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665605 /* LunarCalendarTests.swift */; };
+		F1E2D3C4B5A6978877665608 /* CalendarDayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665607 /* CalendarDayTests.swift */; };
+		F1E2D3C4B5A6978877665609 /* LunarCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665510 /* LunarCalendar.swift */; };
+		F1E2D3C4B5A697887766560A /* CalendarDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665601 /* CalendarDay.swift */; };
+		F1E2D3C4B5A6978877665529 /* DuoGlyphPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766552A /* DuoGlyphPopover.swift */; };
+		F1E2D3C4B5A697887766552B /* SideNotchShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766552C /* SideNotchShape.swift */; };
+		F1E2D3C4B5A6978877665527 /* SideNotchWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665528 /* SideNotchWindowController.swift */; };
+		F1E2D3C4B5A6978877665525 /* DuoGlyphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665526 /* DuoGlyphView.swift */; };
+		F1E2D3C4B5A697887766552D /* QuoteOfTheDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766552E /* QuoteOfTheDay.swift */; };
+		F1E2D3C4B5A6978877665523 /* WiFiMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665524 /* WiFiMonitor.swift */; };
+		C6D7E8F90A1B2C3D4E5F60718 /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E8F90A1B2C3D4E5F60718293 /* MenuBarIcon.swift */; };
+		B7C8D9E0F1A2B3C4D5E6F70819 /* HUDController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B7C8D9E0F1A2B3C4D5E6F708 /* HUDController.swift */; };
+		248AC9ED336DE7DAECD3ADA8 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C681D06BD2AA399DAC946D /* MenuBarController.swift */; };
+		2667A40844853040B7A05814 /* TimerTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673BD4755D05AD7853C1F76E /* TimerTabView.swift */; };
+		26CDEA5B9A2145128EDFED86 /* LockScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAEDE5FE878F78E2978AA24 /* LockScreenView.swift */; };
+		2B70A3A4419F4FE020864D39 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9136682575250DEF91799E27 /* WeatherService.swift */; };
+		2E9D34119F3374CEBD4D3FD8 /* ClipboardTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B95E909348334896A68F812 /* ClipboardTabView.swift */; };
+		3BD39F917C10696489A30FD5 /* MediaRemoteAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47C462DDAED16DC0CF0B9CD7 /* MediaRemoteAdapter.swift */; };
+		425FEEAA4E2FE981B29EE11B /* KeepAwakeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E8B5359309CC6273931BDB /* KeepAwakeController.swift */; };
+		42DB0B956AF67442931A4C45 /* SystemMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297C79BFBDABE898736A3566 /* SystemMonitor.swift */; };
+		4C6428DA8099F4EFBACEA67C /* NotchWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2CCE8038A39D5E0853964B /* NotchWindowController.swift */; };
+		4C7B2C1D0E2ADCD93C0A5EB2 /* ClipboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78DF0CAC5E40C02D4E518CA /* ClipboardManager.swift */; };
+		55E1DB7E9E779F6BEE9CD564 /* TimerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F893697B590481194F309FFE /* TimerStore.swift */; };
+		7684319E1B429AD564B858F9 /* MediaTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DF469611A11F5125227C37 /* MediaTabView.swift */; };
+		7D1AFCC4F14A3E3E04D42F8A /* NotchRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AF03B971722F244F58D669 /* NotchRootView.swift */; };
+		81FB339258E4D27EB0D1CB7C /* CalendarStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A518F32CF21449273D7CEE9D /* CalendarStore.swift */; };
+		86D3748421599E3E9C8FE21D /* FreeTheNotchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30877432D1026706D7E805DA /* FreeTheNotchApp.swift */; };
+		922CE1E6AF41E3A2517EE5BB /* CleaningModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A0DF3DBE4D58FED8A728E7E /* CleaningModeController.swift */; };
+		9CDA1A2A3C984A24B9C429CA /* QRGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0FA5F6B8A880627DF7FFE0 /* QRGenerator.swift */; };
+		9EF307590D273E34F98DFF7E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C826A6FCE48478DCB74F2134 /* SettingsView.swift */; };
+		A80270815FE85DF2FBDAA35A /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A32C3BB81E3C29B621792 /* SettingsStore.swift */; };
+		B4F2222D3B41A3DBD199B364 /* MenuBarPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59C0996DAEEE6F529A27976 /* MenuBarPanelView.swift */; };
+		BD47D5552C7F47E8E80E952E /* ExpandedPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7FD633DBDDE131CA3766E4 /* ExpandedPanelView.swift */; };
+		C2ACAF127972D33E5901A19B /* CollapsedNotchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBEE3772A077021721A278F6 /* CollapsedNotchView.swift */; };
+		D32FEB3E719E01FCD3FE22A4 /* QRTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97706CA828BCA0385813DBA /* QRTabView.swift */; };
+		D37DC2C9A7A5236BB4734865 /* BluetoothMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAC8D82F01B7210760474F /* BluetoothMonitor.swift */; };
+		DF9C1E2A8A3C0ED16BFE1684 /* DisplayGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C8EB5BB682575EC87A171A /* DisplayGeometry.swift */; };
+		D4D5D6D7E8F9A0B1C2D3E4F5 /* ReminderToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3C4C5C6D7E8F9A0B1B2C3D4 /* ReminderToggle.swift */; };
+		F1E2D3C4B5A6978877665530 /* LockScreenPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665531 /* LockScreenPreview.swift */; };
+		E5E6E7E8F9A0B1C2D3E4F607 /* LockScreenReminderWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D5D6D7E8F9A0B1C2D3E4F6 /* LockScreenReminderWidget.swift */; };
+		F8F9FAFBFCFDFEFF0F1F203 /* UniformRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F8F9FAFBFCFDFEFF0F1F2 /* UniformRing.swift */; };
+		A2A3A4A5B6B7B8B9C0C1C2 /* CapsLockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A2A3A4B5B6B7B8C9C0C1 /* CapsLockManager.swift */; };
+		F1E2D3C4B5A6978877665507 /* AudioRouteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665508 /* AudioRouteManager.swift */; };
+		F1E2D3C4B5A6978877665501 /* BatteryHUDController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665502 /* BatteryHUDController.swift */; };
+		F1E2D3C4B5A6978877665503 /* BatteryHUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665504 /* BatteryHUDView.swift */; };
+		F73BB387D080589AB054C240 /* LockScreenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4017F2ED6CFC7403D75E173E /* LockScreenManager.swift */; };
+		A1B2C3D4E5F60718293A4B01 /* SMCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B01 /* SMCClient.swift */; };
+		A1B2C3D4E5F60718293A4B02 /* DiskMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B02 /* DiskMonitor.swift */; };
+		A1B2C3D4E5F60718293A4B03 /* ProcessMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B03 /* ProcessMonitor.swift */; };
+		A1B2C3D4E5F60718293A4B04 /* SpeedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B04 /* SpeedTest.swift */; };
+		A1B2C3D4E5F60718293A4B05 /* PanelStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B05 /* PanelStyles.swift */; };
+		A1B2C3D4E5F60718293A4B06 /* PanelSparkline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B06 /* PanelSparkline.swift */; };
+		A1B2C3D4E5F60718293A4B07 /* PanelSystemSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B07 /* PanelSystemSection.swift */; };
+		A1B2C3D4E5F60718293A4B08 /* PanelNetworkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B08 /* PanelNetworkSection.swift */; };
+		A1B2C3D4E5F60718293A4B09 /* PanelDiskSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B09 /* PanelDiskSection.swift */; };
+		A1B2C3D4E5F60718293A4B0A /* PanelPowerSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B0A /* PanelPowerSection.swift */; };
+		E2E3E4F5A6B7C8D9E0F1A2B3 /* MarqueeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D3D4E5F60718293A4B02 /* MarqueeText.swift */; };
+		A3A4A5A6B7C8D9E0F1A2B3 /* BluetoothPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4B5B6C7D8E9F0A1B2C3D4 /* BluetoothPopupView.swift */; };
+		C2C3D4E5F60718293A4BA1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D2D3D4E5F60718293A4BA1 /* Assets.xcassets */; };
+		F1E2D3C4B5A6978877665511 /* LunarCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665510 /* LunarCalendar.swift */; };
+		F1E2D3C4B5A6978877665513 /* CommandBarMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665512 /* CommandBarMath.swift */; };
+		F1E2D3C4B5A697887766551B /* ScreenCaptureVisibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766551A /* ScreenCaptureVisibility.swift */; };
+		F1E2D3C4B5A6978877665515 /* CalculatorTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665514 /* CalculatorTabView.swift */; };
+		F1E2D3C4B5A6978877665517 /* BatteryStripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665516 /* BatteryStripView.swift */; };
+		F1E2D3C4B5A6978877665519 /* IdleAnimationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665518 /* IdleAnimationManager.swift */; };
+		F1E2D3C4B5A697887766551D /* LottieAnimations in Resources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766551C /* LottieAnimations */; };
+		F1E2D3C4B5A6978877665520 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F1E2D3C4B5A697887766551F /* Lottie */; };
+		F1E2D3C4B5A6978877665522 /* SkinPets.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665521 /* SkinPets.swift */; };
+		F1E2D3C4B5A6978877665701 /* Subprocess.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665700 /* Subprocess.swift */; };
+		F1E2D3C4B5A6978877665702 /* Subprocess.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665700 /* Subprocess.swift */; };
+		F1E2D3C4B5A6978877665704 /* CPUSampling.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665703 /* CPUSampling.swift */; };
+		F1E2D3C4B5A6978877665705 /* CPUSampling.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665703 /* CPUSampling.swift */; };
+		F1E2D3C4B5A6978877665707 /* MaxCapacityProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665706 /* MaxCapacityProbe.swift */; };
+		F1E2D3C4B5A6978877665708 /* MaxCapacityProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665706 /* MaxCapacityProbe.swift */; };
+		F1E2D3C4B5A697887766570A /* BluetoothDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665709 /* BluetoothDevice.swift */; };
+		F1E2D3C4B5A697887766570B /* BluetoothDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665709 /* BluetoothDevice.swift */; };
+		F1E2D3C4B5A697887766570D /* ClipboardHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766570C /* ClipboardHistory.swift */; };
+		F1E2D3C4B5A697887766570E /* ClipboardHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766570C /* ClipboardHistory.swift */; };
+		F1E2D3C4B5A6978877665710 /* DurationFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766570F /* DurationFormat.swift */; };
+		F1E2D3C4B5A6978877665711 /* DurationFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766570F /* DurationFormat.swift */; };
+		F1E2D3C4B5A6978877665713 /* Quote.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665712 /* Quote.swift */; };
+		F1E2D3C4B5A6978877665714 /* Quote.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665712 /* Quote.swift */; };
+		F1E2D3C4B5A6978877665716 /* PlaybackClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665715 /* PlaybackClock.swift */; };
+		F1E2D3C4B5A6978877665717 /* PlaybackClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665715 /* PlaybackClock.swift */; };
+		F1E2D3C4B5A6978877665719 /* SystemSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665718 /* SystemSettings.swift */; };
+		F1E2D3C4B5A697887766571B /* PanelFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766571A /* PanelFormat.swift */; };
+		F1E2D3C4B5A697887766571C /* PanelFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766571A /* PanelFormat.swift */; };
+		F1E2D3C4B5A697887766571E /* ProcessRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766571D /* ProcessRowView.swift */; };
+		F1E2D3C4B5A6978877665720 /* OverlayScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766571F /* OverlayScrollView.swift */; };
+		F1E2D3C4B5A6978877665722 /* PanelKeepAwakeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665721 /* PanelKeepAwakeCard.swift */; };
+		F1E2D3C4B5A6978877665724 /* PanelUtilitiesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665723 /* PanelUtilitiesCard.swift */; };
+		F1E2D3C4B5A6978877665726 /* DuoSystemPopovers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665725 /* DuoSystemPopovers.swift */; };
+		F1E2D3C4B5A6978877665728 /* NotchPopoverTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665727 /* NotchPopoverTracker.swift */; };
+		F1E2D3C4B5A6978877665729 /* CommandBarMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665512 /* CommandBarMath.swift */; };
+		F1E2D3C4B5A697887766572A /* SMCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B01 /* SMCClient.swift */; };
+		F1E2D3C4B5A697887766572B /* ProcessMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B03 /* ProcessMonitor.swift */; };
+		F1E2D3C4B5A697887766572C /* TimerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F893697B590481194F309FFE /* TimerStore.swift */; };
+		F1E2D3C4B5A697887766572D /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9136682575250DEF91799E27 /* WeatherService.swift */; };
+		F1E2D3C4B5A697887766572E /* SpeedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B04 /* SpeedTest.swift */; };
+		F1E2D3C4B5A697887766572F /* QRGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0FA5F6B8A880627DF7FFE0 /* QRGenerator.swift */; };
+		F1E2D3C4B5A6978877665730 /* WiFiMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665524 /* WiFiMonitor.swift */; };
+		F1E2D3C4B5A6978877665731 /* DiskMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293A4B02 /* DiskMonitor.swift */; };
+		F1E2D3C4B5A6978877665733 /* CommandBarMathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665732 /* CommandBarMathTests.swift */; };
+		F1E2D3C4B5A6978877665735 /* SMCValueCodecTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665734 /* SMCValueCodecTests.swift */; };
+		F1E2D3C4B5A6978877665737 /* PanelFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665736 /* PanelFormatTests.swift */; };
+		F1E2D3C4B5A6978877665739 /* CPUSamplingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665738 /* CPUSamplingTests.swift */; };
+		F1E2D3C4B5A697887766573B /* ProcessMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766573A /* ProcessMonitorTests.swift */; };
+		F1E2D3C4B5A697887766573D /* BluetoothToolParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766573C /* BluetoothToolParserTests.swift */; };
+		F1E2D3C4B5A697887766573F /* ClipboardHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766573E /* ClipboardHistoryTests.swift */; };
+		F1E2D3C4B5A6978877665741 /* PlaybackClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665740 /* PlaybackClockTests.swift */; };
+		F1E2D3C4B5A6978877665743 /* TimerStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665742 /* TimerStoreTests.swift */; };
+		F1E2D3C4B5A6978877665745 /* QuoteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665744 /* QuoteTests.swift */; };
+		F1E2D3C4B5A6978877665747 /* NetworkModuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665746 /* NetworkModuleTests.swift */; };
+		F1E2D3C4B5A6978877665749 /* SystemToolsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665748 /* SystemToolsTests.swift */; };
+		F1E2D3C4B5A6978877665B01 /* AIActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B00 /* AIActivity.swift */; };
+		F1E2D3C4B5A6978877665B02 /* AIActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B00 /* AIActivity.swift */; };
+		F1E2D3C4B5A6978877665B04 /* AIActivityReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B03 /* AIActivityReader.swift */; };
+		F1E2D3C4B5A6978877665B05 /* AIActivityReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B03 /* AIActivityReader.swift */; };
+		F1E2D3C4B5A6978877665B07 /* AIActivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B06 /* AIActivityMonitor.swift */; };
+		F1E2D3C4B5A6978877665B0A /* AIQuotaAlertPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B09 /* AIQuotaAlertPolicy.swift */; };
+		F1E2D3C4B5A6978877665B0B /* AIQuotaAlertPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B09 /* AIQuotaAlertPolicy.swift */; };
+		F1E2D3C4B5A6978877665B0D /* AIActivityCompactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B0C /* AIActivityCompactView.swift */; };
+		F1E2D3C4B5A6978877665B10 /* AIUsageHUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B0F /* AIUsageHUDView.swift */; };
+		F1E2D3C4B5A6978877665B14 /* AIActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B12 /* AIActivityTests.swift */; };
+		F1E2D3C4B5A6978877665C01 /* AIActivityParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C00 /* AIActivityParser.swift */; };
+		F1E2D3C4B5A6978877665C02 /* AIActivityParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C00 /* AIActivityParser.swift */; };
+		F1E2D3C4B5A6978877665C04 /* AIUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C03 /* AIUsageProvider.swift */; };
+		F1E2D3C4B5A6978877665C05 /* AIUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C03 /* AIUsageProvider.swift */; };
+		F1E2D3C4B5A6978877665C07 /* AIUsageLimit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C06 /* AIUsageLimit.swift */; };
+		F1E2D3C4B5A6978877665C08 /* AIUsageLimit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C06 /* AIUsageLimit.swift */; };
+		F1E2D3C4B5A6978877665C0A /* AIUsageTotals.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C09 /* AIUsageTotals.swift */; };
+		F1E2D3C4B5A6978877665C0B /* AIUsageTotals.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C09 /* AIUsageTotals.swift */; };
+		F1E2D3C4B5A6978877665C0D /* AIUsageQuotaParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C0C /* AIUsageQuotaParser.swift */; };
+		F1E2D3C4B5A6978877665C0E /* AIUsageQuotaParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C0C /* AIUsageQuotaParser.swift */; };
+		F1E2D3C4B5A6978877665C10 /* AIUsageDirectories.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C0F /* AIUsageDirectories.swift */; };
+		F1E2D3C4B5A6978877665C11 /* AIUsageDirectories.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C0F /* AIUsageDirectories.swift */; };
+		F1E2D3C4B5A6978877665C13 /* AIProviderGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C12 /* AIProviderGlyph.swift */; };
+		F1E2D3C4B5A6978877665C17 /* AIQuotaAlertTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C15 /* AIQuotaAlertTests.swift */; };
+		F1E2D3C4B5A6978877665C1A /* AIActivityMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C18 /* AIActivityMonitorTests.swift */; };
+		F1E2D3C4B5A6978877665B08 /* AIActivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B06 /* AIActivityMonitor.swift */; };
+		F1E2D3C4B5A6978877665C1C /* AIUsageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C1B /* AIUsageError.swift */; };
+		F1E2D3C4B5A6978877665C1D /* AIUsageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C1B /* AIUsageError.swift */; };
+		F1E2D3C4B5A6978877665D02 /* SmoothScrollSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D01 /* SmoothScrollSupport.swift */; };
+		F1E2D3C4B5A6978877665D03 /* SmoothScrollSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D01 /* SmoothScrollSupport.swift */; };
+		F1E2D3C4B5A6978877665D05 /* MouseScrollTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D04 /* MouseScrollTarget.swift */; };
+		F1E2D3C4B5A6978877665D06 /* MouseScrollTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D04 /* MouseScrollTarget.swift */; };
+		F1E2D3C4B5A6978877665D08 /* SmoothScrollService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D07 /* SmoothScrollService.swift */; };
+		F1E2D3C4B5A6978877665D0A /* MouseScrollingSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D09 /* MouseScrollingSettings.swift */; };
+		F1E2D3C4B5A6978877665D0C /* SmoothScrollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D0B /* SmoothScrollTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F1E2D3C4B5A69788776659A2 /* ClaudeDesktopUsageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeDesktopUsageCache.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A69788776659A5 /* AIUsageZstd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIUsageZstd.h; sourceTree = "<group>"; };
+		F1E2D3C4B5A69788776659A6 /* zstddeclib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = zstddeclib.c; sourceTree = "<group>"; };
+		F1E2D3C4B5A69788776659A0 /* SettingsView+AIUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView+AIUsage.swift"; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665960 /* AIUsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageSnapshot.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665963 /* AIUsagePricing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsagePricing.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665966 /* AIUsageLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageLogParser.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665969 /* AIUsageCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageCredentials.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766596C /* AIUsageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageService.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766596F /* AIUsageCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageCredentialStore.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665971 /* AIUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageMonitor.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665974 /* AIUsageTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageTabView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665977 /* AIUsageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665944 /* LockPreviewGeometryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockPreviewGeometryTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665942 /* SettingsSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSupportTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665940 /* LockScreenFormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenFormatTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766593E /* SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766593C /* ArtworkWallpaperFilesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkWallpaperFilesTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766593A /* WallpaperIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperIndexTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665938 /* LockArtworkImageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockArtworkImageTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665936 /* LockScreenLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenLayoutTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665931 /* LockPreviewGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockPreviewGeometry.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766592F /* LockScreenMediaCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenMediaCard.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766592D /* LockNotch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockNotch.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766592B /* LockArtworkClickWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockArtworkClickWindow.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665929 /* LockArtworkWallpaper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockArtworkWallpaper.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665927 /* SkyLightLockSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyLightLockSpace.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665925 /* LockWallpaperTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockWallpaperTransition.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665922 /* ArtworkWallpaperFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkWallpaperFiles.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766591F /* LockScreenFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenFormat.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766591C /* LockArtworkImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockArtworkImage.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665919 /* LockScreenLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenLayout.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665917 /* SettingsView+About.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView+About.swift"; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665915 /* SettingsView+LockScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView+LockScreen.swift"; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665913 /* SettingsView+Modules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView+Modules.swift"; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665911 /* SettingsView+SideNotch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView+SideNotch.swift"; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766590F /* SettingsView+Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView+Appearance.swift"; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766590D /* SettingsView+General.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView+General.swift"; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766590A /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665908 /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665906 /* SettingsIllustrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsIllustrations.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665903 /* SettingsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponents.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665900 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665845 /* CalculatorModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorModelTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665843 /* AgendaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgendaTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665841 /* ConferenceProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConferenceProviderTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766583F /* BatteryTileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryTileTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766583D /* MarqueeTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarqueeTextTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766583B /* NotchSkinTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchSkinTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665839 /* NotchGeometryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchGeometryTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665837 /* NotchPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPageTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665834 /* BatteryTiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryTiles.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665831 /* CalculatorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorModel.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766582E /* MainScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScheduler.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766582C /* OutputVolumeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputVolumeMonitor.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665829 /* AgendaEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgendaEvent.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665827 /* EventLists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLists.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665825 /* StandaloneCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandaloneCalendarView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665823 /* WeekCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekCalendarView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665820 /* WeekWheelLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekWheelLayout.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766581D /* Conference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conference.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665817 /* SkinSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinSettingsSection.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665814 /* SkinDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinDecorationView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665811 /* NotchSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchSkin.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766580F /* SideNotchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNotchView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766580C /* DockSide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockSide.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766580A /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665807 /* NotchShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchShape.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665805 /* NotchStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchStyle.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665803 /* NotchPageIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPageIcon.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665800 /* NotchPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPage.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665601 /* CalendarDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDay.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665603 /* FreeTheNotchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FreeTheNotchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1E2D3C4B5A6978877665605 /* LunarCalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunarCalendarTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665607 /* CalendarDayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766552A /* DuoGlyphPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuoGlyphPopover.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766552C /* SideNotchShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNotchShape.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665528 /* SideNotchWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNotchWindowController.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665526 /* DuoGlyphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuoGlyphView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766552E /* QuoteOfTheDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteOfTheDay.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665524 /* WiFiMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiMonitor.swift; sourceTree = "<group>"; };
+		297C79BFBDABE898736A3566 /* SystemMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMonitor.swift; sourceTree = "<group>"; };
+		29CFDD24A2EEB454D134955A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2A0DF3DBE4D58FED8A728E7E /* CleaningModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleaningModeController.swift; sourceTree = "<group>"; };
+		30877432D1026706D7E805DA /* FreeTheNotchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeTheNotchApp.swift; sourceTree = "<group>"; };
+		36E8B5359309CC6273931BDB /* KeepAwakeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAwakeController.swift; sourceTree = "<group>"; };
+		4017F2ED6CFC7403D75E173E /* LockScreenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenManager.swift; sourceTree = "<group>"; };
+		47C462DDAED16DC0CF0B9CD7 /* MediaRemoteAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRemoteAdapter.swift; sourceTree = "<group>"; };
+		4EAEDE5FE878F78E2978AA24 /* LockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenView.swift; sourceTree = "<group>"; };
+		4F7FD633DBDDE131CA3766E4 /* ExpandedPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedPanelView.swift; sourceTree = "<group>"; };
+		50AF03B971722F244F58D669 /* NotchRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchRootView.swift; sourceTree = "<group>"; };
+		5D2CCE8038A39D5E0853964B /* NotchWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchWindowController.swift; sourceTree = "<group>"; };
+		673BD4755D05AD7853C1F76E /* TimerTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerTabView.swift; sourceTree = "<group>"; };
+		6EAAC8D82F01B7210760474F /* BluetoothMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothMonitor.swift; sourceTree = "<group>"; };
+		73C8EB5BB682575EC87A171A /* DisplayGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayGeometry.swift; sourceTree = "<group>"; };
+		7B92868492545A102186D0F9 /* FreeTheNotch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FreeTheNotch.entitlements; sourceTree = "<group>"; };
+		7B95E909348334896A68F812 /* ClipboardTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardTabView.swift; sourceTree = "<group>"; };
+		846A32C3BB81E3C29B621792 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		9136682575250DEF91799E27 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
+		9F7C9E215EDFE6A4AABC4B3A /* FreeTheNotch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeTheNotch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A518F32CF21449273D7CEE9D /* CalendarStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStore.swift; sourceTree = "<group>"; };
+		B97706CA828BCA0385813DBA /* QRTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRTabView.swift; sourceTree = "<group>"; };
+		C59C0996DAEEE6F529A27976 /* MenuBarPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPanelView.swift; sourceTree = "<group>"; };
+		C826A6FCE48478DCB74F2134 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		CA0FA5F6B8A880627DF7FFE0 /* QRGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRGenerator.swift; sourceTree = "<group>"; };
+		CBEE3772A077021721A278F6 /* CollapsedNotchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollapsedNotchView.swift; sourceTree = "<group>"; };
+		D3C681D06BD2AA399DAC946D /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
+		D7E8F90A1B2C3D4E5F60718293 /* MenuBarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIcon.swift; sourceTree = "<group>"; };
+		A6B7C8D9E0F1A2B3C4D5E6F708 /* HUDController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDController.swift; sourceTree = "<group>"; };
+		E9DF469611A11F5125227C37 /* MediaTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTabView.swift; sourceTree = "<group>"; };
+		F78DF0CAC5E40C02D4E518CA /* ClipboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardManager.swift; sourceTree = "<group>"; };
+		F893697B590481194F309FFE /* TimerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerStore.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293A4B01 /* SMCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMCClient.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293A4B02 /* DiskMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskMonitor.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293A4B03 /* ProcessMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessMonitor.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293A4B04 /* SpeedTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedTest.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293A4B05 /* PanelStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelStyles.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293A4B06 /* PanelSparkline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelSparkline.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293A4B07 /* PanelSystemSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelSystemSection.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293A4B08 /* PanelNetworkSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelNetworkSection.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293A4B09 /* PanelDiskSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelDiskSection.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293A4B0A /* PanelPowerSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelPowerSection.swift; sourceTree = "<group>"; };
+		D2D3D4E5F60718293A4B02 /* MarqueeText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarqueeText.swift; sourceTree = "<group>"; };
+		B3B4B5B6C7D8E9F0A1B2C3D4 /* BluetoothPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothPopupView.swift; sourceTree = "<group>"; };
+		C3C4C5C6D7E8F9A0B1B2C3D4 /* ReminderToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderToggle.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665531 /* LockScreenPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenPreview.swift; sourceTree = "<group>"; };
+		D4D5D6D7E8F9A0B1C2D3E4F6 /* LockScreenReminderWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenReminderWidget.swift; sourceTree = "<group>"; };
+		F7F8F9FAFBFCFDFEFF0F1F2 /* UniformRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformRing.swift; sourceTree = "<group>"; };
+		A1A2A3A4B5B6B7B8C9C0C1 /* CapsLockManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsLockManager.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665508 /* AudioRouteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRouteManager.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665502 /* BatteryHUDController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryHUDController.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665504 /* BatteryHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryHUDView.swift; sourceTree = "<group>"; };
+		D2D3D4E5F60718293A4BA1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665510 /* LunarCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunarCalendar.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665512 /* CommandBarMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandBarMath.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766551A /* ScreenCaptureVisibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureVisibility.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665514 /* CalculatorTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorTabView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665516 /* BatteryStripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryStripView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665518 /* IdleAnimationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleAnimationManager.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766551C /* LottieAnimations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = LottieAnimations; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665521 /* SkinPets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinPets.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665700 /* Subprocess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subprocess.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665703 /* CPUSampling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUSampling.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665706 /* MaxCapacityProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxCapacityProbe.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665709 /* BluetoothDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothDevice.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766570C /* ClipboardHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardHistory.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766570F /* DurationFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationFormat.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665712 /* Quote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quote.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665715 /* PlaybackClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackClock.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665718 /* SystemSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettings.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766571A /* PanelFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelFormat.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766571D /* ProcessRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessRowView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766571F /* OverlayScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayScrollView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665721 /* PanelKeepAwakeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelKeepAwakeCard.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665723 /* PanelUtilitiesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelUtilitiesCard.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665725 /* DuoSystemPopovers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuoSystemPopovers.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665727 /* NotchPopoverTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPopoverTracker.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665732 /* CommandBarMathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandBarMathTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665734 /* SMCValueCodecTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMCValueCodecTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665736 /* PanelFormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelFormatTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665738 /* CPUSamplingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUSamplingTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766573A /* ProcessMonitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessMonitorTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766573C /* BluetoothToolParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothToolParserTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A697887766573E /* ClipboardHistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardHistoryTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665740 /* PlaybackClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackClockTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665742 /* TimerStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerStoreTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665744 /* QuoteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665746 /* NetworkModuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkModuleTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665748 /* SystemToolsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemToolsTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665B00 /* AIActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIActivity.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665B03 /* AIActivityReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIActivityReader.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665B06 /* AIActivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIActivityMonitor.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665B09 /* AIQuotaAlertPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIQuotaAlertPolicy.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665B0C /* AIActivityCompactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIActivityCompactView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665B0F /* AIUsageHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageHUDView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665B12 /* AIActivityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIActivityTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665C00 /* AIActivityParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIActivityParser.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665C03 /* AIUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageProvider.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665C06 /* AIUsageLimit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageLimit.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665C09 /* AIUsageTotals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageTotals.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665C0C /* AIUsageQuotaParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageQuotaParser.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665C0F /* AIUsageDirectories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageDirectories.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665C12 /* AIProviderGlyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderGlyph.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665C15 /* AIQuotaAlertTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIQuotaAlertTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665C18 /* AIActivityMonitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIActivityMonitorTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665C1B /* AIUsageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageError.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665D01 /* SmoothScrollSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothScrollSupport.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665D04 /* MouseScrollTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseScrollTarget.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665D07 /* SmoothScrollService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothScrollService.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665D09 /* MouseScrollingSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseScrollingSettings.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665D0B /* SmoothScrollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothScrollTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F1E2D3C4B5A697887766560C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2CE76B119FF903D48BCB1C16 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1E2D3C4B5A6978877665520 /* Lottie in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F1E2D3C4B5A6978877665D00 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				30877432D1026706D7E805DA /* FreeTheNotchApp.swift */,
+				CF1CB80B2B73A41BA5EF542E /* Core */,
+				196161A9CF8169B1A83BDCEC /* Notch */,
+				1BD812CB504E1427BBC14EBB /* MenuBar */,
+				E24BCA87305FC388E69F6342 /* LockScreen */,
+				E5E2AB29955B73647F0BBE42 /* Modules */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		F1E2D3C4B5A69788776659A9 /* Zstd */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A69788776659A6 /* zstddeclib.c */,
+			);
+			path = Zstd;
+			sourceTree = "<group>";
+		};
+
+		F1E2D3C4B5A6978877665973 /* AIUsage */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A69788776659A2 /* ClaudeDesktopUsageCache.swift */,
+				F1E2D3C4B5A69788776659A5 /* AIUsageZstd.h */,
+				F1E2D3C4B5A69788776659A9 /* Zstd */,
+				F1E2D3C4B5A6978877665960 /* AIUsageSnapshot.swift */,
+				F1E2D3C4B5A6978877665963 /* AIUsagePricing.swift */,
+				F1E2D3C4B5A6978877665966 /* AIUsageLogParser.swift */,
+				F1E2D3C4B5A6978877665969 /* AIUsageCredentials.swift */,
+				F1E2D3C4B5A697887766596C /* AIUsageService.swift */,
+				F1E2D3C4B5A697887766596F /* AIUsageCredentialStore.swift */,
+				F1E2D3C4B5A6978877665971 /* AIUsageMonitor.swift */,
+				F1E2D3C4B5A6978877665C1B /* AIUsageError.swift */,
+				F1E2D3C4B5A6978877665C0F /* AIUsageDirectories.swift */,
+				F1E2D3C4B5A6978877665C0C /* AIUsageQuotaParser.swift */,
+				F1E2D3C4B5A6978877665C09 /* AIUsageTotals.swift */,
+				F1E2D3C4B5A6978877665C06 /* AIUsageLimit.swift */,
+				F1E2D3C4B5A6978877665C03 /* AIUsageProvider.swift */,
+				F1E2D3C4B5A6978877665C00 /* AIActivityParser.swift */,
+				F1E2D3C4B5A6978877665B09 /* AIQuotaAlertPolicy.swift */,
+				F1E2D3C4B5A6978877665B06 /* AIActivityMonitor.swift */,
+				F1E2D3C4B5A6978877665B03 /* AIActivityReader.swift */,
+				F1E2D3C4B5A6978877665B00 /* AIActivity.swift */,
+			);
+			path = AIUsage;
+			sourceTree = "<group>";
+		};
+		F1E2D3C4B5A6978877665976 /* AIUsage */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A6978877665974 /* AIUsageTabView.swift */,
+				F1E2D3C4B5A6978877665C12 /* AIProviderGlyph.swift */,
+				F1E2D3C4B5A6978877665B0F /* AIUsageHUDView.swift */,
+				F1E2D3C4B5A6978877665B0C /* AIActivityCompactView.swift */,
+			);
+			path = AIUsage;
+			sourceTree = "<group>";
+		};
+		F1E2D3C4B5A697887766581C /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A6978877665827 /* EventLists.swift */,
+				F1E2D3C4B5A6978877665825 /* StandaloneCalendarView.swift */,
+				F1E2D3C4B5A6978877665823 /* WeekCalendarView.swift */,
+				F1E2D3C4B5A6978877665820 /* WeekWheelLayout.swift */,
+				F1E2D3C4B5A697887766581D /* Conference.swift */,
+			);
+			name = Calendar;
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		F1E2D3C4B5A6978877665604 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A6978877665D0B /* SmoothScrollTests.swift */,
+				F1E2D3C4B5A6978877665977 /* AIUsageTests.swift */,
+				F1E2D3C4B5A6978877665C18 /* AIActivityMonitorTests.swift */,
+				F1E2D3C4B5A6978877665C15 /* AIQuotaAlertTests.swift */,
+				F1E2D3C4B5A6978877665B12 /* AIActivityTests.swift */,
+				F1E2D3C4B5A6978877665944 /* LockPreviewGeometryTests.swift */,
+				F1E2D3C4B5A6978877665942 /* SettingsSupportTests.swift */,
+				F1E2D3C4B5A6978877665940 /* LockScreenFormatTests.swift */,
+				F1E2D3C4B5A697887766593E /* SettingsStoreTests.swift */,
+				F1E2D3C4B5A697887766593C /* ArtworkWallpaperFilesTests.swift */,
+				F1E2D3C4B5A697887766593A /* WallpaperIndexTests.swift */,
+				F1E2D3C4B5A6978877665938 /* LockArtworkImageTests.swift */,
+				F1E2D3C4B5A6978877665936 /* LockScreenLayoutTests.swift */,
+				F1E2D3C4B5A6978877665845 /* CalculatorModelTests.swift */,
+				F1E2D3C4B5A6978877665843 /* AgendaTests.swift */,
+				F1E2D3C4B5A6978877665841 /* ConferenceProviderTests.swift */,
+				F1E2D3C4B5A697887766583F /* BatteryTileTests.swift */,
+				F1E2D3C4B5A697887766583D /* MarqueeTextTests.swift */,
+				F1E2D3C4B5A697887766583B /* NotchSkinTests.swift */,
+				F1E2D3C4B5A6978877665839 /* NotchGeometryTests.swift */,
+				F1E2D3C4B5A6978877665837 /* NotchPageTests.swift */,
+				F1E2D3C4B5A6978877665748 /* SystemToolsTests.swift */,
+				F1E2D3C4B5A6978877665746 /* NetworkModuleTests.swift */,
+				F1E2D3C4B5A6978877665744 /* QuoteTests.swift */,
+				F1E2D3C4B5A6978877665742 /* TimerStoreTests.swift */,
+				F1E2D3C4B5A6978877665740 /* PlaybackClockTests.swift */,
+				F1E2D3C4B5A697887766573E /* ClipboardHistoryTests.swift */,
+				F1E2D3C4B5A697887766573C /* BluetoothToolParserTests.swift */,
+				F1E2D3C4B5A697887766573A /* ProcessMonitorTests.swift */,
+				F1E2D3C4B5A6978877665738 /* CPUSamplingTests.swift */,
+				F1E2D3C4B5A6978877665736 /* PanelFormatTests.swift */,
+				F1E2D3C4B5A6978877665734 /* SMCValueCodecTests.swift */,
+				F1E2D3C4B5A6978877665732 /* CommandBarMathTests.swift */,
+				F1E2D3C4B5A6978877665605 /* LunarCalendarTests.swift */,
+				F1E2D3C4B5A6978877665607 /* CalendarDayTests.swift */,
+			);
+			name = Tests;
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		196161A9CF8169B1A83BDCEC /* Notch */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A6978877665976 /* AIUsage */,
+				F1E2D3C4B5A697887766581C /* Calendar */,
+				F1E2D3C4B5A6978877665814 /* SkinDecorationView.swift */,
+				F1E2D3C4B5A6978877665811 /* NotchSkin.swift */,
+				F1E2D3C4B5A697887766580F /* SideNotchView.swift */,
+				F1E2D3C4B5A697887766580C /* DockSide.swift */,
+				F1E2D3C4B5A697887766580A /* WaveformView.swift */,
+				F1E2D3C4B5A6978877665807 /* NotchShape.swift */,
+				F1E2D3C4B5A6978877665805 /* NotchStyle.swift */,
+				F1E2D3C4B5A6978877665803 /* NotchPageIcon.swift */,
+				F1E2D3C4B5A6978877665800 /* NotchPage.swift */,
+				F1E2D3C4B5A6978877665727 /* NotchPopoverTracker.swift */,
+				5D2CCE8038A39D5E0853964B /* NotchWindowController.swift */,
+				F1E2D3C4B5A6978877665528 /* SideNotchWindowController.swift */,
+				F1E2D3C4B5A697887766552C /* SideNotchShape.swift */,
+				50AF03B971722F244F58D669 /* NotchRootView.swift */,
+				CBEE3772A077021721A278F6 /* CollapsedNotchView.swift */,
+				F1E2D3C4B5A6978877665504 /* BatteryHUDView.swift */,
+				4F7FD633DBDDE131CA3766E4 /* ExpandedPanelView.swift */,
+				D2D3D4E5F60718293A4B02 /* MarqueeText.swift */,
+				B3B4B5B6C7D8E9F0A1B2C3D4 /* BluetoothPopupView.swift */,
+				C3C4C5C6D7E8F9A0B1B2C3D4 /* ReminderToggle.swift */,
+				F1E2D3C4B5A6978877665521 /* SkinPets.swift */,
+				A5FFB82D2D59A32A99ED5EBE /* Tabs */,
+			);
+			name = Notch;
+			path = Notch;
+			sourceTree = "<group>";
+		};
+		1BD812CB504E1427BBC14EBB /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A6978877665725 /* DuoSystemPopovers.swift */,
+				F1E2D3C4B5A6978877665723 /* PanelUtilitiesCard.swift */,
+				F1E2D3C4B5A6978877665721 /* PanelKeepAwakeCard.swift */,
+				F1E2D3C4B5A697887766571F /* OverlayScrollView.swift */,
+				F1E2D3C4B5A697887766571D /* ProcessRowView.swift */,
+				F1E2D3C4B5A697887766571A /* PanelFormat.swift */,
+				D3C681D06BD2AA399DAC946D /* MenuBarController.swift */,
+				C59C0996DAEEE6F529A27976 /* MenuBarPanelView.swift */,
+				D7E8F90A1B2C3D4E5F60718293 /* MenuBarIcon.swift */,
+				B1B2C3D4E5F60718293A4B05 /* PanelStyles.swift */,
+				B1B2C3D4E5F60718293A4B06 /* PanelSparkline.swift */,
+				B1B2C3D4E5F60718293A4B07 /* PanelSystemSection.swift */,
+				B1B2C3D4E5F60718293A4B08 /* PanelNetworkSection.swift */,
+				B1B2C3D4E5F60718293A4B09 /* PanelDiskSection.swift */,
+				B1B2C3D4E5F60718293A4B0A /* PanelPowerSection.swift */,
+				F1E2D3C4B5A697887766552A /* DuoGlyphPopover.swift */,
+				F1E2D3C4B5A6978877665526 /* DuoGlyphView.swift */,
+			);
+			name = MenuBar;
+			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		5AE36F2E1E4DE1E90C80621D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9F7C9E215EDFE6A4AABC4B3A /* FreeTheNotch.app */,
+				F1E2D3C4B5A6978877665603 /* FreeTheNotchTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		79317DE23F0749D0B7D52B20 = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A6978877665D00 /* Sources */,
+				F1E2D3C4B5A6978877665604 /* Tests */,
+				29CFDD24A2EEB454D134955A /* Info.plist */,
+				D2D3D4E5F60718293A4BA1 /* Assets.xcassets */,
+				F1E2D3C4B5A697887766551C /* LottieAnimations */,
+				7B92868492545A102186D0F9 /* FreeTheNotch.entitlements */,
+				5AE36F2E1E4DE1E90C80621D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A5FFB82D2D59A32A99ED5EBE /* Tabs */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A6978877665834 /* BatteryTiles.swift */,
+				F1E2D3C4B5A6978877665831 /* CalculatorModel.swift */,
+				E9DF469611A11F5125227C37 /* MediaTabView.swift */,
+				7B95E909348334896A68F812 /* ClipboardTabView.swift */,
+				673BD4755D05AD7853C1F76E /* TimerTabView.swift */,
+				B97706CA828BCA0385813DBA /* QRTabView.swift */,
+				F1E2D3C4B5A6978877665516 /* BatteryStripView.swift */,
+				F1E2D3C4B5A6978877665514 /* CalculatorTabView.swift */,
+			);
+			name = Tabs;
+			path = Tabs;
+			sourceTree = "<group>";
+		};
+		CF1CB80B2B73A41BA5EF542E /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A6978877665D09 /* MouseScrollingSettings.swift */,
+				F1E2D3C4B5A6978877665917 /* SettingsView+About.swift */,
+				F1E2D3C4B5A6978877665915 /* SettingsView+LockScreen.swift */,
+				F1E2D3C4B5A6978877665913 /* SettingsView+Modules.swift */,
+				F1E2D3C4B5A6978877665911 /* SettingsView+SideNotch.swift */,
+				F1E2D3C4B5A697887766590F /* SettingsView+Appearance.swift */,
+				F1E2D3C4B5A69788776659A0 /* SettingsView+AIUsage.swift */,
+				F1E2D3C4B5A697887766590D /* SettingsView+General.swift */,
+				F1E2D3C4B5A697887766590A /* AppInfo.swift */,
+				F1E2D3C4B5A6978877665908 /* LaunchAtLogin.swift */,
+				F1E2D3C4B5A6978877665906 /* SettingsIllustrations.swift */,
+				F1E2D3C4B5A6978877665903 /* SettingsComponents.swift */,
+				F1E2D3C4B5A6978877665900 /* Log.swift */,
+				F1E2D3C4B5A6978877665817 /* SkinSettingsSection.swift */,
+				846A32C3BB81E3C29B621792 /* SettingsStore.swift */,
+				73C8EB5BB682575EC87A171A /* DisplayGeometry.swift */,
+				C826A6FCE48478DCB74F2134 /* SettingsView.swift */,
+			);
+			name = Core;
+			path = Core;
+			sourceTree = "<group>";
+		};
+		E24BCA87305FC388E69F6342 /* LockScreen */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A6978877665931 /* LockPreviewGeometry.swift */,
+				F1E2D3C4B5A697887766592F /* LockScreenMediaCard.swift */,
+				F1E2D3C4B5A697887766592D /* LockNotch.swift */,
+				F1E2D3C4B5A697887766592B /* LockArtworkClickWindow.swift */,
+				F1E2D3C4B5A6978877665929 /* LockArtworkWallpaper.swift */,
+				F1E2D3C4B5A6978877665927 /* SkyLightLockSpace.swift */,
+				F1E2D3C4B5A6978877665925 /* LockWallpaperTransition.swift */,
+				F1E2D3C4B5A6978877665922 /* ArtworkWallpaperFiles.swift */,
+				F1E2D3C4B5A697887766591F /* LockScreenFormat.swift */,
+				F1E2D3C4B5A697887766591C /* LockArtworkImage.swift */,
+				F1E2D3C4B5A6978877665919 /* LockScreenLayout.swift */,
+				4017F2ED6CFC7403D75E173E /* LockScreenManager.swift */,
+				4EAEDE5FE878F78E2978AA24 /* LockScreenView.swift */,
+				D4D5D6D7E8F9A0B1C2D3E4F6 /* LockScreenReminderWidget.swift */,
+				F1E2D3C4B5A6978877665531 /* LockScreenPreview.swift */,
+				F7F8F9FAFBFCFDFEFF0F1F2 /* UniformRing.swift */,
+			);
+			name = LockScreen;
+			path = LockScreen;
+			sourceTree = "<group>";
+		};
+		E5E2AB29955B73647F0BBE42 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				F1E2D3C4B5A6978877665D07 /* SmoothScrollService.swift */,
+				F1E2D3C4B5A6978877665D04 /* MouseScrollTarget.swift */,
+				F1E2D3C4B5A6978877665D01 /* SmoothScrollSupport.swift */,
+				F1E2D3C4B5A6978877665973 /* AIUsage */,
+				F1E2D3C4B5A697887766582E /* MainScheduler.swift */,
+				F1E2D3C4B5A697887766582C /* OutputVolumeMonitor.swift */,
+				F1E2D3C4B5A6978877665829 /* AgendaEvent.swift */,
+				F1E2D3C4B5A6978877665518 /* IdleAnimationManager.swift */,
+				F1E2D3C4B5A6978877665718 /* SystemSettings.swift */,
+				F1E2D3C4B5A6978877665715 /* PlaybackClock.swift */,
+				F1E2D3C4B5A6978877665712 /* Quote.swift */,
+				F1E2D3C4B5A697887766570F /* DurationFormat.swift */,
+				F1E2D3C4B5A697887766570C /* ClipboardHistory.swift */,
+				F1E2D3C4B5A6978877665709 /* BluetoothDevice.swift */,
+				F1E2D3C4B5A6978877665706 /* MaxCapacityProbe.swift */,
+				F1E2D3C4B5A6978877665703 /* CPUSampling.swift */,
+				F1E2D3C4B5A6978877665700 /* Subprocess.swift */,
+				47C462DDAED16DC0CF0B9CD7 /* MediaRemoteAdapter.swift */,
+				F78DF0CAC5E40C02D4E518CA /* ClipboardManager.swift */,
+				6EAAC8D82F01B7210760474F /* BluetoothMonitor.swift */,
+				36E8B5359309CC6273931BDB /* KeepAwakeController.swift */,
+				2A0DF3DBE4D58FED8A728E7E /* CleaningModeController.swift */,
+				CA0FA5F6B8A880627DF7FFE0 /* QRGenerator.swift */,
+				297C79BFBDABE898736A3566 /* SystemMonitor.swift */,
+				F893697B590481194F309FFE /* TimerStore.swift */,
+				A518F32CF21449273D7CEE9D /* CalendarStore.swift */,
+				9136682575250DEF91799E27 /* WeatherService.swift */,
+				A6B7C8D9E0F1A2B3C4D5E6F708 /* HUDController.swift */,
+				B1B2C3D4E5F60718293A4B01 /* SMCClient.swift */,
+				B1B2C3D4E5F60718293A4B02 /* DiskMonitor.swift */,
+				B1B2C3D4E5F60718293A4B03 /* ProcessMonitor.swift */,
+				B1B2C3D4E5F60718293A4B04 /* SpeedTest.swift */,
+				A1A2A3A4B5B6B7B8C9C0C1 /* CapsLockManager.swift */,
+				F1E2D3C4B5A6978877665508 /* AudioRouteManager.swift */,
+				F1E2D3C4B5A6978877665502 /* BatteryHUDController.swift */,
+				F1E2D3C4B5A6978877665524 /* WiFiMonitor.swift */,
+				F1E2D3C4B5A697887766552E /* QuoteOfTheDay.swift */,
+				F1E2D3C4B5A697887766551A /* ScreenCaptureVisibility.swift */,
+				F1E2D3C4B5A6978877665512 /* CommandBarMath.swift */,
+				F1E2D3C4B5A6978877665510 /* LunarCalendar.swift */,
+				F1E2D3C4B5A6978877665601 /* CalendarDay.swift */,
+			);
+			name = Modules;
+			path = Modules;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4AA5C9AF9F0BA3D90F871F5C /* FreeTheNotch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 92BE8F6688437717713DAF34 /* Build configuration list for PBXNativeTarget "FreeTheNotch" */;
+			buildPhases = (
+				7E38E74319CD75AA65FEF9F0 /* Sources */,
+				2CE76B119FF903D48BCB1C16 /* Frameworks */,
+				B92CE8343CBAB46C1114AFE4 /* Resources */,
+				A1B2C3D4E5F60718293A4B5C /* Bundle media bridge */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FreeTheNotch;
+			packageProductDependencies = (
+				F1E2D3C4B5A697887766551F /* Lottie */,
+			);
+			productName = FreeTheNotch;
+			productReference = 9F7C9E215EDFE6A4AABC4B3A /* FreeTheNotch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F1E2D3C4B5A697887766560D /* FreeTheNotchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1E2D3C4B5A697887766560E /* Build configuration list for PBXNativeTarget "FreeTheNotchTests" */;
+			buildPhases = (
+				F1E2D3C4B5A697887766560B /* Sources */,
+				F1E2D3C4B5A697887766560C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FreeTheNotchTests;
+			productName = FreeTheNotchTests;
+			productReference = F1E2D3C4B5A6978877665603 /* FreeTheNotchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		471360EAD4D6DF146AFCA5EA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = B8F67897996FAFB893CCB491 /* Build configuration list for PBXProject "FreeTheNotch" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 79317DE23F0749D0B7D52B20;
+			packageReferences = (
+				F1E2D3C4B5A697887766551E /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
+			productRefGroup = 5AE36F2E1E4DE1E90C80621D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4AA5C9AF9F0BA3D90F871F5C /* FreeTheNotch */,
+				F1E2D3C4B5A697887766560D /* FreeTheNotchTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B92CE8343CBAB46C1114AFE4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2C3D4E5F60718293A4BA1 /* Assets.xcassets in Resources */,
+				F1E2D3C4B5A697887766551D /* LottieAnimations in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A1B2C3D4E5F60718293A4B5C /* Bundle media bridge */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle media bridge";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -eu\nDEST=\"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\nmkdir -p \"$DEST\"\nSDK=\"$(xcrun --sdk macosx --show-sdk-path)\"\nclang -dynamiclib -arch arm64 -isysroot \"$SDK\" -mmacosx-version-min=14.0 -framework CoreFoundation -O2 -install_name @rpath/MediaBridge.dylib -o \"$DEST/MediaBridge.dylib\" \"$SRCROOT/Sources/Modules/MediaBridge.c\"\ncp \"$SRCROOT/Sources/Modules/media-bridge.pl\" \"$DEST/media-bridge.pl\"\n# Build number = build time (YYYYMMDD.HHMMSS; CFBundleVersion only allows digits and dots), shown in About as build-YYYYMMDD.HHMMSS.\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $(date +%Y%m%d.%H%M%S)\" \"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F1E2D3C4B5A697887766560B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1E2D3C4B5A6978877665D0C /* SmoothScrollTests.swift in Sources */,
+				F1E2D3C4B5A6978877665D06 /* MouseScrollTarget.swift in Sources */,
+				F1E2D3C4B5A6978877665D03 /* SmoothScrollSupport.swift in Sources */,
+				F1E2D3C4B5A69788776659A4 /* ClaudeDesktopUsageCache.swift in Sources */,
+				F1E2D3C4B5A69788776659A8 /* zstddeclib.c in Sources */,
+				F1E2D3C4B5A6978877665962 /* AIUsageSnapshot.swift in Sources */,
+				F1E2D3C4B5A6978877665965 /* AIUsagePricing.swift in Sources */,
+				F1E2D3C4B5A6978877665968 /* AIUsageLogParser.swift in Sources */,
+				F1E2D3C4B5A697887766596B /* AIUsageCredentials.swift in Sources */,
+				F1E2D3C4B5A697887766596E /* AIUsageService.swift in Sources */,
+				F1E2D3C4B5A6978877665978 /* AIUsageTests.swift in Sources */,
+				F1E2D3C4B5A6978877665C1D /* AIUsageError.swift in Sources */,
+				F1E2D3C4B5A6978877665B08 /* AIActivityMonitor.swift in Sources */,
+				F1E2D3C4B5A6978877665C1A /* AIActivityMonitorTests.swift in Sources */,
+				F1E2D3C4B5A6978877665C17 /* AIQuotaAlertTests.swift in Sources */,
+				F1E2D3C4B5A6978877665C11 /* AIUsageDirectories.swift in Sources */,
+				F1E2D3C4B5A6978877665C0E /* AIUsageQuotaParser.swift in Sources */,
+				F1E2D3C4B5A6978877665C0B /* AIUsageTotals.swift in Sources */,
+				F1E2D3C4B5A6978877665C08 /* AIUsageLimit.swift in Sources */,
+				F1E2D3C4B5A6978877665C05 /* AIUsageProvider.swift in Sources */,
+				F1E2D3C4B5A6978877665C02 /* AIActivityParser.swift in Sources */,
+				F1E2D3C4B5A6978877665B14 /* AIActivityTests.swift in Sources */,
+				F1E2D3C4B5A6978877665B0B /* AIQuotaAlertPolicy.swift in Sources */,
+				F1E2D3C4B5A6978877665B05 /* AIActivityReader.swift in Sources */,
+				F1E2D3C4B5A6978877665B02 /* AIActivity.swift in Sources */,
+				F1E2D3C4B5A6978877665945 /* LockPreviewGeometryTests.swift in Sources */,
+				F1E2D3C4B5A6978877665943 /* SettingsSupportTests.swift in Sources */,
+				F1E2D3C4B5A6978877665941 /* LockScreenFormatTests.swift in Sources */,
+				F1E2D3C4B5A697887766593F /* SettingsStoreTests.swift in Sources */,
+				F1E2D3C4B5A697887766593D /* ArtworkWallpaperFilesTests.swift in Sources */,
+				F1E2D3C4B5A697887766593B /* WallpaperIndexTests.swift in Sources */,
+				F1E2D3C4B5A6978877665939 /* LockArtworkImageTests.swift in Sources */,
+				F1E2D3C4B5A6978877665937 /* LockScreenLayoutTests.swift in Sources */,
+				F1E2D3C4B5A6978877665935 /* DisplayGeometry.swift in Sources */,
+				F1E2D3C4B5A6978877665934 /* SettingsStore.swift in Sources */,
+				F1E2D3C4B5A6978877665933 /* LockPreviewGeometry.swift in Sources */,
+				F1E2D3C4B5A6978877665924 /* ArtworkWallpaperFiles.swift in Sources */,
+				F1E2D3C4B5A6978877665921 /* LockScreenFormat.swift in Sources */,
+				F1E2D3C4B5A697887766591E /* LockArtworkImage.swift in Sources */,
+				F1E2D3C4B5A697887766591B /* LockScreenLayout.swift in Sources */,
+				F1E2D3C4B5A697887766590C /* AppInfo.swift in Sources */,
+				F1E2D3C4B5A6978877665905 /* SettingsComponents.swift in Sources */,
+				F1E2D3C4B5A6978877665902 /* Log.swift in Sources */,
+				F1E2D3C4B5A6978877665846 /* CalculatorModelTests.swift in Sources */,
+				F1E2D3C4B5A6978877665844 /* AgendaTests.swift in Sources */,
+				F1E2D3C4B5A6978877665842 /* ConferenceProviderTests.swift in Sources */,
+				F1E2D3C4B5A6978877665840 /* BatteryTileTests.swift in Sources */,
+				F1E2D3C4B5A697887766583E /* MarqueeTextTests.swift in Sources */,
+				F1E2D3C4B5A697887766583C /* NotchSkinTests.swift in Sources */,
+				F1E2D3C4B5A697887766583A /* NotchGeometryTests.swift in Sources */,
+				F1E2D3C4B5A6978877665838 /* NotchPageTests.swift in Sources */,
+				F1E2D3C4B5A6978877665836 /* BatteryTiles.swift in Sources */,
+				F1E2D3C4B5A6978877665833 /* CalculatorModel.swift in Sources */,
+				F1E2D3C4B5A6978877665830 /* MainScheduler.swift in Sources */,
+				F1E2D3C4B5A697887766582B /* AgendaEvent.swift in Sources */,
+				F1E2D3C4B5A6978877665822 /* WeekWheelLayout.swift in Sources */,
+				F1E2D3C4B5A697887766581F /* Conference.swift in Sources */,
+				F1E2D3C4B5A697887766581A /* MarqueeText.swift in Sources */,
+				F1E2D3C4B5A6978877665819 /* SideNotchShape.swift in Sources */,
+				F1E2D3C4B5A6978877665816 /* SkinDecorationView.swift in Sources */,
+				F1E2D3C4B5A6978877665813 /* NotchSkin.swift in Sources */,
+				F1E2D3C4B5A697887766580E /* DockSide.swift in Sources */,
+				F1E2D3C4B5A6978877665809 /* NotchShape.swift in Sources */,
+				F1E2D3C4B5A6978877665802 /* NotchPage.swift in Sources */,
+				F1E2D3C4B5A6978877665749 /* SystemToolsTests.swift in Sources */,
+				F1E2D3C4B5A6978877665747 /* NetworkModuleTests.swift in Sources */,
+				F1E2D3C4B5A6978877665745 /* QuoteTests.swift in Sources */,
+				F1E2D3C4B5A6978877665743 /* TimerStoreTests.swift in Sources */,
+				F1E2D3C4B5A6978877665741 /* PlaybackClockTests.swift in Sources */,
+				F1E2D3C4B5A697887766573F /* ClipboardHistoryTests.swift in Sources */,
+				F1E2D3C4B5A697887766573D /* BluetoothToolParserTests.swift in Sources */,
+				F1E2D3C4B5A697887766573B /* ProcessMonitorTests.swift in Sources */,
+				F1E2D3C4B5A6978877665739 /* CPUSamplingTests.swift in Sources */,
+				F1E2D3C4B5A6978877665737 /* PanelFormatTests.swift in Sources */,
+				F1E2D3C4B5A6978877665735 /* SMCValueCodecTests.swift in Sources */,
+				F1E2D3C4B5A6978877665733 /* CommandBarMathTests.swift in Sources */,
+				F1E2D3C4B5A6978877665731 /* DiskMonitor.swift in Sources */,
+				F1E2D3C4B5A6978877665730 /* WiFiMonitor.swift in Sources */,
+				F1E2D3C4B5A697887766572F /* QRGenerator.swift in Sources */,
+				F1E2D3C4B5A697887766572E /* SpeedTest.swift in Sources */,
+				F1E2D3C4B5A697887766572D /* WeatherService.swift in Sources */,
+				F1E2D3C4B5A697887766572C /* TimerStore.swift in Sources */,
+				F1E2D3C4B5A697887766572B /* ProcessMonitor.swift in Sources */,
+				F1E2D3C4B5A697887766572A /* SMCClient.swift in Sources */,
+				F1E2D3C4B5A6978877665729 /* CommandBarMath.swift in Sources */,
+				F1E2D3C4B5A697887766571C /* PanelFormat.swift in Sources */,
+				F1E2D3C4B5A6978877665717 /* PlaybackClock.swift in Sources */,
+				F1E2D3C4B5A6978877665714 /* Quote.swift in Sources */,
+				F1E2D3C4B5A6978877665711 /* DurationFormat.swift in Sources */,
+				F1E2D3C4B5A697887766570E /* ClipboardHistory.swift in Sources */,
+				F1E2D3C4B5A697887766570B /* BluetoothDevice.swift in Sources */,
+				F1E2D3C4B5A6978877665708 /* MaxCapacityProbe.swift in Sources */,
+				F1E2D3C4B5A6978877665705 /* CPUSampling.swift in Sources */,
+				F1E2D3C4B5A6978877665702 /* Subprocess.swift in Sources */,
+				F1E2D3C4B5A6978877665606 /* LunarCalendarTests.swift in Sources */,
+				F1E2D3C4B5A6978877665608 /* CalendarDayTests.swift in Sources */,
+				F1E2D3C4B5A6978877665609 /* LunarCalendar.swift in Sources */,
+				F1E2D3C4B5A697887766560A /* CalendarDay.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7E38E74319CD75AA65FEF9F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1E2D3C4B5A6978877665D0A /* MouseScrollingSettings.swift in Sources */,
+				F1E2D3C4B5A6978877665D08 /* SmoothScrollService.swift in Sources */,
+				F1E2D3C4B5A6978877665D05 /* MouseScrollTarget.swift in Sources */,
+				F1E2D3C4B5A6978877665D02 /* SmoothScrollSupport.swift in Sources */,
+				F1E2D3C4B5A69788776659A3 /* ClaudeDesktopUsageCache.swift in Sources */,
+				F1E2D3C4B5A69788776659A7 /* zstddeclib.c in Sources */,
+				F1E2D3C4B5A6978877665961 /* AIUsageSnapshot.swift in Sources */,
+				F1E2D3C4B5A6978877665964 /* AIUsagePricing.swift in Sources */,
+				F1E2D3C4B5A6978877665967 /* AIUsageLogParser.swift in Sources */,
+				F1E2D3C4B5A697887766596A /* AIUsageCredentials.swift in Sources */,
+				F1E2D3C4B5A697887766596D /* AIUsageService.swift in Sources */,
+				F1E2D3C4B5A6978877665970 /* AIUsageCredentialStore.swift in Sources */,
+				F1E2D3C4B5A6978877665972 /* AIUsageMonitor.swift in Sources */,
+				F1E2D3C4B5A6978877665C1C /* AIUsageError.swift in Sources */,
+				F1E2D3C4B5A6978877665C13 /* AIProviderGlyph.swift in Sources */,
+				F1E2D3C4B5A6978877665C10 /* AIUsageDirectories.swift in Sources */,
+				F1E2D3C4B5A6978877665C0D /* AIUsageQuotaParser.swift in Sources */,
+				F1E2D3C4B5A6978877665C0A /* AIUsageTotals.swift in Sources */,
+				F1E2D3C4B5A6978877665C07 /* AIUsageLimit.swift in Sources */,
+				F1E2D3C4B5A6978877665C04 /* AIUsageProvider.swift in Sources */,
+				F1E2D3C4B5A6978877665C01 /* AIActivityParser.swift in Sources */,
+				F1E2D3C4B5A6978877665B10 /* AIUsageHUDView.swift in Sources */,
+				F1E2D3C4B5A6978877665B0D /* AIActivityCompactView.swift in Sources */,
+				F1E2D3C4B5A6978877665B0A /* AIQuotaAlertPolicy.swift in Sources */,
+				F1E2D3C4B5A6978877665B07 /* AIActivityMonitor.swift in Sources */,
+				F1E2D3C4B5A6978877665B04 /* AIActivityReader.swift in Sources */,
+				F1E2D3C4B5A6978877665B01 /* AIActivity.swift in Sources */,
+				F1E2D3C4B5A6978877665975 /* AIUsageTabView.swift in Sources */,
+				F1E2D3C4B5A6978877665932 /* LockPreviewGeometry.swift in Sources */,
+				F1E2D3C4B5A6978877665930 /* LockScreenMediaCard.swift in Sources */,
+				F1E2D3C4B5A697887766592E /* LockNotch.swift in Sources */,
+				F1E2D3C4B5A697887766592C /* LockArtworkClickWindow.swift in Sources */,
+				F1E2D3C4B5A697887766592A /* LockArtworkWallpaper.swift in Sources */,
+				F1E2D3C4B5A6978877665928 /* SkyLightLockSpace.swift in Sources */,
+				F1E2D3C4B5A6978877665926 /* LockWallpaperTransition.swift in Sources */,
+				F1E2D3C4B5A6978877665923 /* ArtworkWallpaperFiles.swift in Sources */,
+				F1E2D3C4B5A6978877665920 /* LockScreenFormat.swift in Sources */,
+				F1E2D3C4B5A697887766591D /* LockArtworkImage.swift in Sources */,
+				F1E2D3C4B5A697887766591A /* LockScreenLayout.swift in Sources */,
+				F1E2D3C4B5A6978877665918 /* SettingsView+About.swift in Sources */,
+				F1E2D3C4B5A6978877665916 /* SettingsView+LockScreen.swift in Sources */,
+				F1E2D3C4B5A6978877665914 /* SettingsView+Modules.swift in Sources */,
+				F1E2D3C4B5A6978877665912 /* SettingsView+SideNotch.swift in Sources */,
+				F1E2D3C4B5A6978877665910 /* SettingsView+Appearance.swift in Sources */,
+				F1E2D3C4B5A69788776659A1 /* SettingsView+AIUsage.swift in Sources */,
+				F1E2D3C4B5A697887766590E /* SettingsView+General.swift in Sources */,
+				F1E2D3C4B5A697887766590B /* AppInfo.swift in Sources */,
+				F1E2D3C4B5A6978877665909 /* LaunchAtLogin.swift in Sources */,
+				F1E2D3C4B5A6978877665907 /* SettingsIllustrations.swift in Sources */,
+				F1E2D3C4B5A6978877665904 /* SettingsComponents.swift in Sources */,
+				F1E2D3C4B5A6978877665901 /* Log.swift in Sources */,
+				F1E2D3C4B5A6978877665835 /* BatteryTiles.swift in Sources */,
+				F1E2D3C4B5A6978877665832 /* CalculatorModel.swift in Sources */,
+				F1E2D3C4B5A697887766582F /* MainScheduler.swift in Sources */,
+				F1E2D3C4B5A697887766582D /* OutputVolumeMonitor.swift in Sources */,
+				F1E2D3C4B5A697887766582A /* AgendaEvent.swift in Sources */,
+				F1E2D3C4B5A6978877665828 /* EventLists.swift in Sources */,
+				F1E2D3C4B5A6978877665826 /* StandaloneCalendarView.swift in Sources */,
+				F1E2D3C4B5A6978877665824 /* WeekCalendarView.swift in Sources */,
+				F1E2D3C4B5A6978877665821 /* WeekWheelLayout.swift in Sources */,
+				F1E2D3C4B5A697887766581E /* Conference.swift in Sources */,
+				F1E2D3C4B5A6978877665818 /* SkinSettingsSection.swift in Sources */,
+				F1E2D3C4B5A6978877665815 /* SkinDecorationView.swift in Sources */,
+				F1E2D3C4B5A6978877665812 /* NotchSkin.swift in Sources */,
+				F1E2D3C4B5A6978877665810 /* SideNotchView.swift in Sources */,
+				F1E2D3C4B5A697887766580D /* DockSide.swift in Sources */,
+				F1E2D3C4B5A697887766580B /* WaveformView.swift in Sources */,
+				F1E2D3C4B5A6978877665808 /* NotchShape.swift in Sources */,
+				F1E2D3C4B5A6978877665806 /* NotchStyle.swift in Sources */,
+				F1E2D3C4B5A6978877665804 /* NotchPageIcon.swift in Sources */,
+				F1E2D3C4B5A6978877665801 /* NotchPage.swift in Sources */,
+				F1E2D3C4B5A6978877665728 /* NotchPopoverTracker.swift in Sources */,
+				F1E2D3C4B5A6978877665726 /* DuoSystemPopovers.swift in Sources */,
+				F1E2D3C4B5A6978877665724 /* PanelUtilitiesCard.swift in Sources */,
+				F1E2D3C4B5A6978877665722 /* PanelKeepAwakeCard.swift in Sources */,
+				F1E2D3C4B5A6978877665720 /* OverlayScrollView.swift in Sources */,
+				F1E2D3C4B5A697887766571E /* ProcessRowView.swift in Sources */,
+				F1E2D3C4B5A697887766571B /* PanelFormat.swift in Sources */,
+				F1E2D3C4B5A6978877665719 /* SystemSettings.swift in Sources */,
+				F1E2D3C4B5A6978877665716 /* PlaybackClock.swift in Sources */,
+				F1E2D3C4B5A6978877665713 /* Quote.swift in Sources */,
+				F1E2D3C4B5A6978877665710 /* DurationFormat.swift in Sources */,
+				F1E2D3C4B5A697887766570D /* ClipboardHistory.swift in Sources */,
+				F1E2D3C4B5A697887766570A /* BluetoothDevice.swift in Sources */,
+				F1E2D3C4B5A6978877665707 /* MaxCapacityProbe.swift in Sources */,
+				F1E2D3C4B5A6978877665704 /* CPUSampling.swift in Sources */,
+				F1E2D3C4B5A6978877665701 /* Subprocess.swift in Sources */,
+				86D3748421599E3E9C8FE21D /* FreeTheNotchApp.swift in Sources */,
+				A80270815FE85DF2FBDAA35A /* SettingsStore.swift in Sources */,
+				DF9C1E2A8A3C0ED16BFE1684 /* DisplayGeometry.swift in Sources */,
+				9EF307590D273E34F98DFF7E /* SettingsView.swift in Sources */,
+				4C6428DA8099F4EFBACEA67C /* NotchWindowController.swift in Sources */,
+				7D1AFCC4F14A3E3E04D42F8A /* NotchRootView.swift in Sources */,
+				C2ACAF127972D33E5901A19B /* CollapsedNotchView.swift in Sources */,
+				BD47D5552C7F47E8E80E952E /* ExpandedPanelView.swift in Sources */,
+				7684319E1B429AD564B858F9 /* MediaTabView.swift in Sources */,
+				2E9D34119F3374CEBD4D3FD8 /* ClipboardTabView.swift in Sources */,
+				C6D7E8F90A1B2C3D4E5F60718 /* MenuBarIcon.swift in Sources */,
+				B7C8D9E0F1A2B3C4D5E6F70819 /* HUDController.swift in Sources */,
+				2667A40844853040B7A05814 /* TimerTabView.swift in Sources */,
+				D32FEB3E719E01FCD3FE22A4 /* QRTabView.swift in Sources */,
+				248AC9ED336DE7DAECD3ADA8 /* MenuBarController.swift in Sources */,
+				B4F2222D3B41A3DBD199B364 /* MenuBarPanelView.swift in Sources */,
+				F73BB387D080589AB054C240 /* LockScreenManager.swift in Sources */,
+				26CDEA5B9A2145128EDFED86 /* LockScreenView.swift in Sources */,
+				3BD39F917C10696489A30FD5 /* MediaRemoteAdapter.swift in Sources */,
+				4C7B2C1D0E2ADCD93C0A5EB2 /* ClipboardManager.swift in Sources */,
+				D37DC2C9A7A5236BB4734865 /* BluetoothMonitor.swift in Sources */,
+				425FEEAA4E2FE981B29EE11B /* KeepAwakeController.swift in Sources */,
+				922CE1E6AF41E3A2517EE5BB /* CleaningModeController.swift in Sources */,
+				9CDA1A2A3C984A24B9C429CA /* QRGenerator.swift in Sources */,
+				42DB0B956AF67442931A4C45 /* SystemMonitor.swift in Sources */,
+				55E1DB7E9E779F6BEE9CD564 /* TimerStore.swift in Sources */,
+				81FB339258E4D27EB0D1CB7C /* CalendarStore.swift in Sources */,
+				D4D5D6D7E8F9A0B1C2D3E4F5 /* ReminderToggle.swift in Sources */,
+				E5E6E7E8F9A0B1C2D3E4F607 /* LockScreenReminderWidget.swift in Sources */,
+				F1E2D3C4B5A6978877665530 /* LockScreenPreview.swift in Sources */,
+				F8F9FAFBFCFDFEFF0F1F203 /* UniformRing.swift in Sources */,
+				A2A3A4A5B6B7B8B9C0C1C2 /* CapsLockManager.swift in Sources */,
+				F1E2D3C4B5A6978877665507 /* AudioRouteManager.swift in Sources */,
+				F1E2D3C4B5A6978877665511 /* LunarCalendar.swift in Sources */,
+				F1E2D3C4B5A6978877665513 /* CommandBarMath.swift in Sources */,
+				F1E2D3C4B5A697887766551B /* ScreenCaptureVisibility.swift in Sources */,
+				F1E2D3C4B5A6978877665515 /* CalculatorTabView.swift in Sources */,
+				F1E2D3C4B5A6978877665517 /* BatteryStripView.swift in Sources */,
+				F1E2D3C4B5A6978877665519 /* IdleAnimationManager.swift in Sources */,
+				F1E2D3C4B5A6978877665522 /* SkinPets.swift in Sources */,
+				F1E2D3C4B5A6978877665501 /* BatteryHUDController.swift in Sources */,
+				F1E2D3C4B5A6978877665503 /* BatteryHUDView.swift in Sources */,
+				F1E2D3C4B5A6978877665529 /* DuoGlyphPopover.swift in Sources */,
+				F1E2D3C4B5A6978877665527 /* SideNotchWindowController.swift in Sources */,
+				F1E2D3C4B5A697887766552B /* SideNotchShape.swift in Sources */,
+				F1E2D3C4B5A6978877665525 /* DuoGlyphView.swift in Sources */,
+				F1E2D3C4B5A6978877665523 /* WiFiMonitor.swift in Sources */,
+				F1E2D3C4B5A697887766552D /* QuoteOfTheDay.swift in Sources */,
+				2B70A3A4419F4FE020864D39 /* WeatherService.swift in Sources */,
+				A1B2C3D4E5F60718293A4B01 /* SMCClient.swift in Sources */,
+				A1B2C3D4E5F60718293A4B02 /* DiskMonitor.swift in Sources */,
+				A1B2C3D4E5F60718293A4B03 /* ProcessMonitor.swift in Sources */,
+				A1B2C3D4E5F60718293A4B04 /* SpeedTest.swift in Sources */,
+				A1B2C3D4E5F60718293A4B05 /* PanelStyles.swift in Sources */,
+				A1B2C3D4E5F60718293A4B06 /* PanelSparkline.swift in Sources */,
+				A1B2C3D4E5F60718293A4B07 /* PanelSystemSection.swift in Sources */,
+				A1B2C3D4E5F60718293A4B08 /* PanelNetworkSection.swift in Sources */,
+				A1B2C3D4E5F60718293A4B09 /* PanelDiskSection.swift in Sources */,
+				A1B2C3D4E5F60718293A4B0A /* PanelPowerSection.swift in Sources */,
+				E2E3E4F5A6B7C8D9E0F1A2B3 /* MarqueeText.swift in Sources */,
+				A3A4A5A6B7C8D9E0F1A2B3 /* BluetoothPopupView.swift in Sources */,
+				F1E2D3C4B5A6978877665602 /* CalendarDay.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F1E2D3C4B5A697887766560F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
+			};
+			name = Debug;
+		};
+		F1E2D3C4B5A6978877665610 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
+			};
+			name = Release;
+		};
+		05DFF69A912715D51CF59109 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_ENABLE_MODULES = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_VERSION = 5.0;
+			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
+			};
+			name = Debug;
+		};
+		3A9EF4E863A5E850A965CDA2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_ENABLE_MODULES = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
+			};
+			name = Release;
+		};
+		C354FA708C7E8A908B713E95 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FreeTheNotch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B53256DTDC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
+			};
+			name = Debug;
+		};
+		C939B774F4EBDF672EB23164 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FreeTheNotch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B53256DTDC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F1E2D3C4B5A697887766560E /* Build configuration list for PBXNativeTarget "FreeTheNotchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1E2D3C4B5A697887766560F /* Debug */,
+				F1E2D3C4B5A6978877665610 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		92BE8F6688437717713DAF34 /* Build configuration list for PBXNativeTarget "FreeTheNotch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C354FA708C7E8A908B713E95 /* Debug */,
+				C939B774F4EBDF672EB23164 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B8F67897996FAFB893CCB491 /* Build configuration list for PBXProject "FreeTheNotch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05DFF69A912715D51CF59109 /* Debug */,
+				3A9EF4E863A5E850A965CDA2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F1E2D3C4B5A697887766551E /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F1E2D3C4B5A697887766551F /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1E2D3C4B5A697887766551E /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 471360EAD4D6DF146AFCA5EA /* Project object */;
+}

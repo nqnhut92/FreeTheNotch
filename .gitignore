@@ -1,0 +1,36 @@
+# Xcode
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift
+.build/
+.swiftpm/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Local overrides
+*.xcconfig.local
+
+# Signing keys and certificates
+*.p12
+*.cer
+*.certSigningRequest
+
+# Local agent files
+.claude/
+CLAUDE.local.md

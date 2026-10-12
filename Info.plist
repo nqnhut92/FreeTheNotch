@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>2026 Nicholas Nguyen</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>FreeTheNotch shows today's agenda in the notch.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>FreeTheNotch shows reminders in the notch and on the lock screen.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>FreeTheNotch shows Bluetooth device status.</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>FreeTheNotch reads and changes shuffle and repeat in Music.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>FreeTheNotch uses your location for the lock-screen temperature and air quality, and to show Wi-Fi network names in the Side Notch.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>FreeTheNotch uses your location for the lock-screen temperature and air quality, and to show Wi-Fi network names in the Side Notch.</string>
+</dict>
+</plist>
