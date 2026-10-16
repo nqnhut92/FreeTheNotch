@@ -2,7 +2,7 @@
 
 This is how the app is built and why. The user-facing feature guide is in [FEATURES.md](FEATURES.md); installation and a quick overview are in [README.md](../README.md). Rules for working on the code (for people and coding agents) are in [AGENTS.md](../AGENTS.md).
 
-- **Last updated:** 2026-10-15 (version 0.1.0)
+- **Last updated:** 2026-10-16 (version 0.1.1)
 - **Stack:** Swift 5, SwiftUI hosted in AppKit windows. Deployment target macOS 14, arm64 only, hardened runtime, not sandboxed.
 - **License:** GPL-3.0-or-later (`LICENSE`), the same as Atoll and Vorssaint. Notices for the MIT, BSD and Apache-2.0 projects it builds on are in `THIRD_PARTY_NOTICES.md`; add one there for any new project.
 - **Dependencies:** `lottie-ios` (Swift Package Manager, source package). A vendored Zstandard v1.5.7 decoder handles Claude Desktop cache compression (BSD-3-Clause). The remaining dependencies are Apple frameworks, plus a few private symbols loaded at runtime (listed in [Private API use](#6-private-api-use)).
@@ -31,7 +31,7 @@ The app is an `LSUIElement` agent (no Dock icon). While Settings is open it swit
 AppDelegate (services: Settings, Media, Clipboard, Bluetooth, Calendar, System, Disk,
              Process, Timer, HUD, BatteryHUD, CapsLock, KeepAwake, Cleaning, SpeedTest)
  ├── NotchWindowController   one KeyablePanel per display  → NotchRootView
- ├── MenuBarController       status item (right-click menu only)
+ ├── MenuBarController       status item (panel or quick actions by layout)
  ├── SideNotchWindowController side-edge panel per screen → SideNotchView, DuoGlyphCombinedPopover, DuoBluetoothPopover, MenuBarPanelView
  ├── LockScreenManager       lock-screen windows           → LockScreenView, lock notch
  ├── Settings window          plain NSWindow                → SettingsView
@@ -137,7 +137,7 @@ The battery HUD (`BatteryHUDController`) overrides all of these while the island
 
 ### 3.5 System panel (`Sources/MenuBar/*`, Vorssaint port)
 
-- `MenuBarController` owns the cup and right-click menu. Left click forwards through `AppDelegate` to `SideNotchWindowController.toggleMenuBarPanel` only while Side Notch is off. The same controller owns both entry points, closes on outside clicks including Settings, and caps height using the anchor screen. Menu bar presentation follows Vorssaint's `Sources/Vorssaint/App/AppDelegate.swift.showPopover` (show below the button, make key, activate).
+- `MenuBarController` owns the cup and right-click menu. With Side Notch on, left click opens the same quick actions menu as right click, without changing the setting. `MenuBarClickAction` selects the primary action and is covered by non-hosted regression tests; this layout-specific routing has no Vorssaint equivalent. With Side Notch off, left click forwards through `AppDelegate` to `SideNotchWindowController.toggleMenuBarPanel`. The same controller owns both entry points, closes on outside clicks including Settings, and caps height using the anchor screen. Menu bar presentation follows Vorssaint's `Sources/Vorssaint/App/AppDelegate.swift.showPopover` (show below the button, make key, activate).
 - `MenuBarPanelView.fixedTab` presents one section without the cup header, tab bar or Settings/Quit footer for Side Notch icons; a nil value presents the full six-tab panel. Each icon has its own cached content controller, so its state survives reopening. "Remember last tab" only affects the full panel. The direct icon stack has no reference equivalent.
 - Six tabs: Keep Awake, System, Network, Disks, Power, Utilities. Each tab is a section view fed by these data sources:
 
@@ -297,7 +297,7 @@ AI quota warnings use `AIUsageMonitor` / `AIUsageHUDView` (§3.5.3), with a four
   2. copies `media-bridge.pl`;
   3. stamps `CFBundleVersion` with the local build time, `date +%Y%m%d.%H%M%S` (a dot, not a dash: `CFBundleVersion` may only hold digits and dots).
 - **Version:**
-  - `CFBundleShortVersionString` = `$(MARKETING_VERSION)`, currently 0.1.0.
+  - `CFBundleShortVersionString` = `$(MARKETING_VERSION)`, currently 0.1.1.
   - About shows `Version <marketing> (build-<YYYYMMDD.HHMMSS>)`.
 - **Releases:** `scripts/release.sh` archives an unsigned Release build, signs it with a self-signed "FreeTheNotch Release" certificate and zips it for GitHub Releases. A personal Apple Development certificate would put the Apple ID's email address in every signature. The self-signed certificate keeps the designated requirement (`certificate leaf = H"…"`) the same across releases, so macOS keeps users' permissions when they update; an ad-hoc signature would change with every build. The script stops if the bundle contains a `/Users/<user>/` path or the signature contains an email address. The app is not notarized, so the first launch needs **Open Anyway**.
 - **Entitlements:** hardened runtime, no sandbox, Apple Events, Calendars, Location (like DuoBar). Without the Location entitlement, locationd silently drops the permission prompt under the hardened runtime ("doesn't have the entitlement, not sending #AuthPrompt"), so Wi-Fi names and local weather never get access.

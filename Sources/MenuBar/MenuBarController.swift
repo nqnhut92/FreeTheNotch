@@ -3,7 +3,7 @@ import Combine
 import SwiftUI
 
 /// The menu bar cup: left click opens the full panel when Side Notch is off;
-/// right click opens quick actions.
+/// either click opens quick actions when Side Notch is on.
 @MainActor
 final class MenuBarController {
     private weak var services: AppDelegate?
@@ -16,7 +16,7 @@ final class MenuBarController {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem?.button?.image = MenuBarIcon.image
         statusItem?.button?.target = self
-        statusItem?.button?.action = #selector(openPanel)
+        statusItem?.button?.action = #selector(openPrimaryAction)
         // Orange icon while keep-awake is active.
         services.keepAwake.$isActive
             .receive(on: DispatchQueue.main)
@@ -42,12 +42,17 @@ final class MenuBarController {
         if let rightClickMonitor { NSEvent.removeMonitor(rightClickMonitor) }
     }
 
-    @objc private func openPanel() {
-        guard let button = statusItem?.button else { return }
-        services?.toggleMenuBarPanel(from: button)
+    @objc private func openPrimaryAction() {
+        guard let services, let button = statusItem?.button else { return }
+        switch MenuBarClickAction.primary(sideNotchEnabled: services.settings.sideNotchEnabled) {
+        case .panel:
+            services.toggleMenuBarPanel(from: button)
+        case .contextMenu:
+            showContextMenu()
+        }
     }
 
-    /// Right-click context menu: Keep Awake durations + Cleaning Mode.
+    /// Quick actions context menu: Keep Awake durations + Cleaning Mode.
     private func showContextMenu() {
         guard let services else { return }
         let menu = NSMenu()

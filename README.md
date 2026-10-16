@@ -2,7 +2,7 @@
 
 A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and widgets on the lock screen.
 
-- **Version:** 0.1.0
+- **Version:** 0.1.1
 - **Requires:** macOS 14 or later, Apple Silicon. Developed and tested on macOS 27.
 - **Docs:** [Screenshots](docs/GALLERY.md) · [Settings](docs/SETTINGS.md) · [Feature guide](docs/FEATURES.md) · [Technical Design](docs/TECHNICAL_DESIGN.md)
 
@@ -12,7 +12,7 @@ A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and 
 - **Live activities:** Now Playing, timers, Caps Lock, volume, keyboard backlight, battery, Bluetooth and AI session status.
 - **AI Usage:** Codex and Claude quota, reset times, local token totals, estimated API cost and quota warnings.
 - **System dashboard:** CPU/GPU, memory, network, disks, battery and Keep Awake.
-- **Side Notch:** optional screen-edge controls for Wi-Fi, sound, Bluetooth and the system dashboard.
+- **Side Notch:** optional screen-edge controls for Wi-Fi, sound, Bluetooth and the system dashboard. When enabled, either click on the menu bar icon opens quick actions; when disabled, left click opens the dashboard and right click opens quick actions.
 - **Lock screen:** media, timers, battery and weather widgets, calendar events, reminders and optional artwork wallpaper.
 - **Utilities and appearance:** smooth mouse scrolling, Cleaning Mode, skins and custom Lottie pets.
 

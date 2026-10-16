@@ -194,7 +194,9 @@
 		F1E2D3C4B5A6978877665717 /* PlaybackClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665715 /* PlaybackClock.swift */; };
 		F1E2D3C4B5A6978877665719 /* SystemSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665718 /* SystemSettings.swift */; };
 		F1E2D3C4B5A697887766571B /* PanelFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766571A /* PanelFormat.swift */; };
+		F1E2D3C4B5A6978877665A01 /* MenuBarClickAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665A00 /* MenuBarClickAction.swift */; };
 		F1E2D3C4B5A697887766571C /* PanelFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766571A /* PanelFormat.swift */; };
+		F1E2D3C4B5A6978877665A02 /* MenuBarClickAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665A00 /* MenuBarClickAction.swift */; };
 		F1E2D3C4B5A697887766571E /* ProcessRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766571D /* ProcessRowView.swift */; };
 		F1E2D3C4B5A6978877665720 /* OverlayScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766571F /* OverlayScrollView.swift */; };
 		F1E2D3C4B5A6978877665722 /* PanelKeepAwakeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665721 /* PanelKeepAwakeCard.swift */; };
@@ -213,6 +215,7 @@
 		F1E2D3C4B5A6978877665733 /* CommandBarMathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665732 /* CommandBarMathTests.swift */; };
 		F1E2D3C4B5A6978877665735 /* SMCValueCodecTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665734 /* SMCValueCodecTests.swift */; };
 		F1E2D3C4B5A6978877665737 /* PanelFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665736 /* PanelFormatTests.swift */; };
+		F1E2D3C4B5A6978877665A04 /* MenuBarClickActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665A03 /* MenuBarClickActionTests.swift */; };
 		F1E2D3C4B5A6978877665739 /* CPUSamplingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665738 /* CPUSamplingTests.swift */; };
 		F1E2D3C4B5A697887766573B /* ProcessMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766573A /* ProcessMonitorTests.swift */; };
 		F1E2D3C4B5A697887766573D /* BluetoothToolParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766573C /* BluetoothToolParserTests.swift */; };
@@ -411,6 +414,7 @@
 		F1E2D3C4B5A6978877665715 /* PlaybackClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackClock.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665718 /* SystemSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettings.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766571A /* PanelFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelFormat.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665A00 /* MenuBarClickAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarClickAction.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766571D /* ProcessRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessRowView.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766571F /* OverlayScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayScrollView.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665721 /* PanelKeepAwakeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelKeepAwakeCard.swift; sourceTree = "<group>"; };
@@ -420,6 +424,7 @@
 		F1E2D3C4B5A6978877665732 /* CommandBarMathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandBarMathTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665734 /* SMCValueCodecTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMCValueCodecTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665736 /* PanelFormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelFormatTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665A03 /* MenuBarClickActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarClickActionTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665738 /* CPUSamplingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUSamplingTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766573A /* ProcessMonitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessMonitorTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766573C /* BluetoothToolParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothToolParserTests.swift; sourceTree = "<group>"; };
@@ -580,6 +585,7 @@
 				F1E2D3C4B5A697887766573A /* ProcessMonitorTests.swift */,
 				F1E2D3C4B5A6978877665738 /* CPUSamplingTests.swift */,
 				F1E2D3C4B5A6978877665736 /* PanelFormatTests.swift */,
+				F1E2D3C4B5A6978877665A03 /* MenuBarClickActionTests.swift */,
 				F1E2D3C4B5A6978877665734 /* SMCValueCodecTests.swift */,
 				F1E2D3C4B5A6978877665732 /* CommandBarMathTests.swift */,
 				F1E2D3C4B5A6978877665605 /* LunarCalendarTests.swift */,
@@ -630,6 +636,7 @@
 				F1E2D3C4B5A697887766571F /* OverlayScrollView.swift */,
 				F1E2D3C4B5A697887766571D /* ProcessRowView.swift */,
 				F1E2D3C4B5A697887766571A /* PanelFormat.swift */,
+				F1E2D3C4B5A6978877665A00 /* MenuBarClickAction.swift */,
 				D3C681D06BD2AA399DAC946D /* MenuBarController.swift */,
 				C59C0996DAEEE6F529A27976 /* MenuBarPanelView.swift */,
 				D7E8F90A1B2C3D4E5F60718293 /* MenuBarIcon.swift */,
@@ -966,6 +973,7 @@
 				F1E2D3C4B5A697887766573B /* ProcessMonitorTests.swift in Sources */,
 				F1E2D3C4B5A6978877665739 /* CPUSamplingTests.swift in Sources */,
 				F1E2D3C4B5A6978877665737 /* PanelFormatTests.swift in Sources */,
+				F1E2D3C4B5A6978877665A04 /* MenuBarClickActionTests.swift in Sources */,
 				F1E2D3C4B5A6978877665735 /* SMCValueCodecTests.swift in Sources */,
 				F1E2D3C4B5A6978877665733 /* CommandBarMathTests.swift in Sources */,
 				F1E2D3C4B5A6978877665731 /* DiskMonitor.swift in Sources */,
@@ -978,6 +986,7 @@
 				F1E2D3C4B5A697887766572A /* SMCClient.swift in Sources */,
 				F1E2D3C4B5A6978877665729 /* CommandBarMath.swift in Sources */,
 				F1E2D3C4B5A697887766571C /* PanelFormat.swift in Sources */,
+				F1E2D3C4B5A6978877665A02 /* MenuBarClickAction.swift in Sources */,
 				F1E2D3C4B5A6978877665717 /* PlaybackClock.swift in Sources */,
 				F1E2D3C4B5A6978877665714 /* Quote.swift in Sources */,
 				F1E2D3C4B5A6978877665711 /* DurationFormat.swift in Sources */,
@@ -1075,6 +1084,7 @@
 				F1E2D3C4B5A6978877665720 /* OverlayScrollView.swift in Sources */,
 				F1E2D3C4B5A697887766571E /* ProcessRowView.swift in Sources */,
 				F1E2D3C4B5A697887766571B /* PanelFormat.swift in Sources */,
+				F1E2D3C4B5A6978877665A01 /* MenuBarClickAction.swift in Sources */,
 				F1E2D3C4B5A6978877665719 /* SystemSettings.swift in Sources */,
 				F1E2D3C4B5A6978877665716 /* PlaybackClock.swift in Sources */,
 				F1E2D3C4B5A6978877665713 /* Quote.swift in Sources */,
@@ -1221,7 +1231,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1244,7 +1254,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
