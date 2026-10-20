@@ -6,12 +6,12 @@ import os
 
 /// Fetches account quota and aggregates local logs independently, so either can survive failure of the other.
 actor AIUsageService {
-    typealias CredentialLoader = @Sendable (AIUsageProvider, Bool) async throws -> AIUsageCredentials
+    typealias CredentialLoader = @Sendable (AIUsageAccount, Bool) async throws -> AIUsageCredentials
     private let session: URLSession
     private let credentials: CredentialLoader
     private let desktopCache: ClaudeDesktopUsageCache?
     private let logRoots: [AIUsageProvider: URL]
-    private var lastDesktopReading: AIUsageSnapshot?
+    private var lastDesktopReadings: [AIUsageAccount: AIUsageSnapshot] = [:]
     private var pricing = AIUsagePricing()
     private var priceTask: Task<AIUsagePricing?, Never>?
     private var pricesUpdatedAt = Date.distantPast
@@ -30,13 +30,17 @@ actor AIUsageService {
         self.desktopCache = desktopCache
     }
 
-    func snapshot(_ provider: AIUsageProvider, allowPrompt: Bool, now: Date, calendar: Calendar) async
+    /// A Claude profile uses its own log folder and Desktop cache; the default logins use the injected ones.
+    func snapshot(_ account: AIUsageAccount, allowPrompt: Bool, now: Date, calendar: Calendar) async
         -> AIUsageSnapshot
     {
         await refreshPricing(now: now)
+        let provider = account.provider
+        let logRoot = account.profile.map(\.codeLogRoot) ?? logRoots[provider]
+        let accountDesktopCache = desktopCache(for: account)
         var result = AIUsageSnapshot()
         do {
-            if let root = logRoots[provider], FileManager.default.fileExists(atPath: root.path) {
+            if let root = logRoot, FileManager.default.fileExists(atPath: root.path) {
                 let files =
                     FileManager.default.enumerator(
                         at: root, includingPropertiesForKeys: [.contentModificationDateKey],
@@ -46,14 +50,15 @@ actor AIUsageService {
             }
             if !result.hasLocalLogs { result.logsMessage = "No local usage logs" }
         } catch { result.logsMessage = "Could not read local usage logs" }
-        if provider == .claude, let cached = desktopCache?.read(now: now) {
-            if lastDesktopReading == nil
-                || (cached.quotaCapturedAt ?? .distantPast) > (lastDesktopReading?.quotaCapturedAt ?? .distantPast)
+        if provider == .claude, let cached = accountDesktopCache?.read(now: now) {
+            let previous = lastDesktopReadings[account]
+            if previous == nil
+                || (cached.quotaCapturedAt ?? .distantPast) > (previous?.quotaCapturedAt ?? .distantPast)
             {
-                lastDesktopReading = cached
+                lastDesktopReadings[account] = cached
             }
         }
-        if provider == .claude, let cached = lastDesktopReading {
+        if provider == .claude, let cached = lastDesktopReadings[account] {
             result.sessionLimit = cached.sessionLimit
             result.weekLimit = cached.weekLimit
             result.identity = cached.identity
@@ -63,7 +68,7 @@ actor AIUsageService {
             return result
         }
         do {
-            let login = try await credentials(provider, allowPrompt)
+            let login = try await credentials(account, allowPrompt)
             result.identity = login.identity
             if let expiration = login.expiresAt, expiration <= now { throw AIUsageError.expired }
             var request = URLRequest(url: provider == .codex ? Self.codexURL : Self.claudeURL)
@@ -94,12 +99,17 @@ actor AIUsageService {
             result.weekLimit = quota.weekLimit
             result.quotaMessage = quota.quotaMessage
         } catch let error as AIUsageError {
-            result.quotaMessage =
-                provider == .claude && (error == .signIn || error == .expired)
-                ? "Open Claude Desktop → Settings → Usage, then refresh. Claude Code can also supply a login."
-                : error.localizedDescription
+            let isDesktopOnly = account.profile.map { $0.codeConfigDirectory == nil } ?? false
+            if isDesktopOnly {
+                // Nothing to connect: this profile's quota only ever comes from its own Desktop window.
+                result.quotaMessage = "Open Settings → Usage in this profile's Claude window."
+            } else if provider == .claude && (error == .signIn || error == .expired) {
+                result.quotaMessage = "Open Settings → Usage in Claude Desktop, or sign in to Claude Code."
+            } else {
+                result.quotaMessage = error.localizedDescription
+            }
             switch error {
-            case .signIn, .keychainAccess, .expired: result.requiresConnection = true
+            case .signIn, .keychainAccess, .expired: result.requiresConnection = !isDesktopOnly
             default: break
             }
         } catch is DecodingError {
@@ -107,6 +117,19 @@ actor AIUsageService {
         } catch { result.quotaMessage = AIUsageError.network.localizedDescription }
         result.updatedAt = now
         return result
+    }
+
+    /// Forgets readings for accounts no longer shown, such as a removed profile.
+    func retainAccounts(_ accounts: Set<AIUsageAccount>) {
+        lastDesktopReadings = lastDesktopReadings.filter { accounts.contains($0.key) }
+    }
+
+    private func desktopCache(for account: AIUsageAccount) -> ClaudeDesktopUsageCache? {
+        guard let profile = account.profile else { return desktopCache }
+        guard let directory = profile.desktopCacheDirectory else { return nil }
+        // The organization match keeps a label from another login off this profile's card.
+        return ClaudeDesktopUsageCache(
+            profileURL: profile.codeAccountFile ?? desktopCache?.profileURL, directory: directory)
     }
 
     private func refreshPricing(now: Date) async {

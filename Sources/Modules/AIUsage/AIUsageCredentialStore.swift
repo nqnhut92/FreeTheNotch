@@ -20,24 +20,54 @@ actor AIUsageCredentialStore {
         self.environment = environment
     }
 
-    func load(_ provider: AIUsageProvider, allowPrompt: Bool) throws -> AIUsageCredentials {
+    func load(_ account: AIUsageAccount, allowPrompt: Bool) throws -> AIUsageCredentials {
+        let provider = account.provider
         let paths: [URL]
+        let accountFile: URL
+        var claudeService = ""
+        var claimedServices = Set<String>()
+        if let profile = account.profile {
+            // A Desktop-only profile has no Claude Code login; never borrow the default account's.
+            guard let credentialsFile = profile.codeCredentialsFile, let service = profile.codeKeychainService,
+                let profileAccountFile = profile.codeAccountFile
+            else { throw AIUsageError.signIn }
+            paths = [credentialsFile]
+            accountFile = profileAccountFile
+            claudeService = service
+        } else {
+            accountFile = home.appendingPathComponent(".claude.json")
+            claudeService = ClaudeProfile.keychainService(configDirectory: environment["CLAUDE_CONFIG_DIR"])
+            claimedServices = Set(
+                ClaudeProfile.profiles(home: home, environment: environment).compactMap(\.codeKeychainService))
+            paths = defaultPaths(provider)
+        }
+        return try load(
+            provider, paths: paths, accountFile: accountFile, claudeService: claudeService,
+            fallsBack: account.profile == nil, claimedServices: claimedServices, allowPrompt: allowPrompt)
+    }
+
+    private func defaultPaths(_ provider: AIUsageProvider) -> [URL] {
         switch provider {
         case .codex:
             if let directory = environment["CODEX_HOME"], !directory.isEmpty {
-                paths = [URL(fileURLWithPath: directory).appendingPathComponent("auth.json")]
-            } else {
-                paths = [
-                    home.appendingPathComponent(".codex/auth.json"),
-                    home.appendingPathComponent(".config/codex/auth.json"),
-                ]
+                return [URL(fileURLWithPath: directory).appendingPathComponent("auth.json")]
             }
+            return [
+                home.appendingPathComponent(".codex/auth.json"),
+                home.appendingPathComponent(".config/codex/auth.json"),
+            ]
         case .claude:
             let directory =
                 environment["CLAUDE_CONFIG_DIR"].map { URL(fileURLWithPath: $0) }
                 ?? home.appendingPathComponent(".claude")
-            paths = [directory.appendingPathComponent(".credentials.json")]
+            return [directory.appendingPathComponent(".credentials.json")]
         }
+    }
+
+    private func load(
+        _ provider: AIUsageProvider, paths: [URL], accountFile: URL, claudeService: String, fallsBack: Bool,
+        claimedServices: Set<String>, allowPrompt: Bool
+    ) throws -> AIUsageCredentials {
         var expired: AIUsageCredentials?
         for path in paths {
             guard let data = try? Data(contentsOf: path),
@@ -46,7 +76,7 @@ actor AIUsageCredentialStore {
             if let date = credentials.expiresAt, date <= Date() {
                 expired = credentials
             } else {
-                return withIdentity(credentials, provider: provider)
+                return withIdentity(credentials, provider: provider, accountFile: accountFile)
             }
         }
         let quietContext = LAContext()
@@ -79,7 +109,10 @@ actor AIUsageCredentialStore {
                     modifiedAt: attributes[kSecAttrModificationDate as String] as? Date ?? .distantPast,
                     persistentReference: attributes[kSecValuePersistentRef as String] as? Data)
             }
-            guard let newest = AIUsageCredentials.newestClaudeItem(candidates) else {
+            guard
+                let newest = AIUsageCredentials.claudeItem(
+                    candidates, service: claudeService, fallsBack: fallsBack, claimedServices: claimedServices)
+            else {
                 throw expired == nil ? AIUsageError.signIn : AIUsageError.expired
             }
             selectedItem = newest
@@ -102,7 +135,9 @@ actor AIUsageCredentialStore {
             if let output = Subprocess.run("/usr/bin/security", arguments: arguments, timeout: 30),
                 output.succeeded, let data = AIUsageCredentials.keychainData(output.data)
             {
-                return withIdentity(try AIUsageCredentials.parse(data, provider: provider), provider: provider)
+                return withIdentity(
+                    try AIUsageCredentials.parse(data, provider: provider), provider: provider, accountFile: accountFile
+                )
             }
         }
         guard status == errSecSuccess, let data = result as? Data else {
@@ -112,10 +147,13 @@ actor AIUsageCredentialStore {
             }
             throw expired == nil ? AIUsageError.signIn : AIUsageError.expired
         }
-        return withIdentity(try AIUsageCredentials.parse(data, provider: provider), provider: provider)
+        return withIdentity(
+            try AIUsageCredentials.parse(data, provider: provider), provider: provider, accountFile: accountFile)
     }
-    private func withIdentity(_ credentials: AIUsageCredentials, provider: AIUsageProvider) -> AIUsageCredentials {
-        guard provider == .claude, let data = try? Data(contentsOf: home.appendingPathComponent(".claude.json")) else {
+    private func withIdentity(
+        _ credentials: AIUsageCredentials, provider: AIUsageProvider, accountFile: URL
+    ) -> AIUsageCredentials {
+        guard provider == .claude, let data = try? Data(contentsOf: accountFile) else {
             return credentials
         }
         var result = credentials

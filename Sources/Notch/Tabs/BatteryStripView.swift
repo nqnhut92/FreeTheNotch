@@ -51,13 +51,9 @@ struct BatteryStripView: View {
     private var cardBackground: some View {
         // Dark backing first: with Liquid Glass the island fades out at the
         // bottom, and a white-only tint let the windows behind show through.
-        RoundedRectangle(cornerRadius: 14, style: .continuous)
+        NotchStyle.cardShape
             .fill(Color.black.opacity(0.55))
-            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.white.opacity(0.07)))
-            .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .strokeBorder(Color.white.opacity(0.06), lineWidth: 0.8)
-            )
+            .overlay(NotchCardBackground())
     }
 
     private var macSection: some View {

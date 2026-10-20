@@ -52,9 +52,16 @@ struct AIUsageCredentials: Sendable {
         let persistentReference: Data?
     }
 
-    static func newestClaudeItem(_ items: [KeychainItem]) -> KeychainItem? {
-        items.filter { $0.service.hasPrefix("Claude Code-credentials") }
-            .max { $0.modifiedAt < $1.modifiedAt }
+    /// The freshest item under the account's own service name. Only the default login falls back to other
+    /// Claude Code items (a CLAUDE_CONFIG_DIR set in a shell but not in the app), and never to one a profile owns.
+    static func claudeItem(
+        _ items: [KeychainItem], service: String, fallsBack: Bool, claimedServices: Set<String> = []
+    ) -> KeychainItem? {
+        let newest = { (candidates: [KeychainItem]) in candidates.max { $0.modifiedAt < $1.modifiedAt } }
+        if let exact = newest(items.filter { $0.service == service }) { return exact }
+        guard fallsBack else { return nil }
+        return newest(
+            items.filter { $0.service.hasPrefix("Claude Code-credentials") && !claimedServices.contains($0.service) })
     }
 
     /// Apple's security tool may return non-ASCII secrets as hexadecimal JSON.

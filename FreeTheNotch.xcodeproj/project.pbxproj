@@ -247,7 +247,14 @@
 		F1E2D3C4B5A6978877665C0E /* AIUsageQuotaParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C0C /* AIUsageQuotaParser.swift */; };
 		F1E2D3C4B5A6978877665C10 /* AIUsageDirectories.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C0F /* AIUsageDirectories.swift */; };
 		F1E2D3C4B5A6978877665C11 /* AIUsageDirectories.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C0F /* AIUsageDirectories.swift */; };
+		F1E2D3C4B5A6978877665D19 /* AIUsageResetFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D18 /* AIUsageResetFormat.swift */; };
+		F1E2D3C4B5A6978877665D1A /* AIUsageResetFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D18 /* AIUsageResetFormat.swift */; };
+		F1E2D3C4B5A6978877665D14 /* AIUsageAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D13 /* AIUsageAccount.swift */; };
+		F1E2D3C4B5A6978877665D15 /* AIUsageAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D13 /* AIUsageAccount.swift */; };
+		F1E2D3C4B5A6978877665D11 /* ClaudeProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D10 /* ClaudeProfile.swift */; };
+		F1E2D3C4B5A6978877665D12 /* ClaudeProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D10 /* ClaudeProfile.swift */; };
 		F1E2D3C4B5A6978877665C13 /* AIProviderGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C12 /* AIProviderGlyph.swift */; };
+		F1E2D3C4B5A6978877665D17 /* ClaudeProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D16 /* ClaudeProfileTests.swift */; };
 		F1E2D3C4B5A6978877665C17 /* AIQuotaAlertTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C15 /* AIQuotaAlertTests.swift */; };
 		F1E2D3C4B5A6978877665C1A /* AIActivityMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C18 /* AIActivityMonitorTests.swift */; };
 		F1E2D3C4B5A6978877665B08 /* AIActivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B06 /* AIActivityMonitor.swift */; };
@@ -446,8 +453,12 @@
 		F1E2D3C4B5A6978877665C06 /* AIUsageLimit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageLimit.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C09 /* AIUsageTotals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageTotals.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C0C /* AIUsageQuotaParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageQuotaParser.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665D10 /* ClaudeProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeProfile.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665D13 /* AIUsageAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageAccount.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665D18 /* AIUsageResetFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageResetFormat.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C0F /* AIUsageDirectories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageDirectories.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C12 /* AIProviderGlyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderGlyph.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665D16 /* ClaudeProfileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeProfileTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C15 /* AIQuotaAlertTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIQuotaAlertTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C18 /* AIActivityMonitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIActivityMonitorTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C1B /* AIUsageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageError.swift; sourceTree = "<group>"; };
@@ -514,6 +525,9 @@
 				F1E2D3C4B5A6978877665971 /* AIUsageMonitor.swift */,
 				F1E2D3C4B5A6978877665C1B /* AIUsageError.swift */,
 				F1E2D3C4B5A6978877665C0F /* AIUsageDirectories.swift */,
+				F1E2D3C4B5A6978877665D18 /* AIUsageResetFormat.swift */,
+				F1E2D3C4B5A6978877665D13 /* AIUsageAccount.swift */,
+				F1E2D3C4B5A6978877665D10 /* ClaudeProfile.swift */,
 				F1E2D3C4B5A6978877665C0C /* AIUsageQuotaParser.swift */,
 				F1E2D3C4B5A6978877665C09 /* AIUsageTotals.swift */,
 				F1E2D3C4B5A6978877665C06 /* AIUsageLimit.swift */,
@@ -558,6 +572,7 @@
 				F1E2D3C4B5A6978877665977 /* AIUsageTests.swift */,
 				F1E2D3C4B5A6978877665C18 /* AIActivityMonitorTests.swift */,
 				F1E2D3C4B5A6978877665C15 /* AIQuotaAlertTests.swift */,
+				F1E2D3C4B5A6978877665D16 /* ClaudeProfileTests.swift */,
 				F1E2D3C4B5A6978877665B12 /* AIActivityTests.swift */,
 				F1E2D3C4B5A6978877665944 /* LockPreviewGeometryTests.swift */,
 				F1E2D3C4B5A6978877665942 /* SettingsSupportTests.swift */,
@@ -914,7 +929,11 @@
 				F1E2D3C4B5A6978877665B08 /* AIActivityMonitor.swift in Sources */,
 				F1E2D3C4B5A6978877665C1A /* AIActivityMonitorTests.swift in Sources */,
 				F1E2D3C4B5A6978877665C17 /* AIQuotaAlertTests.swift in Sources */,
+				F1E2D3C4B5A6978877665D17 /* ClaudeProfileTests.swift in Sources */,
 				F1E2D3C4B5A6978877665C11 /* AIUsageDirectories.swift in Sources */,
+				F1E2D3C4B5A6978877665D1A /* AIUsageResetFormat.swift in Sources */,
+				F1E2D3C4B5A6978877665D15 /* AIUsageAccount.swift in Sources */,
+				F1E2D3C4B5A6978877665D12 /* ClaudeProfile.swift in Sources */,
 				F1E2D3C4B5A6978877665C0E /* AIUsageQuotaParser.swift in Sources */,
 				F1E2D3C4B5A6978877665C0B /* AIUsageTotals.swift in Sources */,
 				F1E2D3C4B5A6978877665C08 /* AIUsageLimit.swift in Sources */,
@@ -1022,6 +1041,9 @@
 				F1E2D3C4B5A6978877665C1C /* AIUsageError.swift in Sources */,
 				F1E2D3C4B5A6978877665C13 /* AIProviderGlyph.swift in Sources */,
 				F1E2D3C4B5A6978877665C10 /* AIUsageDirectories.swift in Sources */,
+				F1E2D3C4B5A6978877665D19 /* AIUsageResetFormat.swift in Sources */,
+				F1E2D3C4B5A6978877665D14 /* AIUsageAccount.swift in Sources */,
+				F1E2D3C4B5A6978877665D11 /* ClaudeProfile.swift in Sources */,
 				F1E2D3C4B5A6978877665C0D /* AIUsageQuotaParser.swift in Sources */,
 				F1E2D3C4B5A6978877665C0A /* AIUsageTotals.swift in Sources */,
 				F1E2D3C4B5A6978877665C07 /* AIUsageLimit.swift in Sources */,
@@ -1231,7 +1253,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1254,7 +1276,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

@@ -1,122 +1,205 @@
 // Adapted from Atoll (GPL-3.0-or-later): components/Notch/NotchLLMUsageView.swift
 // (provider cards, quota gauges, reset times and compact Today/Week totals).
+// Stacking one full-width card per account has no reference equivalent.
 
 import SwiftUI
 
-/// Account quota above local token and API-equivalent cost estimates.
+/// One card per account, stacked: who it is on the left, quota and local token and cost estimates on the right.
 struct AIUsageTabView: View {
-    @EnvironmentObject private var settings: SettingsStore
     @EnvironmentObject private var monitor: AIUsageMonitor
 
+    /// Cards that share the 290 pt page; more accounts scroll at a fixed card height.
+    private static let cardsWithoutScrolling = 3
+    private static let cardSpacing: CGFloat = 6
+    private static let scrollingListHeight =
+        CGFloat(cardsWithoutScrolling) * AIUsageAccountCard.scrollingHeight
+        + CGFloat(cardsWithoutScrolling - 1) * cardSpacing
+
     var body: some View {
-        VStack(spacing: 8) {
-            HStack(alignment: .top, spacing: 10) {
-                ForEach(settings.enabledAIUsageProviders) { provider in card(provider) }
-            }
-            Text("Estimated API cost · local logs · not your subscription bill")
-                .font(.system(size: 10))
-                .foregroundStyle(.secondary)
-        }
-        .padding(.horizontal, 14)
-        .padding(.top, 8)
-        .task {
-            for provider in settings.enabledAIUsageProviders { monitor.refresh(provider) }
-        }
-    }
-
-    private func card(_ provider: AIUsageProvider) -> some View {
-        let snapshot = monitor.snapshots[provider]
-        return VStack(alignment: .leading, spacing: 7) {
-            HStack {
-                Text(provider.title).font(.system(size: 14, weight: .semibold))
-                Spacer()
-                if monitor.refreshing.contains(provider) {
-                    ProgressView().controlSize(.mini)
-                } else {
-                    Button {
-                        monitor.refresh(provider, force: true)
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                    .buttonStyle(.plain)
-                    .help("Refresh " + provider.title + " usage")
-                }
-            }
-            if let snapshot {
-                if let identity = snapshot.identity {
-                    Text(identity.label).font(.system(size: 11)).foregroundStyle(.secondary)
-                        .lineLimit(1).truncationMode(.middle).help(identity.label)
-                }
-                if let limit = snapshot.sessionLimit {
-                    gauge("Session", limit: limit, isStale: snapshot.isQuotaStale(at: Date()))
-                }
-                if let limit = snapshot.weekLimit {
-                    gauge("Week", limit: limit, isStale: snapshot.isQuotaStale(at: Date()))
-                }
-                if let message = snapshot.quotaMessage {
-                    Text(message).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(3)
-                    if snapshot.requiresConnection {
-                        Button("Connect") { monitor.refresh(provider, force: true, allowPrompt: true) }
-                            .controlSize(.mini)
-                            .disabled(monitor.refreshing.contains(provider))
-                    }
-                }
-                if let source = snapshot.quotaSource, let captured = snapshot.quotaCapturedAt {
-                    Text(
-                        (snapshot.isQuotaStale(at: Date()) ? "Old data" : source) + " · "
-                            + captured.formatted(.dateTime.month(.abbreviated).day().hour().minute())
-                    )
-                    .font(.system(size: 10))
-                    .foregroundStyle(snapshot.isQuotaStale(at: Date()) ? .orange : .secondary)
-                }
-                Divider()
-                if snapshot.hasLocalLogs {
-                    totals("Today", snapshot.today)
-                    totals("7 days", snapshot.week)
-                } else {
-                    Text(snapshot.logsMessage ?? "No local usage logs")
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                }
+        VStack(spacing: Self.cardSpacing) {
+            if monitor.accounts.count > Self.cardsWithoutScrolling {
+                ScrollView { cards(fillsHeight: false) }.frame(height: Self.scrollingListHeight)
+                Spacer(minLength: 0)
             } else {
-                Text("Reading usage…").font(.system(size: 11)).foregroundStyle(.secondary)
+                // Cards stretch to share the page, so the footer sits at the bottom with no gap above it.
+                cards(fillsHeight: true).frame(maxHeight: .infinity)
             }
+            footer
         }
-        .frame(maxWidth: .infinity, minHeight: 174, alignment: .topLeading)
-        .padding(10)
-        .background(.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 12))
+        .frame(maxHeight: .infinity)
+        .padding(.horizontal, AIUsageAccountCard.outerPadding)
+        .padding(.top, Self.cardSpacing)
+        .task {
+            for account in monitor.accounts { monitor.refresh(account) }
+        }
     }
 
-    private func gauge(_ title: String, limit: AIUsageLimit, isStale: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack {
-                Text(title)
-                Spacer()
-                Text("\(limit.fraction.formatted(.percent.precision(.fractionLength(0)))) used")
-            }
-            .font(.system(size: 11, weight: .medium))
-            ProgressView(value: limit.fraction)
-                .tint(limit.fraction >= 0.9 ? .red : limit.fraction >= 0.7 ? .orange : .green)
-            if let date = limit.resetsAt {
-                Text(
-                    "\(isStale ? "Recorded reset" : "Resets") \(date.formatted(.dateTime.month(.abbreviated).day().hour().minute()))"
-                )
-                .font(.system(size: 10)).foregroundStyle(.secondary)
+    private func cards(fillsHeight: Bool) -> some View {
+        VStack(spacing: Self.cardSpacing) {
+            ForEach(monitor.accounts) { account in
+                AIUsageAccountCard(account: account, snapshot: monitor.snapshots[account]) {
+                    monitor.refresh(account, force: true, allowPrompt: true)
+                }
+                .frame(height: fillsHeight ? nil : AIUsageAccountCard.scrollingHeight)
             }
         }
     }
 
-    private func totals(_ title: String, _ totals: AIUsageTotals) -> some View {
+    private var footer: some View {
         HStack(spacing: 6) {
-            Text(title).foregroundStyle(.secondary)
+            Text("Estimated API cost · local logs · not your subscription bill")
             Spacer(minLength: 0)
-            Text("\(totals.totalTokens.formatted(.number.notation(.compactName))) tokens")
-                .help("Input: \(totals.inputTokens.formatted()), output: \(totals.outputTokens.formatted()) tokens")
-            Text(
-                totals.hasUnpricedModel ? "Cost unavailable" : totals.estimatedCostUSD.formatted(.currency(code: "USD"))
-            )
-            .foregroundStyle(.secondary)
-            .help("API-equivalent estimate from OpenRouter model prices; cache rates included where available.")
+            if monitor.refreshing.isEmpty {
+                Button {
+                    for account in monitor.accounts { monitor.refresh(account, force: true) }
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Refresh AI usage")
+            } else {
+                ProgressView().controlSize(.mini)
+            }
         }
         .font(.system(size: 10))
+        .foregroundStyle(.secondary)
+    }
+}
+
+/// Account on the left (30 %), usage on the right (70 %). Widths derive from the fixed expanded notch width, never
+/// from a measurement, and text shrinks slightly rather than truncating.
+private struct AIUsageAccountCard: View {
+    let account: AIUsageAccount
+    let snapshot: AIUsageSnapshot?
+    let connect: () -> Void
+
+    static let outerPadding: CGFloat = 14
+    static let scrollingHeight: CGFloat = 80
+    private static let horizontalPadding: CGFloat = 12
+    private static let verticalPadding: CGFloat = 8
+    private static let columnSpacing: CGFloat = 14
+    private static let identityShare: CGFloat = 0.3
+    private static let identityWidth =
+        ((DisplayGeometry.expandedWidth - 2 * outerPadding - 2 * horizontalPadding - columnSpacing) * identityShare)
+        .rounded()
+    private static let windowLabelWidth: CGFloat = 50
+    /// Room for "100% used · Resets Oct 28 at 8:42 AM" at the card's font size.
+    private static let statusWidth: CGFloat = 206
+    private static let minimumTextScale: CGFloat = 0.8
+    private static let lineSpacing: CGFloat = 5
+
+    var body: some View {
+        HStack(alignment: .center, spacing: Self.columnSpacing) {
+            identity.frame(width: Self.identityWidth, alignment: .leading)
+            usage.frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal, Self.horizontalPadding)
+        .padding(.vertical, Self.verticalPadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(NotchCardBackground())
+    }
+
+    private var identity: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 6) {
+                Text(account.provider.title).font(.system(size: 14, weight: .semibold))
+                if let profile = account.profile {
+                    Text(profile.name)
+                        .font(.system(size: 10, weight: .medium))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 1)
+                        .background(.white.opacity(0.12), in: Capsule())
+                }
+            }
+            if let name = snapshot?.identity?.name {
+                Text(name).font(.system(size: 12))
+            }
+            if let email = snapshot?.identity?.email {
+                Text(email).font(.system(size: 11)).foregroundStyle(.secondary)
+            }
+        }
+        .lineLimit(1)
+        .minimumScaleFactor(Self.minimumTextScale)
+    }
+
+    @ViewBuilder private var usage: some View {
+        if let snapshot {
+            VStack(alignment: .leading, spacing: Self.lineSpacing) {
+                if snapshot.sessionLimit != nil || snapshot.weekLimit != nil {
+                    if let limit = snapshot.sessionLimit { window("Session", limit, snapshot) }
+                    if let limit = snapshot.weekLimit { window("Week", limit, snapshot) }
+                } else if let message = snapshot.quotaMessage {
+                    HStack(spacing: 8) {
+                        Text(message).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        if snapshot.requiresConnection {
+                            Button("Connect", action: connect).controlSize(.mini)
+                        }
+                    }
+                }
+                totals(snapshot)
+            }
+            .font(.system(size: 11))
+        } else {
+            Text("Reading usage…").font(.system(size: 11)).foregroundStyle(.secondary)
+        }
+    }
+
+    /// An old Desktop cache reading turns its status orange instead of carrying a separate source line.
+    private func window(_ title: String, _ limit: AIUsageLimit, _ snapshot: AIUsageSnapshot) -> some View {
+        let now = Date()
+        var status = limit.fraction.formatted(.percent.precision(.fractionLength(0))) + " used"
+        if let reset = limit.resetsAt { status += " · Resets " + AIUsageResetFormat.text(reset, now: now) }
+        return HStack(spacing: 8) {
+            Text(title).foregroundStyle(.secondary).frame(width: Self.windowLabelWidth, alignment: .leading)
+            AIUsageQuotaBar(fraction: limit.fraction)
+            Text(status)
+                .monospacedDigit()
+                .foregroundStyle(snapshot.isQuotaStale(at: now) ? .orange : .primary)
+                .lineLimit(1)
+                .minimumScaleFactor(Self.minimumTextScale)
+                .frame(width: Self.statusWidth, alignment: .leading)
+        }
+    }
+
+    /// A Desktop-only profile never has its own logs, so it shows no totals line at all.
+    @ViewBuilder private func totals(_ snapshot: AIUsageSnapshot) -> some View {
+        if snapshot.hasLocalLogs {
+            HStack(spacing: 18) {
+                totalsText("Today", snapshot.today)
+                totalsText("7 days", snapshot.week)
+            }
+            .lineLimit(1)
+            .minimumScaleFactor(Self.minimumTextScale)
+        } else if account.profile?.codeConfigDirectory != nil || account.profile == nil {
+            Text(snapshot.logsMessage ?? "No local usage logs").foregroundStyle(.secondary)
+        }
+    }
+
+    private func totalsText(_ title: String, _ totals: AIUsageTotals) -> Text {
+        let cost =
+            totals.hasUnpricedModel ? "Cost unavailable" : totals.estimatedCostUSD.formatted(.currency(code: "USD"))
+        return Text(title + " ").foregroundStyle(.secondary)
+            + Text(totals.totalTokens.formatted(.number.notation(.compactName)) + " tokens · " + cost)
+    }
+}
+
+/// A thin fixed-height gauge; the system linear ProgressView is taller than a three-line card allows.
+private struct AIUsageQuotaBar: View {
+    let fraction: Double
+
+    private static let height: CGFloat = 5
+
+    private var tint: Color { fraction >= 0.9 ? .red : fraction >= 0.7 ? .orange : .green }
+
+    var body: some View {
+        Capsule()
+            .fill(.white.opacity(0.12))
+            .overlay(alignment: .leading) {
+                GeometryReader { geometry in
+                    Capsule().fill(tint)
+                        .frame(width: max(Self.height, geometry.size.width * min(1, max(0, fraction))))
+                }
+            }
+            .frame(height: Self.height)
     }
 }

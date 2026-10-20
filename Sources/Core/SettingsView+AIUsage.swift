@@ -20,21 +20,25 @@ extension SettingsView {
                     SettingsToggleRow(
                         "Show " + provider.title,
                         isOn: provider == .codex ? $settings.codexUsageEnabled : $settings.claudeUsageEnabled)
-                    SettingsRow(provider.title, description: aiUsageStatus(provider), showDivider: provider != .claude)
-                    {
-                        if aiUsage.refreshing.contains(provider) {
-                            ProgressView().controlSize(.small)
-                            Text("Checking…").font(.system(size: 11)).foregroundStyle(.secondary)
-                        } else {
-                            Button("Refresh") { aiUsage.refresh(provider, force: true) }
-                            Button("Connect") { aiUsage.refresh(provider, force: true, allowPrompt: true) }
+                    ForEach(aiUsageRows(provider)) { account in
+                        SettingsRow(
+                            account.title, description: aiUsageStatus(account),
+                            showDivider: account != aiUsageRows(.claude).last
+                        ) {
+                            if aiUsage.refreshing.contains(account) {
+                                ProgressView().controlSize(.small)
+                                Text("Checking…").font(.system(size: 11)).foregroundStyle(.secondary)
+                            } else {
+                                Button("Refresh") { aiUsage.refresh(account, force: true) }
+                                Button("Connect") { aiUsage.refresh(account, force: true, allowPrompt: true) }
+                            }
                         }
+                        .disabled(!settings.enabledAIUsageProviders.contains(provider))
                     }
-                    .disabled(!settings.enabledAIUsageProviders.contains(provider))
                 }
             }
             SettingsFootnote(
-                "For Claude Desktop, open Settings → Usage in Claude, then refresh here. Codex and Claude Code use their saved login; Connect allows a Keychain prompt if needed."
+                "For Claude Desktop, open Settings → Usage in Claude, then refresh here. Codex and Claude Code use their saved login; Connect allows a Keychain prompt if needed. Profiles made with claude-multiprofile get their own row."
             )
             SettingsGroupHeader("Notch Notifications")
             SettingsCard {
@@ -61,12 +65,18 @@ extension SettingsView {
                 }
             }
         }
-        .onAppear { for provider in AIUsageProvider.allCases { aiUsage.refresh(provider) } }
+        .onAppear { for account in aiUsage.accounts { aiUsage.refresh(account) } }
     }
 
-    private func aiUsageStatus(_ provider: AIUsageProvider) -> String {
-        guard settings.enabledAIUsageProviders.contains(provider) else { return "Disabled" }
-        guard let snapshot = aiUsage.snapshots[provider] else { return "Not checked yet" }
+    /// A disabled provider still shows its default row, so the page keeps its shape.
+    private func aiUsageRows(_ provider: AIUsageProvider) -> [AIUsageAccount] {
+        let accounts = aiUsage.accounts(for: provider)
+        return accounts.isEmpty ? [AIUsageAccount(provider: provider)] : accounts
+    }
+
+    private func aiUsageStatus(_ account: AIUsageAccount) -> String {
+        guard settings.enabledAIUsageProviders.contains(account.provider) else { return "Disabled" }
+        guard let snapshot = aiUsage.snapshots[account] else { return "Not checked yet" }
         let account = snapshot.identity.map { $0.label + "\n" } ?? ""
         if let message = snapshot.quotaMessage { return account + message }
         if let source = snapshot.quotaSource, let captured = snapshot.quotaCapturedAt {

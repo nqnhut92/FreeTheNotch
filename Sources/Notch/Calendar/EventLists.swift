@@ -254,10 +254,7 @@ struct StandaloneEventCardList: View {
         .padding(.horizontal, 11)
         .padding(.vertical, 8)
         .frame(maxWidth: .infinity, minHeight: 50, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color.white.opacity(0.05))
-        )
+        .background(NotchCardBackground())
         .opacity(event.endedToday ? 0.6 : 1)
     }
 }

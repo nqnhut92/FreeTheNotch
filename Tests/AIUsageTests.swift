@@ -140,7 +140,8 @@ struct AIUsageTests {
         let service = AIUsageService(session: session, logRoots: [:]) { _, _ in
             AIUsageCredentials(accessToken: "fixture", accountID: "test-account", expiresAt: nil)
         }
-        let snapshot = await service.snapshot(provider, allowPrompt: false, now: now, calendar: .current)
+        let snapshot = await service.snapshot(
+            AIUsageAccount(provider: provider), allowPrompt: false, now: now, calendar: .current)
         #expect(snapshot.sessionLimit?.usedPercent == 25)
         #expect(snapshot.quotaMessage == nil)
         #expect(!snapshot.hasLocalLogs)
@@ -163,7 +164,8 @@ struct AIUsageTests {
         let service = AIUsageService(session: session, logRoots: [.claude: directory]) { _, _ in
             AIUsageCredentials(accessToken: "must-not-be-sent", accountID: nil, expiresAt: expired)
         }
-        let snapshot = await service.snapshot(.claude, allowPrompt: false, now: now, calendar: .current)
+        let snapshot = await service.snapshot(
+            AIUsageAccount(provider: .claude), allowPrompt: false, now: now, calendar: .current)
         #expect(snapshot.today.totalTokens == 30)
         #expect(snapshot.requiresConnection)
         #expect(snapshot.sessionLimit == nil)
@@ -187,25 +189,83 @@ struct AIUsageTests {
                 Data(#"{"type":"response_item","payload":{"text":"private"}}"#.utf8), context: &context) == nil)
     }
 
-    @Test func desktopUsageCacheKeepsOldReadingsWithoutTreatingThemAsFresh() async throws {
-        let key = "1/0/https://claude.ai/api/organizations/test/usage?skip_spend=1"
-        let body = Data(#"{"five_hour":{"utilization":35,"resets_at":null}}"#.utf8)
-        // A valid single-segment zstd frame containing one final raw block.
+    /// A Chromium Simple Cache entry holding a usage response in a single-segment zstd frame with one raw block.
+    private static func desktopUsageEntry(_ key: String, percent: Int) -> Data {
+        let body = Data(#"{"five_hour":{"utilization":\#(percent),"resets_at":null}}"#.utf8)
         var frame = Data([0x28, 0xb5, 0x2f, 0xfd, 0x20, UInt8(body.count)])
         let block = UInt32(body.count << 3 | 1)
         for shift in [0, 8, 16] { frame.append(UInt8(truncatingIfNeeded: block >> shift)) }
         frame.append(body)
-        func entry(_ key: String) -> Data {
-            var result = Data()
-            let magic: UInt64 = 0xfcfb_6d1b_a772_5c30
-            for shift in stride(from: 0, to: 64, by: 8) { result.append(UInt8(truncatingIfNeeded: magic >> shift)) }
-            for value in [UInt32(5), UInt32(key.utf8.count), UInt32(0), UInt32(0)] {
-                for shift in [0, 8, 16, 24] { result.append(UInt8(truncatingIfNeeded: value >> shift)) }
-            }
-            result.append(Data(key.utf8))
-            result.append(frame)
-            return result
+        var result = Data()
+        let magic: UInt64 = 0xfcfb_6d1b_a772_5c30
+        for shift in stride(from: 0, to: 64, by: 8) { result.append(UInt8(truncatingIfNeeded: magic >> shift)) }
+        for value in [UInt32(5), UInt32(key.utf8.count), UInt32(0), UInt32(0)] {
+            for shift in [0, 8, 16, 24] { result.append(UInt8(truncatingIfNeeded: value >> shift)) }
         }
+        result.append(Data(key.utf8))
+        result.append(frame)
+        return result
+    }
+
+    @Test func eachClaudeProfileReadsOnlyItsOwnDesktopCacheAndLogin() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let key = "1/0/https://claude.ai/api/organizations/test/usage"
+        func cache(_ folder: String, percent: Int) throws -> URL {
+            let directory = root.appendingPathComponent(folder)
+            let cacheDirectory = directory.appendingPathComponent("Cache/Cache_Data")
+            try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
+            let file = cacheDirectory.appendingPathComponent("fixture_0")
+            try Self.desktopUsageEntry(key, percent: percent).write(to: file)
+            try FileManager.default.setAttributes([.modificationDate: now], ofItemAtPath: file.path)
+            return directory
+        }
+        let defaultDesktop = try cache("Default", percent: 10)
+        let profileDesktop = try cache("Profile", percent: 60)
+        let profile = AIUsageAccount(
+            provider: .claude,
+            profile: ClaudeProfile(name: "fixture", desktopDataDirectory: profileDesktop, codeConfigDirectory: nil))
+        let codeOnly = AIUsageAccount(
+            provider: .claude,
+            profile: ClaudeProfile(
+                name: "code", desktopDataDirectory: nil, codeConfigDirectory: root.appendingPathComponent("code")))
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [AIUsageFixtureProtocol.self]
+        let session = URLSession(configuration: configuration)
+        defer { session.invalidateAndCancel() }
+        let requested = AccountRecorder()
+        let service = AIUsageService(
+            session: session, logRoots: [:],
+            desktopCache: ClaudeDesktopUsageCache(
+                profileURL: nil, directory: defaultDesktop.appendingPathComponent("Cache/Cache_Data"))
+        ) { account, _ in
+            await requested.record(account.id)
+            throw AIUsageError.signIn
+        }
+        let defaultReading = await service.snapshot(
+            AIUsageAccount(provider: .claude), allowPrompt: false, now: now, calendar: .current)
+        let profileReading = await service.snapshot(profile, allowPrompt: false, now: now, calendar: .current)
+        let codeReading = await service.snapshot(codeOnly, allowPrompt: false, now: now, calendar: .current)
+        #expect(defaultReading.sessionLimit?.usedPercent == 10)
+        #expect(profileReading.sessionLimit?.usedPercent == 60)
+        // No Desktop folder: the default reading must not leak in, and only this profile's login is asked for.
+        #expect(codeReading.sessionLimit == nil)
+        #expect(codeReading.requiresConnection)
+        #expect(await requested.ids == ["claude.code"])
+        // A Desktop profile without a usage reading has nothing to connect.
+        let emptyDesktop = AIUsageAccount(
+            provider: .claude,
+            profile: ClaudeProfile(
+                name: "empty", desktopDataDirectory: root.appendingPathComponent("Empty"), codeConfigDirectory: nil))
+        let emptyReading = await service.snapshot(emptyDesktop, allowPrompt: false, now: now, calendar: .current)
+        #expect(emptyReading.sessionLimit == nil)
+        #expect(emptyReading.quotaMessage != nil)
+        #expect(!emptyReading.requiresConnection)
+    }
+
+    @Test func desktopUsageCacheKeepsOldReadingsWithoutTreatingThemAsFresh() async throws {
+        let key = "1/0/https://claude.ai/api/organizations/test/usage?skip_spend=1"
+        func entry(_ key: String) -> Data { Self.desktopUsageEntry(key, percent: 35) }
         let reading = try #require(ClaudeDesktopUsageCache.parse(entry(key), modifiedAt: now, now: now))
         #expect(reading.sessionLimit?.usedPercent == 35)
         #expect(reading.quotaCapturedAt == now)
@@ -233,10 +293,11 @@ struct AIUsageTests {
         ) { _, _ in
             throw AIUsageError.signIn
         }
-        _ = await service.snapshot(.claude, allowPrompt: false, now: now, calendar: .current)
+        _ = await service.snapshot(AIUsageAccount(provider: .claude), allowPrompt: false, now: now, calendar: .current)
         try FileManager.default.removeItem(at: file)
         let retained = await service.snapshot(
-            .claude, allowPrompt: false, now: now.addingTimeInterval(3600), calendar: .current)
+            AIUsageAccount(provider: .claude), allowPrompt: false, now: now.addingTimeInterval(3600), calendar: .current
+        )
         #expect(retained.sessionLimit?.usedPercent == 35)
         #expect(retained.quotaCapturedAt == now)
         #expect(retained.isQuotaStale(at: now.addingTimeInterval(3600)))
@@ -246,7 +307,8 @@ struct AIUsageTests {
         try FileManager.default.setAttributes(
             [.modificationDate: now.addingTimeInterval(3601)], ofItemAtPath: file.path)
         let refreshed = await service.snapshot(
-            .claude, allowPrompt: false, now: now.addingTimeInterval(3601), calendar: .current)
+            AIUsageAccount(provider: .claude), allowPrompt: false, now: now.addingTimeInterval(3601), calendar: .current
+        )
         #expect(refreshed.quotaCapturedAt == now.addingTimeInterval(3601))
         #expect(!refreshed.isQuotaStale(at: now.addingTimeInterval(3601)))
         #expect(
@@ -276,7 +338,56 @@ struct AIUsageTests {
             persistentReference: Data([2]))
         let unrelated = AIUsageCredentials.KeychainItem(
             service: "other", account: "same", modifiedAt: now.addingTimeInterval(2), persistentReference: Data([3]))
-        #expect(AIUsageCredentials.newestClaudeItem([fresh, old, unrelated]) == fresh)
+        #expect(
+            AIUsageCredentials.claudeItem([fresh, old, unrelated], service: "Claude Code-credentials", fallsBack: true)
+                == fresh)
+    }
+
+    @Test func eachClaudeLoginReadsOnlyItsOwnKeychainItem() {
+        func item(_ service: String, _ offset: TimeInterval) -> AIUsageCredentials.KeychainItem {
+            AIUsageCredentials.KeychainItem(
+                service: service, account: "same", modifiedAt: now.addingTimeInterval(offset), persistentReference: nil)
+        }
+        let defaultItem = item("Claude Code-credentials", 0)
+        let profileItem = item("Claude Code-credentials-aaaaaaaa", 5)
+        let shellItem = item("Claude Code-credentials-bbbbbbbb", 3)
+        let items = [defaultItem, profileItem, shellItem]
+        // The default login prefers its own item even when a profile signed in more recently.
+        #expect(
+            AIUsageCredentials.claudeItem(items, service: "Claude Code-credentials", fallsBack: true) == defaultItem)
+        // Without its own item, the default login never borrows one a profile owns.
+        #expect(
+            AIUsageCredentials.claudeItem(
+                [profileItem, shellItem], service: "Claude Code-credentials", fallsBack: true,
+                claimedServices: [profileItem.service]) == shellItem)
+        // A profile never falls back to another login.
+        #expect(
+            AIUsageCredentials.claudeItem(items, service: "Claude Code-credentials-aaaaaaaa", fallsBack: false)
+                == profileItem)
+        #expect(
+            AIUsageCredentials.claudeItem(
+                [defaultItem, shellItem], service: "Claude Code-credentials-aaaaaaaa", fallsBack: false) == nil)
+    }
+
+    /// 2026-10-20 is a Tuesday; offsets are seconds from its UTC midnight.
+    private static let resetCases: [(locale: String, offset: Int, expected: String)] = [
+        ("en_GB", 52_740, "14:39"),
+        ("en_GB", 568_740, "Mon 13:59"),
+        ("en_GB", 722_520, "28 Oct at 08:42"),
+        ("en_GB", -54_000, "19 Oct at 09:00"),
+        ("vi_VN", 52_740, "14:39"),
+        ("vi_VN", 722_520, "08:42 28 thg 10"),
+    ]
+
+    @Test(arguments: resetCases)
+    func resetTimeShowsOnlyAsMuchDateAsItNeeds(_ example: (locale: String, offset: Int, expected: String)) {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .gmt
+        let midnight = Date(timeIntervalSince1970: 1_792_454_400)
+        #expect(
+            AIUsageResetFormat.text(
+                midnight.addingTimeInterval(TimeInterval(example.offset)), now: midnight.addingTimeInterval(3600),
+                calendar: calendar, locale: Locale(identifier: example.locale)) == example.expected)
     }
 
     @Test func securityOutputAcceptsPlainOrHexJSONButRejectsMalformedBytes() {
@@ -331,4 +442,10 @@ private final class AIUsageFixtureProtocol: URLProtocol, @unchecked Sendable {
         client?.urlProtocolDidFinishLoading(self)
     }
     override func stopLoading() {}
+}
+
+/// Collects which logins the service asks for, across its actor boundary.
+private actor AccountRecorder {
+    private(set) var ids: [String] = []
+    func record(_ id: String) { ids.append(id) }
 }

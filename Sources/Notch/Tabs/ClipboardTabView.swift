@@ -179,15 +179,8 @@ private struct ClipboardGridCard: View {
         }
         .padding(8)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white.opacity(isHovered ? 0.12 : 0.08))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.blue.opacity(0.2), lineWidth: 1)
-                )
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .background(NotchCardBackground(isHighlighted: isHovered))
+        .clipShape(NotchStyle.cardShape)
         .overlay(alignment: .topTrailing) {
             if isHovered {
                 Button(action: onDelete) {

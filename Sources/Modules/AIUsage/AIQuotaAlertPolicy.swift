@@ -1,20 +1,21 @@
 import Foundation
 
-/// One warning per provider and quota window; historical cache readings cannot raise new warnings.
+/// One warning per account and quota window; historical cache readings cannot raise new warnings.
 struct AIQuotaAlertPolicy {
     struct Alert: Equatable, Sendable {
         enum Window: CaseIterable, Hashable, Sendable {
             case session, week
             var title: String { self == .session ? "Session" : "Week" }
         }
-        let provider: AIUsageProvider
+        let account: AIUsageAccount
         let window: Window
         let usedPercent: Double
+        var provider: AIUsageProvider { account.provider }
     }
 
     static let threshold = 80.0
     private struct Key: Hashable {
-        let provider: AIUsageProvider
+        let account: AIUsageAccount
         let identity: String
         let window: Alert.Window
     }
@@ -29,7 +30,7 @@ struct AIQuotaAlertPolicy {
     static let presentationDuration: TimeInterval = 4
     private var announced: [Key: Announcement] = [:]
 
-    mutating func alerts(provider: AIUsageProvider, snapshot: AIUsageSnapshot, now: Date) -> [Alert] {
+    mutating func alerts(account: AIUsageAccount, snapshot: AIUsageSnapshot, now: Date) -> [Alert] {
         guard !snapshot.isQuotaStale(at: now), snapshot.quotaMessage == nil, !snapshot.requiresConnection,
             (0..<Self.maximumSnapshotAge).contains(now.timeIntervalSince(snapshot.updatedAt))
         else { return [] }
@@ -41,7 +42,7 @@ struct AIQuotaAlertPolicy {
                 limit.resetsAt.map({ $0 > now }) ?? true
             else { return nil }
             let identity = snapshot.identity?.label ?? ""
-            let key = Key(provider: provider, identity: identity, window: window)
+            let key = Key(account: account, identity: identity, window: window)
             if let previous = announced[key] {
                 guard let reset = limit.resetsAt, let oldReset = previous.reset,
                     abs(reset.timeIntervalSince(oldReset)) > Self.resetTolerance
@@ -49,7 +50,7 @@ struct AIQuotaAlertPolicy {
             }
             // Relative reset timestamps include request/clock jitter; that is not a new quota window.
             announced[key] = Announcement(reset: limit.resetsAt, at: now)
-            return Alert(provider: provider, window: window, usedPercent: min(100, limit.usedPercent))
+            return Alert(account: account, window: window, usedPercent: min(100, limit.usedPercent))
         }
     }
 }

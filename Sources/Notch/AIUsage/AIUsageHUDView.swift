@@ -27,7 +27,7 @@ struct AIUsageHUDView: View {
                 }
                 .frame(width: Self.indicatorDiameter, height: Self.indicatorDiameter)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(alert.provider.title).font(.system(size: 14, weight: .semibold))
+                    Text(alert.account.title).font(.system(size: 14, weight: .semibold))
                     Text(alert.window.title + " quota used").font(.system(size: 10))
                         .foregroundStyle(.white.opacity(0.6))
                 }
@@ -49,6 +49,6 @@ struct AIUsageHUDView: View {
         .padding(.horizontal, Self.horizontalPadding)
         .padding(.bottom, Self.bottomPadding)
         .accessibilityLabel(
-            "\(alert.provider.title) \(alert.window.title) quota \(alert.usedPercent.formatted()) percent used")
+            "\(alert.account.title) \(alert.window.title) quota \(alert.usedPercent.formatted()) percent used")
     }
 }

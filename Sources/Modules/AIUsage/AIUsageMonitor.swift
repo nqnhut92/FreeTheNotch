@@ -3,11 +3,13 @@
 import Combine
 import Foundation
 
-/// Shared between displays; refreshes enabled providers once a minute, including while the notch is closed.
+/// Shared between displays; refreshes enabled accounts once a minute, including while the notch is closed.
+/// Claude profiles from claude-multiprofile are re-read on every pass, so added or removed profiles follow.
 @MainActor
 final class AIUsageMonitor: ObservableObject {
-    @Published private(set) var snapshots: [AIUsageProvider: AIUsageSnapshot] = [:]
-    @Published private(set) var refreshing = Set<AIUsageProvider>()
+    @Published private(set) var accounts: [AIUsageAccount] = []
+    @Published private(set) var snapshots: [AIUsageAccount: AIUsageSnapshot] = [:]
+    @Published private(set) var refreshing = Set<AIUsageAccount>()
     @Published private(set) var quotaAlert: AIQuotaAlertPolicy.Alert?
     private var alertPolicy = AIQuotaAlertPolicy()
     private var alertQueue: [AIQuotaAlertPolicy.Alert] = []
@@ -15,8 +17,11 @@ final class AIUsageMonitor: ObservableObject {
     private var backgroundTask: Task<Void, Never>?
     private var hudSubscription: AnyCancellable?
     private var showsQuotaHUD = true
+    private let home = FileManager.default.homeDirectoryForCurrentUser
+    private let environment = ProcessInfo.processInfo.environment
     private let service: AIUsageService
-    private var tasks: [AIUsageProvider: Task<Void, Never>] = [:]
+    private var profiles: [ClaudeProfile] = []
+    private var tasks: [AIUsageAccount: Task<Void, Never>] = [:]
     private static let refreshInterval: TimeInterval = 60
 
     private var enabledProviders = Set(AIUsageProvider.allCases)
@@ -29,26 +34,13 @@ final class AIUsageMonitor: ObservableObject {
         service = AIUsageService(
             logRoots: directories.logRoots, desktopCache: ClaudeDesktopUsageCache()
         ) {
-            provider, allowPrompt in try await store.load(provider, allowPrompt: allowPrompt)
+            account, allowPrompt in try await store.load(account, allowPrompt: allowPrompt)
         }
         settingsSubscription = Publishers.CombineLatest(settings.$codexUsageEnabled, settings.$claudeUsageEnabled)
             .sink { [weak self] codex, claude in
                 guard let self else { return }
-                let previous = enabledProviders
                 enabledProviders = Set(AIUsageProvider.allCases.filter { $0 == .codex ? codex : claude })
-                for provider in AIUsageProvider.allCases where !enabledProviders.contains(provider) {
-                    tasks[provider]?.cancel()
-                    tasks[provider] = nil
-                    refreshing.remove(provider)
-                    snapshots[provider] = nil
-                    alertQueue.removeAll { $0.provider == provider }
-                    if quotaAlert?.provider == provider {
-                        alertTask?.cancel()
-                        quotaAlert = nil
-                        presentNextAlert()
-                    }
-                }
-                for provider in enabledProviders.subtracting(previous) { refresh(provider, force: true) }
+                updateAccounts()
             }
         hudSubscription = settings.$aiQuotaHUDEnabled.sink { [weak self] enabled in
             guard let self else { return }
@@ -59,22 +51,57 @@ final class AIUsageMonitor: ObservableObject {
                 quotaAlert = nil
             }
         }
-        backgroundTask = Task { [weak self] in
+        backgroundTask = Task { [weak self, home = self.home, environment = self.environment] in
             while !Task.isCancelled {
-                self?.refreshEnabledProviders()
+                let profiles = await Task.detached { ClaudeProfile.profiles(home: home, environment: environment) }
+                    .value
+                guard let self else { return }
+                if profiles != self.profiles {
+                    self.profiles = profiles
+                    updateAccounts()
+                }
+                for account in accounts { refresh(account) }
                 do { try await Task.sleep(for: .seconds(Self.refreshInterval)) } catch { return }
             }
         }
     }
 
-    private func refreshEnabledProviders() {
-        for provider in enabledProviders { refresh(provider) }
+    func accounts(for provider: AIUsageProvider) -> [AIUsageAccount] {
+        accounts.filter { $0.provider == provider }
+    }
+
+    func refresh(_ provider: AIUsageProvider, force: Bool = false, allowPrompt: Bool = false) {
+        for account in accounts(for: provider) { refresh(account, force: force, allowPrompt: allowPrompt) }
+    }
+
+    /// Keeps cards, readings and alerts only for enabled providers and profiles still in the registry.
+    private func updateAccounts() {
+        let previous = Set(accounts)
+        accounts = AIUsageAccount.all(profiles: profiles).filter { enabledProviders.contains($0.provider) }
+        let current = Set(accounts)
+        for account in previous.subtracting(current) {
+            tasks[account]?.cancel()
+            tasks[account] = nil
+            refreshing.remove(account)
+            snapshots[account] = nil
+            alertQueue.removeAll { $0.account == account }
+            if quotaAlert?.account == account {
+                alertTask?.cancel()
+                quotaAlert = nil
+                presentNextAlert()
+            }
+        }
+        Task { [service] in await service.retainAccounts(current) }
+        for account in current.subtracting(previous) { refresh(account, force: true) }
     }
 
     /// Preview uses the normal presentation queue without changing quota or warning history.
     func triggerQuotaHUDTest(_ provider: AIUsageProvider) {
         guard showsQuotaHUD, enabledProviders.contains(provider) else { return }
-        alertQueue.append(.init(provider: provider, window: .session, usedPercent: AIQuotaAlertPolicy.threshold))
+        alertQueue.append(
+            .init(
+                account: AIUsageAccount(provider: provider), window: .session,
+                usedPercent: AIQuotaAlertPolicy.threshold))
         presentNextAlert()
     }
 
@@ -95,24 +122,25 @@ final class AIUsageMonitor: ObservableObject {
         for task in tasks.values { task.cancel() }
     }
 
-    func refresh(_ provider: AIUsageProvider, force: Bool = false, allowPrompt: Bool = false) {
-        guard enabledProviders.contains(provider), !refreshing.contains(provider) else { return }
-        if !force, let last = snapshots[provider]?.updatedAt,
+    func refresh(_ account: AIUsageAccount, force: Bool = false, allowPrompt: Bool = false) {
+        guard accounts.contains(account), !refreshing.contains(account) else { return }
+        if !force, let last = snapshots[account]?.updatedAt,
             Date().timeIntervalSince(last) < Self.refreshInterval
         {
             return
         }
-        refreshing.insert(provider)
-        tasks[provider] = Task { [weak self, service] in
-            let snapshot = await service.snapshot(provider, allowPrompt: allowPrompt, now: Date(), calendar: .current)
+        refreshing.insert(account)
+        tasks[account] = Task { [weak self, service] in
+            let snapshot = await service.snapshot(
+                account, allowPrompt: allowPrompt, now: Date(), calendar: .current)
             guard let self, !Task.isCancelled else { return }
-            snapshots[provider] = snapshot
+            snapshots[account] = snapshot
             if showsQuotaHUD {
-                alertQueue.append(contentsOf: alertPolicy.alerts(provider: provider, snapshot: snapshot, now: Date()))
+                alertQueue.append(contentsOf: alertPolicy.alerts(account: account, snapshot: snapshot, now: Date()))
                 presentNextAlert()
             }
-            refreshing.remove(provider)
-            tasks[provider] = nil
+            refreshing.remove(account)
+            tasks[account] = nil
         }
     }
 }
