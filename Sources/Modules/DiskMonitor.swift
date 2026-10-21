@@ -29,11 +29,13 @@ struct DiskVolume: Identifiable {
     var ioDiskBSD: String
     var mountPath: String
     var totalBytes: UInt64
+    /// Available, purgeable space included (what Finder and System
+    /// Settings → Storage call available).
     var freeBytes: UInt64
+    /// The part of `freeBytes` macOS frees on demand (caches, local
+    /// snapshots).
     var purgeableBytes: UInt64
-    /// Vorssaint: physically used = total - raw free. Purgeable space still
-    /// counts as used (shown separately), so "used" + "available" can exceed
-    /// the total, exactly as in Vorssaint.
+    /// `totalBytes - freeBytes`, as System Settings → Storage shows it.
     var usedBytes: UInt64
     var fileSystem: String
     var isInternal: Bool
@@ -49,6 +51,28 @@ struct DiskVolume: Identifiable {
     }
 }
 
+/// How a volume's capacity splits, the way System Settings → Storage shows
+/// it: purgeable space counts as available, not used. Vorssaint counts it as
+/// used (total - raw free); then "used" and "available" add up to more than
+/// the disk and disagree with System Settings.
+struct DiskSpace: Equatable {
+    let used: UInt64
+    let available: UInt64
+    /// The part of `available` macOS frees on demand.
+    let purgeable: UInt64
+
+    /// - Parameters:
+    ///   - available: free space counting what macOS would purge.
+    ///   - rawFree: free space right now, without purging; nil when the
+    ///     volume cannot tell.
+    init(total: UInt64, available: UInt64, rawFree: UInt64?) {
+        let available = min(available, total)
+        self.available = available
+        used = total - available
+        purgeable = rawFree.map { available > $0 ? available - $0 : 0 } ?? 0
+    }
+}
+
 final class DiskMonitor: ObservableObject {
     @Published private(set) var volumes: [DiskVolume] = []
     @Published var selectedID: String?
@@ -61,19 +85,48 @@ final class DiskMonitor: ObservableObject {
     private var speedTimer: Timer?
     private var smartTimer: Timer?
     private var lastStats: [String: (read: UInt64, written: UInt64, time: Date)] = [:]
+    private static let speedInterval: TimeInterval = 2
+    /// Each volume refresh runs `diskutil info` once per mounted volume.
+    private static let volumeInterval: TimeInterval = 30
 
     var selected: DiskVolume? {
         volumes.first { $0.id == selectedID } ?? volumes.first
     }
 
+    /// Speeds are cheap block-storage counters and keep running, so the
+    /// session totals count from launch. The volume list and SMART health
+    /// refresh only while the Disks tab shows (`setVolumeSampling`).
     init() {
         refreshVolumes()
-        speedTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: Self.speedInterval, repeats: true) { [weak self] _ in
             self?.refreshSpeeds()
         }
-        smartTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+        timer.tolerance = Self.speedInterval / 4
+        RunLoop.main.add(timer, forMode: .common)
+        speedTimer = timer
+    }
+
+    deinit {
+        speedTimer?.invalidate()
+        smartTimer?.invalidate()
+    }
+
+    /// Refreshes the volume list and SMART health now and every 30 s while
+    /// `isActive`. Main thread only.
+    func setVolumeSampling(_ isActive: Bool) {
+        guard isActive else {
+            smartTimer?.invalidate()
+            smartTimer = nil
+            return
+        }
+        guard smartTimer == nil else { return }
+        refreshVolumes()
+        let timer = Timer(timeInterval: Self.volumeInterval, repeats: true) { [weak self] _ in
             self?.refreshVolumes()
         }
+        timer.tolerance = Self.volumeInterval / 4
+        RunLoop.main.add(timer, forMode: .common)
+        smartTimer = timer
     }
 
     // MARK: - Volumes & SMART
@@ -116,12 +169,8 @@ final class DiskMonitor: ObservableObject {
                 let total = Self.positive(values?.volumeTotalCapacity) ?? diskutilTotal
                 let rawFree = Self.positive(values?.volumeAvailableCapacity)
                 let importantFree = values?.volumeIsReadOnly == true ? nil : Self.importantFree(url)
-                let free = min(importantFree ?? rawFree ?? diskutilFree, total)
-                let purgeable = rawFree.map { free > $0 ? free - $0 : 0 } ?? 0
-                let used = min(
-                    total,
-                    rawFree.map { total >= $0 ? total - $0 : 0 }
-                        ?? (total >= free ? total - free : 0))
+                let space = DiskSpace(
+                    total: total, available: importantFree ?? rawFree ?? diskutilFree, rawFree: rawFree)
                 let volume = DiskVolume(
                     id: path,
                     name: name,
@@ -130,9 +179,9 @@ final class DiskMonitor: ObservableObject {
                     ioDiskBSD: ioDisk,
                     mountPath: path,
                     totalBytes: total,
-                    freeBytes: free,
-                    purgeableBytes: purgeable,
-                    usedBytes: used,
+                    freeBytes: space.available,
+                    purgeableBytes: space.purgeable,
+                    usedBytes: space.used,
                     fileSystem: Self.fileSystemLabel(
                         type: info["FilesystemType"] as? String,
                         name: info["FilesystemName"] as? String),

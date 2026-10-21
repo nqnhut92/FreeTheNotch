@@ -114,7 +114,8 @@ struct PanelDiskSection: View {
                     Text("\(DiskFormat.diskBytes(volume.usedBytes)) / \(DiskFormat.diskBytes(volume.totalBytes))")
                     if volume.purgeableBytes >= 500_000_000 {
                         Spacer()
-                        Text("\(DiskFormat.diskBytes(volume.purgeableBytes)) purgeable")
+                        // Part of the available space above, as in System Settings.
+                        Text("incl. \(DiskFormat.diskBytes(volume.purgeableBytes)) purgeable")
                     }
                 }
                 .font(.system(size: 10))

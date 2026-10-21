@@ -93,7 +93,6 @@
 		F1E2D3C4B5A697887766581A /* MarqueeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D3D4E5F60718293A4B02 /* MarqueeText.swift */; };
 		F1E2D3C4B5A6978877665819 /* SideNotchShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766552C /* SideNotchShape.swift */; };
 		F1E2D3C4B5A6978877665818 /* SkinSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665817 /* SkinSettingsSection.swift */; };
-		F1E2D3C4B5A6978877665816 /* SkinDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665814 /* SkinDecorationView.swift */; };
 		F1E2D3C4B5A6978877665815 /* SkinDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665814 /* SkinDecorationView.swift */; };
 		F1E2D3C4B5A6978877665813 /* NotchSkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665811 /* NotchSkin.swift */; };
 		F1E2D3C4B5A6978877665812 /* NotchSkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665811 /* NotchSkin.swift */; };
@@ -267,6 +266,26 @@
 		F1E2D3C4B5A6978877665D08 /* SmoothScrollService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D07 /* SmoothScrollService.swift */; };
 		F1E2D3C4B5A6978877665D0A /* MouseScrollingSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D09 /* MouseScrollingSettings.swift */; };
 		F1E2D3C4B5A6978877665D0C /* SmoothScrollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D0B /* SmoothScrollTests.swift */; };
+		F1E2D3C4B5A6978877665E02 /* SamplingDemand.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E01 /* SamplingDemand.swift */; };
+		F1E2D3C4B5A6978877665E03 /* SamplingDemand.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E01 /* SamplingDemand.swift */; };
+		F1E2D3C4B5A6978877665E05 /* EnergySmoothing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E04 /* EnergySmoothing.swift */; };
+		F1E2D3C4B5A6978877665E06 /* EnergySmoothing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E04 /* EnergySmoothing.swift */; };
+		F1E2D3C4B5A6978877665E08 /* MenuBarPanelTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E07 /* MenuBarPanelTab.swift */; };
+		F1E2D3C4B5A6978877665E09 /* MenuBarPanelTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E07 /* MenuBarPanelTab.swift */; };
+		F1E2D3C4B5A6978877665E0B /* SideNotchPopoverKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E0A /* SideNotchPopoverKind.swift */; };
+		F1E2D3C4B5A6978877665E0C /* SideNotchPopoverKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E0A /* SideNotchPopoverKind.swift */; };
+		F1E2D3C4B5A6978877665E0E /* SkinMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E0D /* SkinMotion.swift */; };
+		F1E2D3C4B5A6978877665E0F /* SkinMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E0D /* SkinMotion.swift */; };
+		F1E2D3C4B5A6978877665E11 /* PanelSamplingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E10 /* PanelSamplingTests.swift */; };
+		F1E2D3C4B5A6978877665E13 /* EnergySmoothingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E12 /* EnergySmoothingTests.swift */; };
+		F1E2D3C4B5A6978877665E15 /* SkinMotionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E14 /* SkinMotionTests.swift */; };
+		F1E2D3C4B5A6978877665E21 /* SkinMotionCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E20 /* SkinMotionCurve.swift */; };
+		F1E2D3C4B5A6978877665E22 /* SkinMotionCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E20 /* SkinMotionCurve.swift */; };
+		F1E2D3C4B5A6978877665E24 /* CoreAnimationMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E23 /* CoreAnimationMotion.swift */; };
+		F1E2D3C4B5A6978877665E26 /* SkinMotionCurveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E25 /* SkinMotionCurveTests.swift */; };
+		F1E2D3C4B5A6978877665E41 /* SkinDecorationGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E40 /* SkinDecorationGeometry.swift */; };
+		F1E2D3C4B5A6978877665E42 /* SkinDecorationGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E40 /* SkinDecorationGeometry.swift */; };
+		F1E2D3C4B5A6978877665E44 /* SkinDecorationLayers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E43 /* SkinDecorationLayers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -467,6 +486,19 @@
 		F1E2D3C4B5A6978877665D07 /* SmoothScrollService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothScrollService.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665D09 /* MouseScrollingSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseScrollingSettings.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665D0B /* SmoothScrollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothScrollTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E01 /* SamplingDemand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplingDemand.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E04 /* EnergySmoothing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnergySmoothing.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E07 /* MenuBarPanelTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPanelTab.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E0A /* SideNotchPopoverKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNotchPopoverKind.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E0D /* SkinMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinMotion.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E10 /* PanelSamplingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelSamplingTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E12 /* EnergySmoothingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnergySmoothingTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E14 /* SkinMotionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinMotionTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E20 /* SkinMotionCurve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinMotionCurve.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E23 /* CoreAnimationMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreAnimationMotion.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E25 /* SkinMotionCurveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinMotionCurveTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E40 /* SkinDecorationGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinDecorationGeometry.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E43 /* SkinDecorationLayers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinDecorationLayers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -605,6 +637,10 @@
 				F1E2D3C4B5A6978877665732 /* CommandBarMathTests.swift */,
 				F1E2D3C4B5A6978877665605 /* LunarCalendarTests.swift */,
 				F1E2D3C4B5A6978877665607 /* CalendarDayTests.swift */,
+				F1E2D3C4B5A6978877665E10 /* PanelSamplingTests.swift */,
+				F1E2D3C4B5A6978877665E12 /* EnergySmoothingTests.swift */,
+				F1E2D3C4B5A6978877665E14 /* SkinMotionTests.swift */,
+				F1E2D3C4B5A6978877665E25 /* SkinMotionCurveTests.swift */,
 			);
 			name = Tests;
 			path = Tests;
@@ -637,6 +673,12 @@
 				C3C4C5C6D7E8F9A0B1B2C3D4 /* ReminderToggle.swift */,
 				F1E2D3C4B5A6978877665521 /* SkinPets.swift */,
 				A5FFB82D2D59A32A99ED5EBE /* Tabs */,
+				F1E2D3C4B5A6978877665E0A /* SideNotchPopoverKind.swift */,
+				F1E2D3C4B5A6978877665E0D /* SkinMotion.swift */,
+				F1E2D3C4B5A6978877665E20 /* SkinMotionCurve.swift */,
+				F1E2D3C4B5A6978877665E23 /* CoreAnimationMotion.swift */,
+				F1E2D3C4B5A6978877665E40 /* SkinDecorationGeometry.swift */,
+				F1E2D3C4B5A6978877665E43 /* SkinDecorationLayers.swift */,
 			);
 			name = Notch;
 			path = Notch;
@@ -663,6 +705,7 @@
 				B1B2C3D4E5F60718293A4B0A /* PanelPowerSection.swift */,
 				F1E2D3C4B5A697887766552A /* DuoGlyphPopover.swift */,
 				F1E2D3C4B5A6978877665526 /* DuoGlyphView.swift */,
+				F1E2D3C4B5A6978877665E07 /* MenuBarPanelTab.swift */,
 			);
 			name = MenuBar;
 			path = MenuBar;
@@ -799,6 +842,8 @@
 				F1E2D3C4B5A6978877665512 /* CommandBarMath.swift */,
 				F1E2D3C4B5A6978877665510 /* LunarCalendar.swift */,
 				F1E2D3C4B5A6978877665601 /* CalendarDay.swift */,
+				F1E2D3C4B5A6978877665E01 /* SamplingDemand.swift */,
+				F1E2D3C4B5A6978877665E04 /* EnergySmoothing.swift */,
 			);
 			name = Modules;
 			path = Modules;
@@ -977,7 +1022,6 @@
 				F1E2D3C4B5A697887766581F /* Conference.swift in Sources */,
 				F1E2D3C4B5A697887766581A /* MarqueeText.swift in Sources */,
 				F1E2D3C4B5A6978877665819 /* SideNotchShape.swift in Sources */,
-				F1E2D3C4B5A6978877665816 /* SkinDecorationView.swift in Sources */,
 				F1E2D3C4B5A6978877665813 /* NotchSkin.swift in Sources */,
 				F1E2D3C4B5A697887766580E /* DockSide.swift in Sources */,
 				F1E2D3C4B5A6978877665809 /* NotchShape.swift in Sources */,
@@ -1018,6 +1062,17 @@
 				F1E2D3C4B5A6978877665608 /* CalendarDayTests.swift in Sources */,
 				F1E2D3C4B5A6978877665609 /* LunarCalendar.swift in Sources */,
 				F1E2D3C4B5A697887766560A /* CalendarDay.swift in Sources */,
+				F1E2D3C4B5A6978877665E03 /* SamplingDemand.swift in Sources */,
+				F1E2D3C4B5A6978877665E06 /* EnergySmoothing.swift in Sources */,
+				F1E2D3C4B5A6978877665E09 /* MenuBarPanelTab.swift in Sources */,
+				F1E2D3C4B5A6978877665E0C /* SideNotchPopoverKind.swift in Sources */,
+				F1E2D3C4B5A6978877665E0F /* SkinMotion.swift in Sources */,
+				F1E2D3C4B5A6978877665E11 /* PanelSamplingTests.swift in Sources */,
+				F1E2D3C4B5A6978877665E13 /* EnergySmoothingTests.swift in Sources */,
+				F1E2D3C4B5A6978877665E15 /* SkinMotionTests.swift in Sources */,
+				F1E2D3C4B5A6978877665E22 /* SkinMotionCurve.swift in Sources */,
+				F1E2D3C4B5A6978877665E26 /* SkinMotionCurveTests.swift in Sources */,
+				F1E2D3C4B5A6978877665E42 /* SkinDecorationGeometry.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1178,6 +1233,15 @@
 				E2E3E4F5A6B7C8D9E0F1A2B3 /* MarqueeText.swift in Sources */,
 				A3A4A5A6B7C8D9E0F1A2B3 /* BluetoothPopupView.swift in Sources */,
 				F1E2D3C4B5A6978877665602 /* CalendarDay.swift in Sources */,
+				F1E2D3C4B5A6978877665E02 /* SamplingDemand.swift in Sources */,
+				F1E2D3C4B5A6978877665E05 /* EnergySmoothing.swift in Sources */,
+				F1E2D3C4B5A6978877665E08 /* MenuBarPanelTab.swift in Sources */,
+				F1E2D3C4B5A6978877665E0B /* SideNotchPopoverKind.swift in Sources */,
+				F1E2D3C4B5A6978877665E0E /* SkinMotion.swift in Sources */,
+				F1E2D3C4B5A6978877665E21 /* SkinMotionCurve.swift in Sources */,
+				F1E2D3C4B5A6978877665E24 /* CoreAnimationMotion.swift in Sources */,
+				F1E2D3C4B5A6978877665E41 /* SkinDecorationGeometry.swift in Sources */,
+				F1E2D3C4B5A6978877665E44 /* SkinDecorationLayers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1253,7 +1317,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1276,7 +1340,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

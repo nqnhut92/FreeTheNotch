@@ -6,6 +6,16 @@ final class PanelPlacement: ObservableObject {
     @Published var screen: NSScreen?
 }
 
+/// What the panel keeps between opens. Its view is dropped on close, so
+/// nothing in it keeps observing the monitors; this outlives it.
+final class PanelMemory: ObservableObject {
+    /// The full panel's selected tab.
+    @Published var tab: MenuBarPanelTab = MenuBarPanelTab.allCases[0]
+    /// Last measured content height per tab, so a rebuilt panel opens at its
+    /// final size. Not published: it is read once per open.
+    var contentHeights: [MenuBarPanelTab: CGFloat] = [:]
+}
+
 // Menu-bar monitor panel. Tab bar + card design follows Vorssaint's panel
 // (vorssaint/vorssaint-utils, GPL-3.0-or-later); the System/Network/Disks/
 // Power tabs are faithful ports of their sections.
@@ -22,6 +32,7 @@ struct MenuBarPanelView: View {
 
     @EnvironmentObject var cleaning: CleaningModeController
     @EnvironmentObject var placement: PanelPlacement
+    @EnvironmentObject var memory: PanelMemory
 
     /// On the popover's dark system glass (macOS 26+, Reduce Transparency
     /// off), like the Side Notch's other popovers: white text levels.
@@ -31,42 +42,12 @@ struct MenuBarPanelView: View {
     }
 
     @Environment(\.colorScheme) private var colorScheme
-    @State private var storedTab: PanelTab = .keepAwake
-    private var selectedTab: PanelTab { fixedTab ?? storedTab }
+    typealias PanelTab = MenuBarPanelTab
+
+    private var selectedTab: PanelTab { fixedTab ?? memory.tab }
     /// Natural height of the scrolled content, reported by OverlayScrollView.
     @State private var contentHeight: CGFloat = 0
     @State private var measuredTab: PanelTab?
-
-    /// Posted by SideNotchWindowController after closing when "Remember last tab" is off.
-    static let resetTabNotification = Notification.Name("FreeTheNotch.menuPanelResetTab")
-
-    enum PanelTab: String, CaseIterable {
-        case keepAwake, system, network, disk, power, tools
-
-        var icon: String {
-            switch self {
-            case .keepAwake: return "moon.zzz.fill"
-            case .system: return "cpu"
-            case .network: return "network"
-            case .disk: return "internaldrive"
-            case .power: return "bolt.fill"
-            case .tools: return "wrench.and.screwdriver.fill"
-            }
-        }
-
-        /// Section title above the card (uppercased by PanelSectionTitle)
-        /// and the tab's tooltip.
-        var title: String {
-            switch self {
-            case .keepAwake: return "Keep awake"
-            case .system: return "System"
-            case .network: return "Network"
-            case .disk: return "Disks"
-            case .power: return "Power"
-            case .tools: return "Utilities"
-            }
-        }
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -93,10 +74,10 @@ struct MenuBarPanelView: View {
         .glassPanelText(usesGlassPanel)
         .background(PanelGlassSurface())
         .onChange(of: selectedTab) { _, _ in measuredTab = nil }
-        .onReceive(NotificationCenter.default.publisher(for: Self.resetTabNotification)) { _ in
-            storedTab = PanelTab.allCases[0]
+        .onChange(of: contentHeight) { _, height in
+            measuredTab = selectedTab
+            memory.contentHeights[selectedTab] = height
         }
-        .onChange(of: contentHeight) { _, _ in measuredTab = selectedTab }
     }
 
     // MARK: - Height (Vorssaint's navigable panel sizing)
@@ -125,7 +106,9 @@ struct MenuBarPanelView: View {
     }
 
     private var scrollHeight: CGFloat {
-        let measured = (measuredTab == selectedTab && contentHeight > 0) ? contentHeight : estimatedContentHeight
+        let measured =
+            (measuredTab == selectedTab && contentHeight > 0)
+            ? contentHeight : memory.contentHeights[selectedTab] ?? estimatedContentHeight
         return min(measured, max(80, maxHeight - chromeHeight))
     }
 
@@ -161,7 +144,7 @@ struct MenuBarPanelView: View {
             ForEach(PanelTab.allCases, id: \.self) { tab in
                 let isActive = selectedTab == tab
                 Button {
-                    storedTab = tab
+                    memory.tab = tab
                 } label: {
                     Image(systemName: tab.icon)
                         .font(.system(size: 13.5, weight: .semibold))

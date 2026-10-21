@@ -118,6 +118,9 @@ struct NotchRootView: View {
         return notchHeight
     }
 
+    /// Hovered or open: a skin on battery keeps moving.
+    private var isSkinEngaged: Bool { panelState.isHovered || panelState.isExpanded }
+
     /// Width on each side of the physical camera once the island is open.
     private var earWidth: CGFloat {
         max(0, (shapeWidth - notchWidth) / 2)
@@ -127,7 +130,9 @@ struct NotchRootView: View {
         ZStack(alignment: .top) {
             if showsSkin {
                 // Behind the island: the pet's tucked part hides under it.
-                NotchSkinLayer(part: .behindIsland, shapeSize: CGSize(width: shapeWidth, height: shapeHeight))
+                NotchSkinLayer(
+                    part: .behindIsland, shapeSize: CGSize(width: shapeWidth, height: shapeHeight),
+                    isEngaged: isSkinEngaged, isOnScreen: panelState.isOnScreen)
             }
             NotchShape(
                 topRadius: 0,
@@ -164,7 +169,9 @@ struct NotchRootView: View {
             .clipped()
 
             if showsSkin {
-                NotchSkinLayer(part: .aboveIsland, shapeSize: CGSize(width: shapeWidth, height: shapeHeight))
+                NotchSkinLayer(
+                    part: .aboveIsland, shapeSize: CGSize(width: shapeWidth, height: shapeHeight),
+                    isEngaged: isSkinEngaged, isOnScreen: panelState.isOnScreen)
             }
 
             // Bluetooth connection notification: drops below the notch shape.

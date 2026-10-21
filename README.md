@@ -2,7 +2,7 @@
 
 A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and widgets on the lock screen.
 
-- **Version:** 0.2.0
+- **Version:** 0.3.0
 - **Requires:** macOS 14 or later, Apple Silicon. Developed and tested on macOS 27.
 - **Docs:** [Screenshots](docs/GALLERY.md) · [Settings](docs/SETTINGS.md) · [Feature guide](docs/FEATURES.md) · [Technical Design](docs/TECHNICAL_DESIGN.md)
 

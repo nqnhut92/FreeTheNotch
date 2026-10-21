@@ -2,7 +2,7 @@
 
 Detailed feature guide and settings reference. For installation and a quick overview, see the [README](../README.md). Implementation details are in [Technical Design](TECHNICAL_DESIGN.md).
 
-- **Version:** 0.2.0 (2026-10-20)
+- **Version:** 0.3.0 (2026-10-21)
 
 [Notch](#notch) · [AI Usage](#ai-usage) · [System panel](#system-panel) · [Side Notch](#side-notch) · [Lock screen](#lock-screen) · [Mouse scrolling](#mouse-scrolling) · [Privacy](#privacy) · [Permissions](#permissions) · [Settings](#settings) · [Known limits](#known-limits)
 
@@ -54,6 +54,8 @@ Optional decorations around the island, chosen in Settings → Skins:
 
 Pets dance to the music's tempo while something is playing. Skins never block clicks.
 
+Skins use more energy than None. Plugged in, they run at full smoothness. On battery or in Low Power Mode they run at a lower frame rate and hold still after 20 seconds without hover or music; hovering or music wakes them. They always hold still while the screen is locked or asleep.
+
 ## AI Usage
 
 Account name/email appears when available from the provider’s local login/profile; Claude Desktop profile labels require an organization match with its cached usage.
@@ -80,7 +82,7 @@ With Side Notch off, left-click the menu bar coffee cup to open the full panel. 
 - **System:** CPU and GPU temperature and usage with sparklines, a per-core matrix, the apps using the most CPU, GPU and memory, memory pressure, and uptime.
 - **Network:** live up/down rates, per-app traffic, session totals, local IP addresses, and a Cloudflare speed test.
 - **Disks:** usage, live read/write, SMART health and temperature, and eject.
-- **Power:** battery history, apps using significant energy, system and adapter watts, time remaining, health and cycles.
+- **Power:** battery history, apps ranked by energy use, system and adapter watts, time remaining, health and cycles.
 - **Utilities:** Cleaning Mode locks the keyboard (and optionally the trackpad) so you can wipe it. Press Esc five times to exit.
 
 The menu bar cup stays: right-click it for quick Keep Awake, Cleaning Mode, Side Notch on/off, Hide from Screen Sharing, Settings and Quit. Left-click it for the full panel when Side Notch is off.

@@ -11,6 +11,9 @@ final class NotchPanelState: ObservableObject {
     @Published var isExpanded = false
     /// Which tool the open island is showing. Drives the shape height.
     @Published var page: NotchPage = .home
+    /// False while the panel is hidden (screen locked) or the displays
+    /// sleep: nothing on it needs to animate.
+    @Published var isOnScreen = true
 }
 
 // MARK: - Key-capable panel
@@ -105,6 +108,9 @@ final class NotchWindowController: NSObject {
     private var hoverPollTimer: Timer?
     private var scopeObserver: AnyCancellable?
     private var tabObserver: AnyCancellable?
+    private var sleepObservers: [AnyCancellable] = []
+    private var isHiddenWhileLocked = false
+    private var areScreensAsleep = false
 
     /// Atoll's level: above the menu bar, below pop-up menus.
     static let windowLevel = NSWindow.Level(rawValue: NSWindow.Level.mainMenu.rawValue + 3)
@@ -137,6 +143,22 @@ final class NotchWindowController: NSObject {
             for entry in self.entries.values where !visible.contains(entry.state.page) {
                 entry.state.page = visible.first ?? .home
             }
+        }
+        let workspace = NSWorkspace.shared.notificationCenter
+        sleepObservers = [
+            (NSWorkspace.screensDidSleepNotification, true),
+            (NSWorkspace.screensDidWakeNotification, false),
+        ].map { name, isAsleep in
+            workspace.publisher(for: name)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in self?.setScreensAsleep(isAsleep) }
+        }
+    }
+
+    private func setScreensAsleep(_ isAsleep: Bool) {
+        areScreensAsleep = isAsleep
+        for entry in entries.values {
+            entry.state.isOnScreen = !isHiddenWhileLocked && !isAsleep
         }
     }
 
@@ -176,7 +198,9 @@ final class NotchWindowController: NSObject {
 
     /// Hide/show all notch panels (Atoll-style lock behavior).
     func setPanelsHidden(_ hidden: Bool) {
+        isHiddenWhileLocked = hidden
         for entry in entries.values {
+            entry.state.isOnScreen = !hidden && !areScreensAsleep
             if hidden {
                 entry.panel.alphaValue = 0
                 entry.panel.orderOut(nil)
@@ -191,6 +215,7 @@ final class NotchWindowController: NSObject {
         guard let services else { return }
         let state = NotchPanelState()
         state.page = services.settings.visibleNotchTabs.first ?? .home
+        state.isOnScreen = !isHiddenWhileLocked && !areScreensAsleep
 
         let frame = fixedFrame(for: screen, settings: services.settings)
         let panel = KeyablePanel(

@@ -27,9 +27,8 @@ struct PanelNetworkSection: View {
             Divider()
             speedTestRow
         }
+        // SideNotchWindowController samples per-app traffic while this shows.
         .panelCard()
-        .onAppear { processes.startNetworkSampling() }
-        .onDisappear { processes.stopNetworkSampling() }
     }
 
     // MARK: - Speed
@@ -125,7 +124,7 @@ struct PanelNetworkSection: View {
                 Spacer(minLength: 0)
             }
             if processes.topNetwork.isEmpty {
-                Text(processes.hasSamples ? "No apps using network now" : "Measuring…")
+                Text(processes.hasNetworkSamples ? "No apps using network now" : "Measuring…")
                     .font(.system(size: 10.5))
                     .foregroundStyle(.panelTertiary)
             } else {

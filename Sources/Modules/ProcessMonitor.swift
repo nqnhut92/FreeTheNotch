@@ -17,28 +17,57 @@ struct ProcessRow: Identifiable {
     var id: pid_t { pid }
 }
 
+/// Samples only while a popover shows the data (`setSampling`), like
+/// Vorssaint's ProcessUsageService, which its panel starts and stops.
 final class ProcessMonitor: ObservableObject {
     @Published private(set) var topCPU: [ProcessRow] = []
     @Published private(set) var topMemory: [ProcessRow] = []
     @Published private(set) var topGPU: [ProcessRow] = []
+    /// Smoothed CPU + GPU share per app (`EnergySmoother`), largest first.
     @Published private(set) var topEnergy: [ProcessRow] = []
+    /// The apps in `topEnergy` that count as using significant energy
+    /// (`SignificantEnergyFilter`), largest first.
+    @Published private(set) var significantEnergy: [ProcessRow] = []
     @Published private(set) var topNetwork: [ProcessRow] = []
-    /// True once at least one full sampling interval has elapsed.
+    /// True once a full CPU/GPU sampling interval has elapsed.
     @Published private(set) var hasSamples = false
+    /// True once nettop has answered since network sampling started.
+    @Published private(set) var hasNetworkSamples = false
 
     private var timer: Timer?
     private var netTimer: Timer?
+    /// Bumped on every stop, so a sample still in flight is not published
+    /// after its data was cleared. Main thread only.
+    private var processGeneration = 0
+    private var networkGeneration = 0
+    // Work-queue state.
     private var lastCPU: [pid_t: UInt64] = [:]
     private var lastCPUDate = Date.distantPast
     private var lastGPU: [pid_t: Double] = [:]
     private var lastGPUDate = Date.distantPast
     private var timebaseNumer: UInt64 = 1
     private var timebaseDenom: UInt64 = 1
-    private var iconCache: [pid_t: NSImage] = [:]
+    /// Display name and icon per owner pid. Resolving a name goes through
+    /// NSRunningApplication, which is costly enough to show in samples.
+    private var ownerCache: [pid_t: (name: String, icon: NSImage)] = [:]
+    private var energySmoother = EnergySmoother()
+    private var significantFilter = SignificantEnergyFilter()
+    /// Last row seen per app, to name an app whose average is still fading
+    /// after it left the sample.
+    private var lastEnergyRows: [pid_t: ProcessRow] = [:]
     private let workQueue = DispatchQueue(label: "FreeTheNotch.ProcessMonitor", qos: .utility)
 
     static let breakdownLimit = 15
     static let networkLimit = 6
+    static let significantLimit = 5
+    private static let processInterval: TimeInterval = 4
+    /// The first delta needs two samples at least `minimumDeltaInterval`
+    /// apart; the second one comes this soon after starting.
+    private static let firstDeltaDelay: TimeInterval = 2.5
+    private static let minimumDeltaInterval: TimeInterval = 2
+    private static let networkInterval: TimeInterval = 10
+    /// Lets the system coalesce these wake-ups with others.
+    private static let timerTolerance: TimeInterval = 1
 
     init() {
         var tb = mach_timebase_info_data_t()
@@ -46,31 +75,90 @@ final class ProcessMonitor: ObservableObject {
             timebaseNumer = UInt64(tb.numer)
             timebaseDenom = UInt64(tb.denom)
         }
-        timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: true) { [weak self] _ in
+    }
+
+    deinit {
+        timer?.invalidate()
+        netTimer?.invalidate()
+    }
+
+    // MARK: - Demand
+
+    /// Starts or stops per-app CPU/GPU/memory sampling and per-app network
+    /// sampling (nettop). Stopping clears what was sampled, so a popover
+    /// opened later never shows stale rows. Main thread only.
+    func setSampling(processes: Bool, network: Bool) {
+        if processes { startProcessSampling() } else { stopProcessSampling() }
+        if network { startNetworkSampling() } else { stopNetworkSampling() }
+    }
+
+    private func startProcessSampling() {
+        guard timer == nil else { return }
+        refresh()
+        let timer = Timer(
+            fire: Date().addingTimeInterval(Self.firstDeltaDelay), interval: Self.processInterval, repeats: true
+        ) { [weak self] _ in
             self?.refresh()
         }
-        workQueue.async { [weak self] in self?.refresh() }
+        timer.tolerance = Self.timerTolerance
+        RunLoop.main.add(timer, forMode: .common)
+        self.timer = timer
     }
 
-    // MARK: - Network sampling (on demand; nettop is expensive)
-
-    func startNetworkSampling() {
-        guard netTimer == nil else { return }
-        workQueue.async { [weak self] in self?.sampleNetwork() }
-        netTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
+    private func stopProcessSampling() {
+        guard let timer else { return }
+        timer.invalidate()
+        self.timer = nil
+        processGeneration += 1
+        workQueue.async { [weak self] in
             guard let self else { return }
-            self.workQueue.async { self.sampleNetwork() }
+            self.lastCPU = [:]
+            self.lastCPUDate = .distantPast
+            self.lastGPU = [:]
+            self.lastGPUDate = .distantPast
+            self.ownerCache = [:]
+            self.energySmoother = EnergySmoother()
+            self.significantFilter = SignificantEnergyFilter()
+            self.lastEnergyRows = [:]
         }
+        topCPU = []
+        topMemory = []
+        topGPU = []
+        topEnergy = []
+        significantEnergy = []
+        hasSamples = false
     }
 
-    func stopNetworkSampling() {
-        netTimer?.invalidate()
-        netTimer = nil
+    // MARK: - Network sampling (nettop is expensive)
+
+    private func startNetworkSampling() {
+        guard netTimer == nil else { return }
+        sampleNetwork()
+        let timer = Timer(timeInterval: Self.networkInterval, repeats: true) { [weak self] _ in
+            self?.sampleNetwork()
+        }
+        timer.tolerance = Self.timerTolerance
+        RunLoop.main.add(timer, forMode: .common)
+        netTimer = timer
+    }
+
+    private func stopNetworkSampling() {
+        guard let netTimer else { return }
+        netTimer.invalidate()
+        self.netTimer = nil
+        networkGeneration += 1
+        // Nothing prunes the cache while only the network is sampled.
+        if timer == nil {
+            workQueue.async { [weak self] in self?.ownerCache = [:] }
+        }
+        topNetwork = []
+        hasNetworkSamples = false
     }
 
     // MARK: - Main refresh (CPU / memory / GPU)
 
     private func refresh() {
+        let generation = processGeneration
         workQueue.async { [weak self] in
             guard let self else { return }
             let now = Date()
@@ -78,17 +166,18 @@ final class ProcessMonitor: ObservableObject {
             let cpuTimes = usage.cpuNanoseconds
             let footprints = usage.footprints
             let gpuTimes = Self.gpuTimePerPid()
-            // Icons are cached per owner pid; drop the ones whose process is
-            // gone so the cache neither grows nor hands a reused pid the
-            // wrong icon.
-            self.iconCache = self.iconCache.filter { usage.livePids.contains($0.key) }
+            // Names and icons are cached per owner pid; drop the ones whose
+            // process is gone so the cache neither grows nor hands a reused
+            // pid the wrong name.
+            self.ownerCache = self.ownerCache.filter { usage.livePids.contains($0.key) }
 
             var cpuRows: [ProcessRow] = []
             var memRows: [ProcessRow] = []
             var gpuRows: [ProcessRow] = []
 
             let cpuElapsed = now.timeIntervalSince(self.lastCPUDate)
-            if cpuElapsed >= 2, !self.lastCPU.isEmpty {
+            let hasDelta = cpuElapsed >= Self.minimumDeltaInterval && !self.lastCPU.isEmpty
+            if hasDelta {
                 let elapsedNs = cpuElapsed * 1_000_000_000
                 for (pid, ns) in cpuTimes {
                     guard let before = self.lastCPU[pid], ns > before else { continue }
@@ -106,7 +195,7 @@ final class ProcessMonitor: ObservableObject {
                 memRows.append(ProcessRow(pid: owner, name: name, icon: icon, value: Double(bytes)))
             }
             let gpuElapsed = now.timeIntervalSince(self.lastGPUDate)
-            if gpuElapsed >= 2, !self.lastGPU.isEmpty {
+            if gpuElapsed >= Self.minimumDeltaInterval, !self.lastGPU.isEmpty {
                 let elapsedNs = gpuElapsed * 1_000_000_000
                 for (pid, total) in gpuTimes {
                     guard let before = self.lastGPU[pid], total > before else { continue }
@@ -125,18 +214,41 @@ final class ProcessMonitor: ObservableObject {
             let groupedCPU = Self.grouped(cpuRows)
             let groupedMem = Self.grouped(memRows)
             let groupedGPU = Self.grouped(gpuRows)
-            // Energy: combined CPU + GPU share per app.
-            // Rows carry the owner pid, so CPU + GPU merge per app.
-            let energy = Self.grouped(groupedCPU + groupedGPU)
+            let energy = hasDelta ? self.smoothedEnergy(cpu: groupedCPU, gpu: groupedGPU, elapsed: cpuElapsed) : nil
 
             DispatchQueue.main.async {
-                self.topCPU = Array(groupedCPU.prefix(Self.breakdownLimit))
+                guard generation == self.processGeneration else { return }
                 self.topMemory = Array(groupedMem.prefix(Self.breakdownLimit))
+                guard let energy else { return }
+                self.topCPU = Array(groupedCPU.prefix(Self.breakdownLimit))
                 self.topGPU = Array(groupedGPU.prefix(Self.breakdownLimit))
-                self.topEnergy = Array(energy.prefix(Self.breakdownLimit))
+                self.topEnergy = Array(energy.all.prefix(Self.breakdownLimit))
+                self.significantEnergy = Array(energy.significant.prefix(Self.significantLimit))
                 self.hasSamples = true
             }
         }
+    }
+
+    /// Combined CPU + GPU share per app (rows carry the owner pid, so the
+    /// two merge per app), averaged over recent samples. Work queue only.
+    private func smoothedEnergy(
+        cpu: [ProcessRow], gpu: [ProcessRow], elapsed: TimeInterval
+    ) -> (all: [ProcessRow], significant: [ProcessRow]) {
+        let sampled = Self.grouped(cpu + gpu)
+        for row in sampled { lastEnergyRows[row.pid] = row }
+        let averages = energySmoother.add(
+            Dictionary(sampled.map { ($0.pid, $0.value) }, uniquingKeysWith: +), elapsed: elapsed)
+        lastEnergyRows = lastEnergyRows.filter { averages[$0.key] != nil }
+        let all =
+            averages
+            .compactMap { pid, average -> ProcessRow? in
+                guard var row = lastEnergyRows[pid] else { return nil }
+                row.value = average
+                return row
+            }
+            .sorted { $0.value > $1.value }
+        let listed = significantFilter.update(averages)
+        return (all, all.filter { listed.contains($0.pid) })
     }
 
     /// Sums rows per responsible app (rows already carry the owner pid),
@@ -158,15 +270,15 @@ final class ProcessMonitor: ObservableObject {
 
     /// Vorssaint's ResponsibleProcess: bill a helper to the app responsible
     /// for it, named and iconed like that app. Daemons keep their own name
-    /// and the generic executable icon.
+    /// and the generic executable icon. Work queue only.
     private func ownerNameAndIcon(for pid: pid_t) -> (pid_t, String, NSImage) {
         let owner = ResponsibleProcess.owner(of: pid)
+        if let cached = ownerCache[owner] { return (owner, cached.name, cached.icon) }
         let name = ResponsibleProcess.displayName(pid: owner, fallback: "pid \(owner)")
-        if let cached = iconCache[owner] { return (owner, name, cached) }
         let icon =
             NSRunningApplication(processIdentifier: owner)?.icon
             ?? NSWorkspace.shared.icon(for: .unixExecutable)
-        iconCache[owner] = icon
+        ownerCache[owner] = (name, icon)
         return (owner, name, icon)
     }
 
@@ -277,21 +389,27 @@ final class ProcessMonitor: ObservableObject {
     // MARK: - Network via nettop
 
     private func sampleNetwork() {
-        // -d -L 2: the first sample is lifetime totals, the second is the
-        // per-second delta we want.
-        let arguments = ["-P", "-d", "-t", "external", "-J", "bytes_in,bytes_out", "-L", "2", "-s", "1"]
-        guard let output = Subprocess.run("/usr/bin/nettop", arguments: arguments, timeout: 10), output.succeeded
-        else { return }
-        let rows = Self.parseNettop(output.text).map { sample in
-            let (owner, name, icon) = ownerNameAndIcon(for: sample.pid)
-            return ProcessRow(
-                pid: owner, name: name, icon: icon,
-                value: sample.bytesIn + sample.bytesOut,
-                downBps: sample.bytesIn, upBps: sample.bytesOut)
-        }
-        let grouped = Self.grouped(rows)
-        DispatchQueue.main.async {
-            self.topNetwork = Array(grouped.prefix(Self.networkLimit))
+        let generation = networkGeneration
+        workQueue.async { [weak self] in
+            guard let self else { return }
+            // -d -L 2: the first sample is lifetime totals, the second is the
+            // per-second delta we want.
+            let arguments = ["-P", "-d", "-t", "external", "-J", "bytes_in,bytes_out", "-L", "2", "-s", "1"]
+            guard let output = Subprocess.run("/usr/bin/nettop", arguments: arguments, timeout: 10), output.succeeded
+            else { return }
+            let rows = Self.parseNettop(output.text).map { sample in
+                let (owner, name, icon) = self.ownerNameAndIcon(for: sample.pid)
+                return ProcessRow(
+                    pid: owner, name: name, icon: icon,
+                    value: sample.bytesIn + sample.bytesOut,
+                    downBps: sample.bytesIn, upBps: sample.bytesOut)
+            }
+            let grouped = Self.grouped(rows)
+            DispatchQueue.main.async {
+                guard generation == self.networkGeneration else { return }
+                self.topNetwork = Array(grouped.prefix(Self.networkLimit))
+                self.hasNetworkSamples = true
+            }
         }
     }
 

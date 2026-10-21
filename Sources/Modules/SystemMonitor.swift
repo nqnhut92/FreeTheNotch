@@ -101,6 +101,11 @@ final class SystemMonitor: ObservableObject {
     }
 
     private var timer: Timer?
+    private static let sampleInterval: TimeInterval = 2
+    /// Lets the system coalesce the wake-up with others.
+    private static let sampleTolerance: TimeInterval = 0.5
+    /// Temperatures are read only while something shows them.
+    private var temperatureDemand = SamplingDemand<TemperatureClient>()
     private var lastSample = NetworkSample()
     /// `mach_host_self()` adds a send right on every call; one is kept for
     /// the monitor's lifetime instead of leaking one per sample.
@@ -124,13 +129,22 @@ final class SystemMonitor: ObservableObject {
     /// Owned by the lock-screen manager; kept here so previews share it.
     let weather = WeatherService()
 
+    /// What shows temperatures, so they are read only while one of these is
+    /// on screen.
+    enum TemperatureClient: Hashable {
+        /// The System or Power tab of a Side Notch or menu bar popover.
+        case panel
+        /// The battery strip on the notch's Home page.
+        case batteryStrip
+    }
+
     init() {
         refreshBatteryPower()
         refreshBattery()
         refreshBatteryDetails()
         weather.refresh()
         discoverSMCKeys()
-        timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: Self.sampleInterval, repeats: true) { [weak self] _ in
             guard let self else { return }
             // Power first: refreshBattery reads isOnACPower.
             self.refreshBatteryPower()
@@ -141,9 +155,20 @@ final class SystemMonitor: ObservableObject {
             self.refreshMemory()
             self.refreshGPU()
             self.refreshNetwork()
-            self.refreshSMC()
+            self.refreshSystemPower()
+            if self.temperatureDemand.isActive { self.refreshTemperatures() }
             self.uptimeSeconds = SystemMonitor.wallClockUptime()
         }
+        timer.tolerance = Self.sampleTolerance
+        RunLoop.main.add(timer, forMode: .common)
+        self.timer = timer
+    }
+
+    /// Adds or removes `client`'s need for temperatures. They are read at
+    /// once when the first client arrives. Main thread only.
+    func setTemperaturesNeeded(_ isNeeded: Bool, by client: TemperatureClient) {
+        guard temperatureDemand.set(isNeeded, by: client), temperatureDemand.isActive else { return }
+        refreshTemperatures()
     }
 
     deinit {
@@ -405,7 +430,8 @@ extension SystemMonitor {
         }
     }
 
-    private func refreshSMC() {
+    /// CPU, GPU and battery temperatures: dozens of SMC keys per read.
+    private func refreshTemperatures() {
         guard let sensors = smcSensors else { return }
         let smc = sensors.client
         // Vorssaint: the hottest verified core sensor of this chip; the other
@@ -416,6 +442,13 @@ extension SystemMonitor {
             ?? Self.maxChip(sensors.cpuFallbackKeys.map { smc.readValue($0) })
         gpuTemperature = Self.maxChip(sensors.gpuKeys.map { smc.readValue($0) })
         batteryTemperature = Self.maxValid(sensors.batteryKeys.map { smc.readValue($0) })
+    }
+
+    /// System and adapter power: two SMC keys, sampled always so the power
+    /// graph has its history when the Power tab opens.
+    private func refreshSystemPower() {
+        guard let sensors = smcSensors else { return }
+        let smc = sensors.client
         if let key = sensors.systemPowerKey,
             let w = smc.readValue(key), (0...1000).contains(w)
         {

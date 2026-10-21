@@ -15,6 +15,8 @@ struct SkinSettingsSection: View {
 
     private var selected: IdleAnimation? { manager.animation(named: settings.idleAnimationName) }
 
+    private var previewMotion: SkinMotion { activeState == .inactive ? .still : .smooth }
+
     /// The size of the selected skin's pet (per animation for Custom).
     private var petScale: Binding<Double> {
         Binding(
@@ -38,6 +40,11 @@ struct SkinSettingsSection: View {
                 }
             }
             .padding(.top, 8)
+            SettingsFootnote(
+                "Skins animate all the time and use more energy than None. On battery or in Low Power Mode, "
+                    + "they run at a lower frame rate and hold still after \(Int(SkinMotion.idleDelay)) seconds "
+                    + "without hover or music. Plugged in, they run at full smoothness. They always hold still "
+                    + "while the screen is locked or asleep.")
             if settings.notchSkin != .none {
                 SettingsCard {
                     if settings.notchSkin.pet != nil || settings.notchSkin == .custom {
@@ -138,7 +145,7 @@ struct SkinSettingsSection: View {
                         if let pet = previewPet(skin) {
                             SkinPetView(
                                 pet: pet, shapeSize: island, scale: 0.7 * settings.petScale(for: skin),
-                                speed: settings.idleAnimationSpeed
+                                speed: settings.idleAnimationSpeed, motion: previewMotion
                             )
                             .frame(width: island.width, height: island.height, alignment: .top)
                         }
@@ -147,8 +154,7 @@ struct SkinSettingsSection: View {
                             .frame(width: island.width, height: island.height)
                         if let decoration = skin.decoration {
                             SkinDecorationView(
-                                decoration: decoration, shapeSize: island,
-                                isPaused: activeState == .inactive)
+                                decoration: decoration, shapeSize: island, motion: previewMotion)
                         }
                     }
                 }

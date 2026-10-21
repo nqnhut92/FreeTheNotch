@@ -179,7 +179,7 @@ struct PanelPowerSection: View {
 
 // MARK: - Energy breakdown
 
-/// Collapsible "Apps using significant energy" list inside the charge block.
+/// Collapsible ranking of apps by energy use inside the charge block.
 private struct EnergyAppsBreakdown: View {
     @EnvironmentObject var processes: ProcessMonitor
     @State private var expanded = false
@@ -193,7 +193,7 @@ private struct EnergyAppsBreakdown: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 8, weight: .semibold))
                         .rotationEffect(.degrees(expanded ? 90 : 0))
-                    Text("Apps using significant energy")
+                    Text("Apps by energy use")
                     Spacer()
                 }
                 .contentShape(Rectangle())
@@ -201,7 +201,7 @@ private struct EnergyAppsBreakdown: View {
             .buttonStyle(.plain)
             if expanded {
                 if processes.topEnergy.isEmpty {
-                    Text(processes.hasSamples ? "No significant energy use" : "Measuring…")
+                    Text(processes.hasSamples ? "No apps using energy now" : "Measuring…")
                         .foregroundStyle(.panelTertiary)
                 } else {
                     ForEach(processes.topEnergy.prefix(15), id: \.name) { row in

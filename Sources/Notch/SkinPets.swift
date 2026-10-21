@@ -90,8 +90,23 @@ struct NotchSkinLayer: View {
 
     let part: Part
     let shapeSize: CGSize
+    /// The island is hovered or open.
+    var isEngaged = false
+    /// False while the screen is locked or asleep.
+    var isOnScreen = true
     @EnvironmentObject var settings: SettingsStore
     @EnvironmentObject var media: MediaRemoteAdapter
+    @EnvironmentObject var power: BatteryHUDController
+    /// Set `SkinMotion.idleDelay` after the island was last active.
+    @State private var hasIdled = false
+
+    private var isActive: Bool { isEngaged || danceBPM != nil }
+
+    private var motion: SkinMotion {
+        SkinMotion.resolve(
+            isNotchVisible: isOnScreen, isOnBattery: power.isOnBattery,
+            isLowPowerMode: power.isInLowPowerMode, isActive: isActive, hasIdled: hasIdled)
+    }
 
     /// Tempo the pet dances to while music plays: the track's BPM from Music
     /// when it has one, else a typical pop tempo. There is no audio tap, so
@@ -109,17 +124,31 @@ struct NotchSkinLayer: View {
                     SkinPetView(
                         pet: pet, shapeSize: shapeSize,
                         scale: settings.petScale(for: settings.notchSkin), speed: settings.idleAnimationSpeed,
-                        danceBPM: danceBPM)
+                        danceBPM: danceBPM, motion: motion)
                 }
             case .aboveIsland:
                 if let decoration = settings.notchSkin.decoration {
-                    SkinDecorationView(decoration: decoration, shapeSize: shapeSize)
+                    SkinDecorationView(decoration: decoration, shapeSize: shapeSize, motion: motion)
                 }
             }
         }
         .frame(width: shapeSize.width, height: shapeSize.height, alignment: .top)
         .allowsHitTesting(false)
         .transition(.opacity)
+        .task(id: isActive) { await trackIdle() }
+    }
+
+    /// Counts the idle delay down from the moment the island stops being
+    /// active; any activity restarts it.
+    private func trackIdle() async {
+        hasIdled = false
+        guard !isActive else { return }
+        do {
+            try await Task.sleep(for: .seconds(SkinMotion.idleDelay))
+            hasIdled = true
+        } catch {
+            // Cancelled: the island became active again.
+        }
     }
 
     private var resolvedPet: SkinPet? {
@@ -143,35 +172,44 @@ struct SkinPetView: View {
     var speed: Double = 1
     /// Set while music plays: the pet bobs and nods on every beat.
     var danceBPM: Double?
+    var motion: SkinMotion = .smooth
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var petWidth: CGFloat { pet.width * scale }
 
-    /// Beats since the reference date (fractional).
-    private func beats(_ t: Double) -> Double { t * (danceBPM ?? 0) / 60 }
+    /// Idle: a lazy sway. Music: one swing per beat, wider.
+    private var swingCurve: SkinMotionCurve? {
+        guard !reduceMotion else { return nil }
+        return danceBPM.map { .beatSwing(bpm: $0) } ?? .sway
+    }
+
+    /// Bob and nod on every beat while music plays.
+    private var danceCurve: SkinMotionCurve? {
+        guard !reduceMotion, let danceBPM else { return nil }
+        return .beatDance(bpm: danceBPM, amount: scale)
+    }
 
     var body: some View {
         let x = shapeSize.width * pet.xFraction - shapeSize.width / 2
+        let isPlaying = !motion.isStill
         Group {
             switch pet.placement {
             case .peekUpsideDown:
                 let h = CroppedLottie.height(for: pet, width: petWidth)
-                CroppedLottie(pet: pet, width: petWidth, speed: speed)
-                    .rotationEffect(.degrees(180))
-                    .modifier(BeatDance(bpm: reduceMotion ? nil : danceBPM, amount: scale))
-                    .offset(x: x, y: shapeSize.height - h * pet.tuck)
+                CoreAnimationMotion(curve: danceCurve, frameRate: motion.danceFrameRate, isPaused: motion.isStill) {
+                    CroppedLottie(pet: pet, width: petWidth, speed: speed, isPlaying: isPlaying)
+                        .rotationEffect(.degrees(180))
+                }
+                .offset(x: x, y: shapeSize.height - h * pet.tuck)
             case .dangle:
-                CroppedLottie(pet: pet, width: petWidth, speed: speed)
-                    .modifier(BeatDance(bpm: reduceMotion ? nil : danceBPM, amount: scale))
-                    .offset(x: x, y: shapeSize.height - 2 + pet.gap * scale)
+                CoreAnimationMotion(curve: danceCurve, frameRate: motion.danceFrameRate, isPaused: motion.isStill) {
+                    CroppedLottie(pet: pet, width: petWidth, speed: speed, isPlaying: isPlaying)
+                }
+                .offset(x: x, y: shapeSize.height - 2 + pet.gap * scale)
             case .swing:
-                TimelineView(.animation(minimumInterval: 1 / 30, paused: reduceMotion)) { context in
-                    let t = context.date.timeIntervalSinceReferenceDate
-                    // Idle: a lazy sway. Music: one swing per beat, wider.
-                    let angle = danceBPM == nil ? sin(t * 1.7) * 7 : sin(beats(t) * .pi) * 12
-                    swing
-                        .rotationEffect(.degrees(reduceMotion ? 0 : angle), anchor: .top)
+                CoreAnimationMotion(curve: swingCurve, frameRate: motion.frameRate, isPaused: motion.isStill) {
+                    swing(isPlaying: isPlaying)
                 }
                 .offset(x: x, y: shapeSize.height - 4)
             }
@@ -180,7 +218,7 @@ struct SkinPetView: View {
     }
 
     /// Two ropes from under the island, a plank, and the pet sitting on it.
-    private var swing: some View {
+    private func swing(isPlaying: Bool) -> some View {
         let ropeLength = 18 * scale
         let petHeight = CroppedLottie.height(for: pet, width: petWidth)
         let plankWidth = petWidth * 1.05
@@ -192,7 +230,7 @@ struct SkinPetView: View {
             }
             .frame(width: plankWidth - 6)
             .overlay(alignment: .bottom) {
-                CroppedLottie(pet: pet, width: petWidth, speed: speed)
+                CroppedLottie(pet: pet, width: petWidth, speed: speed, isPlaying: isPlaying)
                     .padding(.bottom, -petHeight * 0.07)
             }
             RoundedRectangle(cornerRadius: 2.5, style: .continuous)
@@ -216,38 +254,20 @@ struct SkinPetView: View {
     }
 }
 
-/// Bob down and nod side to side on every beat, hanging from the top edge
-/// (the island). Off when `bpm` is nil.
-private struct BeatDance: ViewModifier {
-    let bpm: Double?
-    var amount: Double = 1
-
-    func body(content: Content) -> some View {
-        if let bpm {
-            TimelineView(.animation(minimumInterval: 1 / 60)) { context in
-                let beats = context.date.timeIntervalSinceReferenceDate * bpm / 60
-                // 0 on the beat, 1 halfway: a sharp drop on each beat.
-                let hop = abs(sin(beats * .pi))
-                content
-                    .scaleEffect(x: 1 - 0.04 * hop, y: 1 + 0.08 * hop, anchor: .top)
-                    .rotationEffect(.degrees(sin(beats * .pi) * 6), anchor: .top)
-                    .offset(y: CGFloat(hop) * 3 * amount)
-            }
-            .transition(.identity)
-        } else {
-            content
-        }
-    }
-}
-
 /// Lottie view that shows only the drawing's part of the canvas, so the pet
 /// fills its frame instead of floating in empty space.
 struct CroppedLottie: View {
     let pet: SkinPet
     let width: CGFloat
     var speed: Double = 1
+    var isPlaying = true
 
     @ObservedObject private var manager = IdleAnimationManager.shared
+
+    /// Loops while playing; paused, it holds the current frame.
+    private var playbackMode: LottiePlaybackMode {
+        isPlaying ? .playing(.fromProgress(nil, toProgress: 1, loopMode: .loop)) : .paused(at: .currentFrame)
+    }
 
     static func canvasAspect(_ name: String) -> CGFloat {
         IdleAnimationManager.shared.canvasAspect(named: name)
@@ -265,7 +285,7 @@ struct CroppedLottie: View {
         let height = fullHeight * pet.crop.height
         if let anim = manager.animations.first(where: { $0.name == pet.animationName }) {
             LottieView(animation: .filepath(anim.url.path))
-                .playing(loopMode: .loop)
+                .playbackMode(playbackMode)
                 .animationSpeed(speed)
                 .resizable()
                 .frame(width: fullWidth, height: fullHeight)

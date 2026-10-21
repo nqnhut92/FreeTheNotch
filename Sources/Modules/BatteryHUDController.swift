@@ -30,7 +30,9 @@ final class BatteryHUDController: ObservableObject {
     @Published private(set) var level: Float = 0
     @Published private(set) var isPluggedIn = false
     @Published private(set) var isCharging = false
-    private(set) var isInLowPowerMode = false
+    @Published private(set) var isInLowPowerMode = false
+    /// Running on the internal battery. False on a Mac without one.
+    @Published private(set) var isOnBattery = false
 
     private weak var settings: SettingsStore?
     private var source: CFRunLoopSource?
@@ -42,6 +44,7 @@ final class BatteryHUDController: ObservableObject {
             level = info.level
             isPluggedIn = info.isPluggedIn
             isCharging = info.isCharging
+            isOnBattery = !info.isPluggedIn
         }
         isInLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
 
@@ -78,6 +81,7 @@ final class BatteryHUDController: ObservableObject {
         let wasPluggedIn = isPluggedIn
         isPluggedIn = info.isPluggedIn
         isCharging = info.isCharging
+        isOnBattery = !info.isPluggedIn
         if !wasPluggedIn && isPluggedIn {
             present(.charging)
         }

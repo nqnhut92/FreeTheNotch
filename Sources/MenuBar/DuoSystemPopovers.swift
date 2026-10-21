@@ -12,10 +12,6 @@ struct DuoBatteryPopover: View {
     @ObservedObject var energy: EnergyModeController
     let onClose: () -> Void
 
-    /// CPU + GPU share (% of one core) above which an app counts as using
-    /// significant energy.
-    private static let significantEnergy: Double = 20
-
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Battery")
@@ -108,9 +104,8 @@ struct DuoBatteryPopover: View {
         return nil
     }
 
-    private var significantApps: [ProcessRow] {
-        Array(processes.topEnergy.filter { $0.value >= Self.significantEnergy }.prefix(5))
-    }
+    /// Join and leave thresholds: `SignificantEnergyFilter`.
+    private var significantApps: [ProcessRow] { processes.significantEnergy }
 
     private static func duration(_ minutes: Int) -> String {
         "\(minutes / 60):" + String(format: "%02d", minutes % 60)

@@ -19,17 +19,12 @@ import SwiftUI
 /// while Settings → Side Notch → Show Side Notch is on.
 @MainActor
 final class SideNotchWindowController: NSObject, NSPopoverDelegate {
-    /// One popover per cell.
-    private enum PopoverKind: String {
-        case duo, bluetooth, keepAwake, system, network, disk, power, panel
-
-        var tab: MenuBarPanelView.PanelTab? {
-            MenuBarPanelView.PanelTab(rawValue: rawValue)
-        }
-    }
+    private typealias PopoverKind = SideNotchPopoverKind
 
     private weak var services: AppDelegate?
     private var panels: [NSPanel] = []
+    /// Popovers that are open or closing. A closed popover is dropped with
+    /// its content, so nothing hidden keeps observing the monitors.
     private var popovers: [PopoverKind: NSPopover] = [:]
     private var shownKind: PopoverKind?
     private weak var popoverAnchor: NSView?
@@ -43,6 +38,7 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
     private let energy = EnergyModeController()
     private let duoState = DuoGlyphPopoverState()
     private let panelPlacement = PanelPlacement()
+    private let panelMemory = PanelMemory()
     /// `.transient` alone does not close a popover of an agent app that
     /// was never activated, nor on clicks in our own other windows.
     private let outsideClicks = OutsideClickMonitor()
@@ -72,6 +68,13 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
             .dropFirst()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in self?.rebuildPanels() }
+            .store(in: &cancellables)
+        // The full panel's tab decides what it samples.
+        panelMemory.$tab
+            .removeDuplicates()
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.updateSampling() }
             .store(in: &cancellables)
         NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)
             .sink { [weak self] _ in self?.closePopovers() }
@@ -212,7 +215,11 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
             // don't reopen it.
             return
         }
-        guard let popover = popovers[kind].map(Self.freshPopover(replacing:)) ?? makePopover(kind) else { return }
+        // Always a new popover: a reused popover's window reaches the screen
+        // only after the open animation, so key would stay on the notch's
+        // `KeyablePanel` and the cup panel would show the inactive look
+        // (grey switches, pale glass); a new popover's window does not.
+        guard let popover = makePopover(kind) else { return }
         popovers[kind] = popover
         shownKind = kind
         popoverAnchor = anchor
@@ -244,6 +251,18 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
         case .bluetooth: services?.bluetooth.refresh()
         default: break
         }
+        updateSampling()
+    }
+
+    /// Samples what the open popovers show, and nothing for closed ones
+    /// (Vorssaint's `releasePanelResources()` in `popoverDidClose`).
+    private func updateSampling() {
+        guard let services else { return }
+        let needs = PopoverKind.samplingNeeds(
+            shown: popovers.filter { $0.value.isShown }.keys, panelTab: panelMemory.tab)
+        services.processes.setSampling(processes: needs.contains(.processes), network: needs.contains(.network))
+        services.system.setTemperaturesNeeded(needs.contains(.temperatures), by: .panel)
+        services.disks.setVolumeSampling(needs.contains(.disks))
     }
 
     /// Fresh data for the DuoGlyph tab about to show.
@@ -258,24 +277,6 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
     private func closePopovers() {
         outsideClicks.stop()
         for popover in popovers.values where popover.isShown { popover.close() }
-    }
-
-    /// A new NSPopover around the same content (its SwiftUI state, such as
-    /// the panel's tab, survives). A reused popover's window reaches the
-    /// screen only after the open animation, so key would stay on the
-    /// notch's `KeyablePanel` and the cup panel would show the inactive look
-    /// (grey switches, pale glass); a new popover's window does not.
-    private static func freshPopover(replacing old: NSPopover) -> NSPopover {
-        let popover = NSPopover()
-        popover.appearance = old.appearance
-        popover.behavior = old.behavior
-        popover.animates = old.animates
-        popover.delegate = old.delegate
-        if #available(macOS 26.0, *) { popover.hasFullSizeContent = old.hasFullSizeContent }
-        let content = old.contentViewController
-        old.contentViewController = nil
-        popover.contentViewController = content
-        return popover
     }
 
     private func makePopover(_ kind: PopoverKind) -> NSPopover? {
@@ -310,7 +311,8 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
                 .environmentObject(services.speedTest)
                 .environmentObject(services.keepAwake)
                 .environmentObject(services.cleaning)
-                .environmentObject(panelPlacement))
+                .environmentObject(panelPlacement)
+                .environmentObject(panelMemory))
             // Closed by us (outside clicks, including the Settings window).
             // The panel's surface reaches the arrow.
             popover.behavior = .applicationDefined
@@ -322,8 +324,8 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
         return popover
     }
 
-    /// Safety net for `freshPopover`: key it once it is up if `makeKey()`
-    /// in `togglePopover` did not take.
+    /// Safety net: key the popover once it is up if `makeKey()` in
+    /// `togglePopover` did not take.
     func popoverDidShow(_ notification: Notification) {
         guard let popover = notification.object as? NSPopover,
             let window = popover.contentViewController?.view.window, !window.isKeyWindow
@@ -332,15 +334,19 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
     }
 
     func popoverDidClose(_ notification: Notification) {
-        guard let popover = notification.object as? NSPopover,
-            let kind = popovers.first(where: { $0.value === popover })?.key
-        else { return }
-        lastClosed = (kind, Date())
-        if popovers.values.allSatisfy({ !$0.isShown }) { outsideClicks.stop() }
-        // The panel view is reused between opens; reset its tab while hidden.
-        if kind == .panel, services?.settings.rememberLastTab == false {
-            NotificationCenter.default.post(name: MenuBarPanelView.resetTabNotification, object: nil)
+        guard let popover = notification.object as? NSPopover else { return }
+        // Tear the SwiftUI tree down: kept, it would re-render on every
+        // monitor update while hidden, and its onDisappear would never run.
+        popover.contentViewController = nil
+        if let kind = popovers.first(where: { $0.value === popover })?.key {
+            popovers[kind] = nil
+            lastClosed = (kind, Date())
+            if kind == .panel, services?.settings.rememberLastTab == false {
+                panelMemory.tab = MenuBarPanelTab.allCases[0]
+            }
         }
+        if popovers.values.allSatisfy({ !$0.isShown }) { outsideClicks.stop() }
+        updateSampling()
     }
 }
 

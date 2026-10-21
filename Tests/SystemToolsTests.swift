@@ -52,6 +52,29 @@ struct DiskMonitorTests {
     func physicalWholeDisk(_ identifier: String?, expected: String?) {
         #expect(DiskMonitor.physicalWholeDisk(identifier) == expected)
     }
+
+    /// System Settings → Storage on a 994.66 GB disk: 403.8 GB used,
+    /// 590.86 GB available, of which 241 GB is purgeable (raw free 349.86 GB).
+    /// Counting purgeable space as used would give 644.8 GB, 65 %.
+    @Test func purgeableSpaceCountsAsAvailableLikeSystemSettings() {
+        let space = DiskSpace(total: 994_660_000_000, available: 590_860_000_000, rawFree: 349_860_000_000)
+        #expect(space.used == 403_800_000_000)
+        #expect(space.available == 590_860_000_000)
+        #expect(space.purgeable == 241_000_000_000)
+    }
+
+    @Test func withoutARawFreeValueNothingIsPurgeable() {
+        let space = DiskSpace(total: 500, available: 200, rawFree: nil)
+        #expect(space == DiskSpace(total: 500, available: 200, rawFree: 200))
+        #expect(space.purgeable == 0)
+    }
+
+    /// The sealed system snapshot can report more free space than its size.
+    @Test func availableNeverExceedsTheTotal() {
+        let space = DiskSpace(total: 500, available: 800, rawFree: 800)
+        #expect(space.used == 0)
+        #expect(space.available == 500)
+    }
 }
 
 struct QRGeneratorTests {

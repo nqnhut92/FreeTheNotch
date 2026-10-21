@@ -24,6 +24,9 @@ struct BatteryStripView: View {
             .background(cardBackground)
         }
         .foregroundStyle(.white)
+        // The battery temperature is read only while something shows it.
+        .onAppear { system.setTemperaturesNeeded(true, by: .batteryStrip) }
+        .onDisappear { system.setTemperaturesNeeded(false, by: .batteryStrip) }
     }
 
     @ViewBuilder
