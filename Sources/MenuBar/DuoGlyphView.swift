@@ -2,7 +2,8 @@
 // UI/DuoGlyphView.swift (DuoArcShape, DuoRingGeometry) and
 // UI/DuoGlyphMetrics.swift (bottom-gap arc). Differences: the 5 dots are
 // output volume and sit on the ring's own circle, the battery number cuts
-// across the top of the ring, and the centre is the stock `wifi` symbol.
+// across the top of the ring, and the centre is the stock `wifi` symbol, or
+// a drawn `<···>` Ethernet mark while a cable is connected.
 
 import SwiftUI
 
@@ -19,6 +20,7 @@ struct DuoGlyphView: View {
             isCharging: battery.isCharging,
             isPluggedIn: battery.isPluggedIn,
             wifiBars: wifi.bars,
+            hasWiredLink: wifi.ethernetLabel != nil,
             volumeLevel: Double(volume.level),
             isMuted: volume.isMuted,
             scale: scale
@@ -36,6 +38,8 @@ struct DuoGlyphCanvas: View {
     var isPluggedIn = false
     /// 0 = Wi-Fi off or not associated (whole symbol dimmed), 1–3 = arcs lit.
     let wifiBars: Int
+    /// A wired link is up: the centre shows Ethernet instead of Wi-Fi.
+    var hasWiredLink = false
     let volumeLevel: Double
     let isMuted: Bool
     /// Drawn at this scale (vector), not stretched afterwards.
@@ -158,10 +162,8 @@ struct DuoGlyphCanvas: View {
                 .tag(SymbolID.plug)
         }
         .overlay {
-            // Wi-Fi: stock symbol, lit arcs follow the signal. An overlay
-            // view so its font size follows `scale`.
-            Image(systemName: "wifi", variableValue: Self.wifiVariableValue(bars: wifiBars))
-                .font(.system(size: 7.5 * scale, weight: .semibold))
+            // An overlay view so the symbol's size follows `scale`.
+            networkSymbol
                 .position(x: Self.center.x * scale, y: (Self.center.y + 0.5) * scale)
         }
         .frame(width: Self.size.width * scale, height: Self.size.height * scale)
@@ -170,6 +172,27 @@ struct DuoGlyphCanvas: View {
     }
 
     private enum SymbolID: Hashable { case bolt, plug }
+
+    private static let wifiPointSize: CGFloat = 7.5
+    private static let ethernetWidth: CGFloat = 9.5
+
+    private var network: NetworkSymbol {
+        NetworkSymbol(hasWiredLink: hasWiredLink, wifiBars: wifiBars)
+    }
+
+    @ViewBuilder private var networkSymbol: some View {
+        switch network {
+        case .ethernet:
+            EthernetSymbolShape()
+                .frame(
+                    width: Self.ethernetWidth * scale,
+                    height: Self.ethernetWidth / EthernetSymbolShape.aspectRatio * scale)
+        case .wifi(let bars):
+            // Stock symbol; the lit arcs follow the signal.
+            Image(systemName: "wifi", variableValue: Self.wifiVariableValue(bars: bars))
+                .font(.system(size: Self.wifiPointSize * scale, weight: .semibold))
+        }
+    }
 
     /// DuoBar's WiFiSignalLevel.symbolVariableValue. An exact 2/3 sits just
     /// under the symbol's second-layer threshold and would light only the dot.
@@ -186,8 +209,7 @@ struct DuoGlyphCanvas: View {
         let battery =
             "Battery \(batteryLevel) percent"
             + (isCharging ? ", charging" : isPluggedIn ? ", on power, not charging" : "")
-        let network = wifiBars > 0 ? "Wi-Fi \(wifiBars) of 3 bars" : "Wi-Fi not connected"
         let sound = isMuted ? "volume muted" : "volume \(Int((volumeLevel * 100).rounded())) percent"
-        return "\(battery), \(network), \(sound)"
+        return "\(battery), \(network.accessibilityDescription), \(sound)"
     }
 }

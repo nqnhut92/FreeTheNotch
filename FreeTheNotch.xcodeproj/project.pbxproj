@@ -115,6 +115,13 @@
 		F1E2D3C4B5A697887766552B /* SideNotchShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766552C /* SideNotchShape.swift */; };
 		F1E2D3C4B5A6978877665527 /* SideNotchWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665528 /* SideNotchWindowController.swift */; };
 		F1E2D3C4B5A6978877665525 /* DuoGlyphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665526 /* DuoGlyphView.swift */; };
+		F1E2D3C4B5A6978877665E46 /* NetworkSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E45 /* NetworkSymbol.swift */; };
+		F1E2D3C4B5A6978877665E47 /* NetworkSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E45 /* NetworkSymbol.swift */; };
+		F1E2D3C4B5A6978877665E49 /* CleaningUnlockCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E48 /* CleaningUnlockCounter.swift */; };
+		F1E2D3C4B5A6978877665E4A /* CleaningUnlockCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E48 /* CleaningUnlockCounter.swift */; };
+		F1E2D3C4B5A6978877665E4C /* EthernetSymbolShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E4B /* EthernetSymbolShape.swift */; };
+		F1E2D3C4B5A6978877665E4E /* NetworkSymbolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E4D /* NetworkSymbolTests.swift */; };
+		F1E2D3C4B5A6978877665E50 /* CleaningUnlockCounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E4F /* CleaningUnlockCounterTests.swift */; };
 		F1E2D3C4B5A697887766552D /* QuoteOfTheDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766552E /* QuoteOfTheDay.swift */; };
 		F1E2D3C4B5A6978877665523 /* WiFiMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665524 /* WiFiMonitor.swift */; };
 		C6D7E8F90A1B2C3D4E5F60718 /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E8F90A1B2C3D4E5F60718293 /* MenuBarIcon.swift */; };
@@ -368,6 +375,11 @@
 		F1E2D3C4B5A697887766552C /* SideNotchShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNotchShape.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665528 /* SideNotchWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNotchWindowController.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665526 /* DuoGlyphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuoGlyphView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E45 /* NetworkSymbol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSymbol.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E48 /* CleaningUnlockCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleaningUnlockCounter.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E4B /* EthernetSymbolShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EthernetSymbolShape.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E4D /* NetworkSymbolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSymbolTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E4F /* CleaningUnlockCounterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleaningUnlockCounterTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766552E /* QuoteOfTheDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteOfTheDay.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665524 /* WiFiMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiMonitor.swift; sourceTree = "<group>"; };
 		297C79BFBDABE898736A3566 /* SystemMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMonitor.swift; sourceTree = "<group>"; };
@@ -624,6 +636,8 @@
 				F1E2D3C4B5A6978877665837 /* NotchPageTests.swift */,
 				F1E2D3C4B5A6978877665748 /* SystemToolsTests.swift */,
 				F1E2D3C4B5A6978877665746 /* NetworkModuleTests.swift */,
+				F1E2D3C4B5A6978877665E4D /* NetworkSymbolTests.swift */,
+				F1E2D3C4B5A6978877665E4F /* CleaningUnlockCounterTests.swift */,
 				F1E2D3C4B5A6978877665744 /* QuoteTests.swift */,
 				F1E2D3C4B5A6978877665742 /* TimerStoreTests.swift */,
 				F1E2D3C4B5A6978877665740 /* PlaybackClockTests.swift */,
@@ -705,6 +719,7 @@
 				B1B2C3D4E5F60718293A4B0A /* PanelPowerSection.swift */,
 				F1E2D3C4B5A697887766552A /* DuoGlyphPopover.swift */,
 				F1E2D3C4B5A6978877665526 /* DuoGlyphView.swift */,
+				F1E2D3C4B5A6978877665E4B /* EthernetSymbolShape.swift */,
 				F1E2D3C4B5A6978877665E07 /* MenuBarPanelTab.swift */,
 			);
 			name = MenuBar;
@@ -823,6 +838,7 @@
 				6EAAC8D82F01B7210760474F /* BluetoothMonitor.swift */,
 				36E8B5359309CC6273931BDB /* KeepAwakeController.swift */,
 				2A0DF3DBE4D58FED8A728E7E /* CleaningModeController.swift */,
+				F1E2D3C4B5A6978877665E48 /* CleaningUnlockCounter.swift */,
 				CA0FA5F6B8A880627DF7FFE0 /* QRGenerator.swift */,
 				297C79BFBDABE898736A3566 /* SystemMonitor.swift */,
 				F893697B590481194F309FFE /* TimerStore.swift */,
@@ -837,6 +853,7 @@
 				F1E2D3C4B5A6978877665508 /* AudioRouteManager.swift */,
 				F1E2D3C4B5A6978877665502 /* BatteryHUDController.swift */,
 				F1E2D3C4B5A6978877665524 /* WiFiMonitor.swift */,
+				F1E2D3C4B5A6978877665E45 /* NetworkSymbol.swift */,
 				F1E2D3C4B5A697887766552E /* QuoteOfTheDay.swift */,
 				F1E2D3C4B5A697887766551A /* ScreenCaptureVisibility.swift */,
 				F1E2D3C4B5A6978877665512 /* CommandBarMath.swift */,
@@ -1028,6 +1045,10 @@
 				F1E2D3C4B5A6978877665802 /* NotchPage.swift in Sources */,
 				F1E2D3C4B5A6978877665749 /* SystemToolsTests.swift in Sources */,
 				F1E2D3C4B5A6978877665747 /* NetworkModuleTests.swift in Sources */,
+				F1E2D3C4B5A6978877665E4E /* NetworkSymbolTests.swift in Sources */,
+				F1E2D3C4B5A6978877665E50 /* CleaningUnlockCounterTests.swift in Sources */,
+				F1E2D3C4B5A6978877665E47 /* NetworkSymbol.swift in Sources */,
+				F1E2D3C4B5A6978877665E4A /* CleaningUnlockCounter.swift in Sources */,
 				F1E2D3C4B5A6978877665745 /* QuoteTests.swift in Sources */,
 				F1E2D3C4B5A6978877665743 /* TimerStoreTests.swift in Sources */,
 				F1E2D3C4B5A6978877665741 /* PlaybackClockTests.swift in Sources */,
@@ -1217,6 +1238,9 @@
 				F1E2D3C4B5A6978877665527 /* SideNotchWindowController.swift in Sources */,
 				F1E2D3C4B5A697887766552B /* SideNotchShape.swift in Sources */,
 				F1E2D3C4B5A6978877665525 /* DuoGlyphView.swift in Sources */,
+				F1E2D3C4B5A6978877665E46 /* NetworkSymbol.swift in Sources */,
+				F1E2D3C4B5A6978877665E49 /* CleaningUnlockCounter.swift in Sources */,
+				F1E2D3C4B5A6978877665E4C /* EthernetSymbolShape.swift in Sources */,
 				F1E2D3C4B5A6978877665523 /* WiFiMonitor.swift in Sources */,
 				F1E2D3C4B5A697887766552D /* QuoteOfTheDay.swift in Sources */,
 				2B70A3A4419F4FE020864D39 /* WeatherService.swift in Sources */,
@@ -1317,7 +1341,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1340,7 +1364,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

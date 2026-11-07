@@ -12,24 +12,37 @@ import os
 ///
 /// Exit: press Esc five times, or click the button on the overlay (only
 /// possible when the trackpad is not locked). No timeout.
+///
+/// Locking the trackpad: swallowing pointer events in the tap stops clicks,
+/// but not the cursor, which WindowServer moves before any tap sees the event.
+/// `CGAssociateMouseAndMouseCursorPosition` and `NSCursor.hide()` only act
+/// while this app is frontmost, which an accessory app is not by default, so
+/// the app activates itself for the duration, and every swallowed move also
+/// warps the cursor back to where it was parked, in case activation is refused.
 final class CleaningModeController: ObservableObject {
     @Published private(set) var isActive = false
     /// Consecutive Esc presses so far (0...unlockThreshold).
     @Published private(set) var unlockProgress = 0
     @Published private(set) var trackpadLocked = false
 
-    let unlockThreshold = 5
+    var unlockThreshold: Int { unlockCounter.threshold }
 
-    private static let escapeKeyCode: Int64 = 53
-    /// Vorssaint's 6s window: slow deliberate presses still count, five
-    /// isolated Esc hits spread across a long wipe do not.
-    private static let pressWindow: TimeInterval = 6.0
     private static let gestureRaw = UInt32(NSEvent.EventType.gesture.rawValue)
+    private static let pointerMoveTypes: Set<CGEventType> = [
+        .mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged,
+    ]
 
     private var windows: [NSWindow] = []
     private var tap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
-    private var lastEscTime: TimeInterval = 0
+    private var unlockCounter = CleaningUnlockCounter()
+    /// Where the cursor stays while the trackpad is locked (global display
+    /// coordinates, top-left origin).
+    private var parkedCursor: CGPoint?
+    private var isCursorHidden = false
+    /// Frontmost app before activating for the trackpad lock; gets focus back.
+    private var previousApp: NSRunningApplication?
+    private var activationObserver: NSObjectProtocol?
 
     func start(lockTrackpad: Bool) {
         guard !isActive else { return }
@@ -45,8 +58,11 @@ final class CleaningModeController: ObservableObject {
             Logger.modules.error("[FreeTheNotch] Cleaning mode: failed to create event tap")
             return
         }
+        unlockCounter.reset()
         unlockProgress = 0
         isActive = true
+        Logger.modules.notice(
+            "[FreeTheNotch] Cleaning mode on (trackpad locked: \(lockTrackpad ? 1 : 0, privacy: .public))")
 
         for screen in NSScreen.screens {
             let panel = NSPanel(
@@ -70,11 +86,49 @@ final class CleaningModeController: ObservableObject {
             windows.append(panel)
         }
 
-        if lockTrackpad {
-            NSCursor.hide()
-            // Freeze the cursor even if a movement slips past the tap.
-            CGAssociateMouseAndMouseCursorPosition(0)
+        if lockTrackpad { freezeCursor() }
+    }
+
+    private func freezeCursor() {
+        parkedCursor = CGEvent(source: nil)?.location
+        let current = NSRunningApplication.current
+        if let front = NSWorkspace.shared.frontmostApplication, front != current {
+            previousApp = front
         }
+        if NSApp.isActive {
+            detachCursor()
+        } else {
+            // Activation is asynchronous; hide once it has happened.
+            activationObserver = NotificationCenter.default.addObserver(
+                forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main
+            ) { [weak self] _ in
+                guard let self, self.isActive, self.trackpadLocked else { return }
+                self.detachCursor()
+            }
+            NSApp.activate()
+        }
+    }
+
+    /// Needs the app to be frontmost (see the type's comment).
+    private func detachCursor() {
+        if !isCursorHidden {
+            NSCursor.hide()
+            isCursorHidden = true
+        }
+        CGAssociateMouseAndMouseCursorPosition(0)
+    }
+
+    private func releaseCursor() {
+        if let activationObserver { NotificationCenter.default.removeObserver(activationObserver) }
+        activationObserver = nil
+        CGAssociateMouseAndMouseCursorPosition(1)
+        if isCursorHidden {
+            NSCursor.unhide()
+            isCursorHidden = false
+        }
+        parkedCursor = nil
+        previousApp?.activate()
+        previousApp = nil
     }
 
     @objc func stop() {
@@ -89,12 +143,10 @@ final class CleaningModeController: ObservableObject {
     private func finishStop() {
         guard isActive else { return }
         isActive = false
+        unlockCounter.reset()
         unlockProgress = 0
         removeTap()
-        if trackpadLocked {
-            CGAssociateMouseAndMouseCursorPosition(1)
-            NSCursor.unhide()
-        }
+        if trackpadLocked { releaseCursor() }
         trackpadLocked = false
         for window in windows { window.orderOut(nil) }
         windows.removeAll()
@@ -163,7 +215,10 @@ final class CleaningModeController: ObservableObject {
             return nil
         }
 
-        if type == .keyDown {
+        if Self.pointerMoveTypes.contains(type), let parkedCursor {
+            // Generates no event, so this cannot loop back into the tap.
+            CGWarpMouseCursorPosition(parkedCursor)
+        } else if type == .keyDown {
             let code = event.getIntegerValueField(.keyboardEventKeycode)
             let isRepeat = event.getIntegerValueField(.keyboardEventAutorepeat) != 0
             registerKeyDown(code: code, isRepeat: isRepeat)
@@ -175,18 +230,10 @@ final class CleaningModeController: ObservableObject {
     }
 
     private func registerKeyDown(code: Int64, isRepeat: Bool) {
-        guard !isRepeat else { return }
-        let now = ProcessInfo.processInfo.systemUptime
-        if code == Self.escapeKeyCode {
-            if unlockProgress > 0, now - lastEscTime > Self.pressWindow {
-                unlockProgress = 0
-            }
-            lastEscTime = now
-            unlockProgress += 1
-            if unlockProgress >= unlockThreshold { stop() }
-        } else {
-            unlockProgress = 0
-        }
+        let isUnlocked = unlockCounter.registerKeyDown(
+            code: code, isRepeat: isRepeat, at: ProcessInfo.processInfo.systemUptime)
+        if unlockProgress != unlockCounter.progress { unlockProgress = unlockCounter.progress }
+        if isUnlocked { stop() }
     }
 }
 

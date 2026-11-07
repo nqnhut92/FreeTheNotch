@@ -94,7 +94,7 @@ An optional black notch welded to the left or right edge of the screen, centred 
 **DuoGlyph** (top), which works like the iPhone's combined status indicator:
 
 - **Ring:** battery level, with the number across the top. Green, number and bolt included, while charging; a plug, and no colour, when on power but not charging (macOS "Charging On Hold": charge limit, Optimized Charging, or full); red below 20% on battery.
-- **Centre:** the Wi-Fi symbol. Lit arcs follow signal strength; dimmed when Wi-Fi is off or not connected.
+- **Centre:** the Wi-Fi symbol. Lit arcs follow signal strength; dimmed when Wi-Fi is off or not connected. While an Ethernet cable is connected it shows the macOS Ethernet mark `<···>` instead.
 - **Dots:** output volume, five dots of about 20% each. All dimmed when muted.
 
 **Bluetooth** (second): the Bluetooth logo, blue while Bluetooth is on and dimmed while it is off.
