@@ -4,6 +4,7 @@ A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and 
 
 - **Version:** 0.3.1
 - **Requires:** macOS 14 or later, Apple Silicon. Developed and tested on macOS 27.
+- **Interactive demo:** [freethenotch.nqnhut92.top](https://freethenotch.nqnhut92.top) ([web repo](https://github.com/nqnhut92/freethenotch-web))
 - **Docs:** [Screenshots](docs/GALLERY.md) · [Settings](docs/SETTINGS.md) · [Feature guide](docs/FEATURES.md) · [Technical Design](docs/TECHNICAL_DESIGN.md)
 
 ## Features
@@ -28,7 +29,7 @@ Music, calendar, reminders and device batteries together. Artwork and track deta
 
 ![Open notch with music controls, sample calendar event and reminder, and battery levels](docs/images/notch-home.png)
 
-Explore the [feature screenshots](docs/GALLERY.md) for AI Usage, tools, system monitoring, connectivity and lock-screen widgets, or the [Settings gallery](docs/SETTINGS.md) for configuration. Controls, permissions and limits are in the [feature guide](docs/FEATURES.md).
+Try the [interactive web demo](https://freethenotch.nqnhut92.top), or explore the [feature screenshots](docs/GALLERY.md) for AI Usage, tools, system monitoring, connectivity and lock-screen widgets, or the [Settings gallery](docs/SETTINGS.md) for configuration. Controls, permissions and limits are in the [feature guide](docs/FEATURES.md).
 
 Calendar, clipboard, settings and local AI logs stay on your Mac. FreeTheNotch has no account or telemetry service of its own. Some features use external services for weather, quotes, speed tests, AI quota and model prices; see [Privacy](docs/FEATURES.md#privacy).
 
