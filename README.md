@@ -6,7 +6,7 @@ A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and 
 - **Requires:** macOS 14 or later, Apple Silicon. Developed and tested on macOS 27.
 - **Interactive demo:** [freethenotch.nqnhut92.top](https://freethenotch.nqnhut92.top) ([web repo](https://github.com/nqnhut92/freethenotch-web))
 - **Docs:** [Screenshots](docs/GALLERY.md) · [Settings](docs/SETTINGS.md) · [Feature guide](docs/FEATURES.md) · [Technical Design](docs/TECHNICAL_DESIGN.md)
-- **Support:** [Ko-fi](https://ko-fi.com/nqnhut92)
+- **Support:** [Ko-fi](https://ko-fi.com/nqnhut92) · [Vietnam QR](https://freethenotch.nqnhut92.top/#support-vn)
 
 ## Features
 
@@ -73,6 +73,18 @@ FreeTheNotch builds on these open-source projects, under their licenses:
 - Pet animations from [LottieFiles](https://lottiefiles.com) (Lottie Simple License): Orange Cat Peeping by Kanika, Moody Dog and Reindeer by Bashir, Tiger Happy by Ludovic.
 
 ---
+
+## Support
+
+- **International:** [Support on Ko-fi](https://ko-fi.com/nqnhut92)
+- **Vietnam (MoMo / VietQR):**
+
+<details>
+<summary>Show MoMo / VietQR code (0% fee · scan with any Vietnamese banking app)</summary>
+
+<img src=".github/support-qr.png" alt="MoMo and VietQR code" width="240">
+
+</details>
 
 ## License
 
