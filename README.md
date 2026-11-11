@@ -6,6 +6,7 @@ A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and 
 - **Requires:** macOS 14 or later, Apple Silicon. Developed and tested on macOS 27.
 - **Interactive demo:** [freethenotch.nqnhut92.top](https://freethenotch.nqnhut92.top) ([web repo](https://github.com/nqnhut92/freethenotch-web))
 - **Docs:** [Screenshots](docs/GALLERY.md) · [Settings](docs/SETTINGS.md) · [Feature guide](docs/FEATURES.md) · [Technical Design](docs/TECHNICAL_DESIGN.md)
+- **Support:** [Ko-fi](https://ko-fi.com/nqnhut92)
 
 ## Features
 
