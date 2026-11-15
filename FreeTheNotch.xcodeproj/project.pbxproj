@@ -100,6 +100,8 @@
 		F1E2D3C4B5A697887766580E /* DockSide.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766580C /* DockSide.swift */; };
 		F1E2D3C4B5A697887766580D /* DockSide.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766580C /* DockSide.swift */; };
 		F1E2D3C4B5A697887766580B /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766580A /* WaveformView.swift */; };
+		F1E2D3C4B5A6978877665E65 /* KeyablePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E63 /* KeyablePanel.swift */; };
+		F1E2D3C4B5A6978877665E66 /* NotchHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E64 /* NotchHostingView.swift */; };
 		F1E2D3C4B5A6978877665809 /* NotchShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665807 /* NotchShape.swift */; };
 		F1E2D3C4B5A6978877665808 /* NotchShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665807 /* NotchShape.swift */; };
 		F1E2D3C4B5A6978877665806 /* NotchStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665805 /* NotchStyle.swift */; };
@@ -197,6 +199,17 @@
 		F1E2D3C4B5A697887766570D /* ClipboardHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766570C /* ClipboardHistory.swift */; };
 		F1E2D3C4B5A697887766570E /* ClipboardHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766570C /* ClipboardHistory.swift */; };
 		F1E2D3C4B5A6978877665710 /* DurationFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766570F /* DurationFormat.swift */; };
+		F1E2D3C4B5A6978877665E5D /* DeviceSyncActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E58 /* DeviceSyncActivity.swift */; };
+		F1E2D3C4B5A6978877665E6C /* DeviceSyncLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E69 /* DeviceSyncLog.swift */; };
+		F1E2D3C4B5A6978877665E6D /* DeviceSyncLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E69 /* DeviceSyncLog.swift */; };
+		F1E2D3C4B5A6978877665E6E /* DeviceSyncLogReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E6A /* DeviceSyncLogReader.swift */; };
+		F1E2D3C4B5A6978877665E6F /* DeviceSyncLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E6B /* DeviceSyncLogTests.swift */; };
+		F1E2D3C4B5A6978877665E5E /* DeviceSyncActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E58 /* DeviceSyncActivity.swift */; };
+		F1E2D3C4B5A6978877665E5F /* DeviceSyncMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E59 /* DeviceSyncMonitor.swift */; };
+		F1E2D3C4B5A6978877665E60 /* MobileDeviceNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E5A /* MobileDeviceNames.swift */; };
+		F1E2D3C4B5A6978877665E68 /* MobileDeviceConnections.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E67 /* MobileDeviceConnections.swift */; };
+		F1E2D3C4B5A6978877665E61 /* DeviceSyncCompactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E5B /* DeviceSyncCompactView.swift */; };
+		F1E2D3C4B5A6978877665E62 /* DeviceSyncActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E5C /* DeviceSyncActivityTests.swift */; };
 		F1E2D3C4B5A6978877665711 /* DurationFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766570F /* DurationFormat.swift */; };
 		F1E2D3C4B5A6978877665713 /* Quote.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665712 /* Quote.swift */; };
 		F1E2D3C4B5A6978877665714 /* Quote.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665712 /* Quote.swift */; };
@@ -367,6 +380,8 @@
 		F1E2D3C4B5A697887766580F /* SideNotchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNotchView.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766580C /* DockSide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockSide.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766580A /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E63 /* KeyablePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyablePanel.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E64 /* NotchHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchHostingView.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665807 /* NotchShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchShape.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665805 /* NotchStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchStyle.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665803 /* NotchPageIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPageIcon.swift; sourceTree = "<group>"; };
@@ -455,6 +470,15 @@
 		F1E2D3C4B5A6978877665709 /* BluetoothDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothDevice.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766570C /* ClipboardHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardHistory.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766570F /* DurationFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationFormat.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E58 /* DeviceSyncActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSyncActivity.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E69 /* DeviceSyncLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSyncLog.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E6A /* DeviceSyncLogReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSyncLogReader.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E6B /* DeviceSyncLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSyncLogTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E59 /* DeviceSyncMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSyncMonitor.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E5A /* MobileDeviceNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileDeviceNames.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E67 /* MobileDeviceConnections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileDeviceConnections.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E5B /* DeviceSyncCompactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSyncCompactView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E5C /* DeviceSyncActivityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSyncActivityTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665712 /* Quote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quote.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665715 /* PlaybackClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackClock.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665718 /* SystemSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettings.swift; sourceTree = "<group>"; };
@@ -625,6 +649,8 @@
 				F1E2D3C4B5A6978877665C15 /* AIQuotaAlertTests.swift */,
 				F1E2D3C4B5A6978877665D16 /* ClaudeProfileTests.swift */,
 				F1E2D3C4B5A6978877665B12 /* AIActivityTests.swift */,
+				F1E2D3C4B5A6978877665E5C /* DeviceSyncActivityTests.swift */,
+				F1E2D3C4B5A6978877665E6B /* DeviceSyncLogTests.swift */,
 				F1E2D3C4B5A6978877665944 /* LockPreviewGeometryTests.swift */,
 				F1E2D3C4B5A6978877665942 /* SettingsSupportTests.swift */,
 				F1E2D3C4B5A6978877665940 /* LockScreenFormatTests.swift */,
@@ -678,6 +704,9 @@
 				F1E2D3C4B5A697887766580F /* SideNotchView.swift */,
 				F1E2D3C4B5A697887766580C /* DockSide.swift */,
 				F1E2D3C4B5A697887766580A /* WaveformView.swift */,
+				F1E2D3C4B5A6978877665E63 /* KeyablePanel.swift */,
+				F1E2D3C4B5A6978877665E64 /* NotchHostingView.swift */,
+				F1E2D3C4B5A6978877665E5B /* DeviceSyncCompactView.swift */,
 				F1E2D3C4B5A6978877665807 /* NotchShape.swift */,
 				F1E2D3C4B5A6978877665805 /* NotchStyle.swift */,
 				F1E2D3C4B5A6978877665803 /* NotchPageIcon.swift */,
@@ -838,6 +867,12 @@
 				F1E2D3C4B5A6978877665715 /* PlaybackClock.swift */,
 				F1E2D3C4B5A6978877665712 /* Quote.swift */,
 				F1E2D3C4B5A697887766570F /* DurationFormat.swift */,
+				F1E2D3C4B5A6978877665E58 /* DeviceSyncActivity.swift */,
+				F1E2D3C4B5A6978877665E69 /* DeviceSyncLog.swift */,
+				F1E2D3C4B5A6978877665E6A /* DeviceSyncLogReader.swift */,
+				F1E2D3C4B5A6978877665E59 /* DeviceSyncMonitor.swift */,
+				F1E2D3C4B5A6978877665E5A /* MobileDeviceNames.swift */,
+				F1E2D3C4B5A6978877665E67 /* MobileDeviceConnections.swift */,
 				F1E2D3C4B5A697887766570C /* ClipboardHistory.swift */,
 				F1E2D3C4B5A6978877665709 /* BluetoothDevice.swift */,
 				F1E2D3C4B5A6978877665706 /* MaxCapacityProbe.swift */,
@@ -1086,6 +1121,10 @@
 				F1E2D3C4B5A6978877665717 /* PlaybackClock.swift in Sources */,
 				F1E2D3C4B5A6978877665714 /* Quote.swift in Sources */,
 				F1E2D3C4B5A6978877665711 /* DurationFormat.swift in Sources */,
+				F1E2D3C4B5A6978877665E5E /* DeviceSyncActivity.swift in Sources */,
+				F1E2D3C4B5A6978877665E6D /* DeviceSyncLog.swift in Sources */,
+				F1E2D3C4B5A6978877665E6F /* DeviceSyncLogTests.swift in Sources */,
+				F1E2D3C4B5A6978877665E62 /* DeviceSyncActivityTests.swift in Sources */,
 				F1E2D3C4B5A697887766570E /* ClipboardHistory.swift in Sources */,
 				F1E2D3C4B5A697887766570B /* BluetoothDevice.swift in Sources */,
 				F1E2D3C4B5A6978877665708 /* MaxCapacityProbe.swift in Sources */,
@@ -1183,6 +1222,8 @@
 				F1E2D3C4B5A6978877665810 /* SideNotchView.swift in Sources */,
 				F1E2D3C4B5A697887766580D /* DockSide.swift in Sources */,
 				F1E2D3C4B5A697887766580B /* WaveformView.swift in Sources */,
+				F1E2D3C4B5A6978877665E65 /* KeyablePanel.swift in Sources */,
+				F1E2D3C4B5A6978877665E66 /* NotchHostingView.swift in Sources */,
 				F1E2D3C4B5A6978877665808 /* NotchShape.swift in Sources */,
 				F1E2D3C4B5A6978877665806 /* NotchStyle.swift in Sources */,
 				F1E2D3C4B5A6978877665804 /* NotchPageIcon.swift in Sources */,
@@ -1199,6 +1240,13 @@
 				F1E2D3C4B5A6978877665716 /* PlaybackClock.swift in Sources */,
 				F1E2D3C4B5A6978877665713 /* Quote.swift in Sources */,
 				F1E2D3C4B5A6978877665710 /* DurationFormat.swift in Sources */,
+				F1E2D3C4B5A6978877665E5D /* DeviceSyncActivity.swift in Sources */,
+				F1E2D3C4B5A6978877665E6C /* DeviceSyncLog.swift in Sources */,
+				F1E2D3C4B5A6978877665E6E /* DeviceSyncLogReader.swift in Sources */,
+				F1E2D3C4B5A6978877665E5F /* DeviceSyncMonitor.swift in Sources */,
+				F1E2D3C4B5A6978877665E60 /* MobileDeviceNames.swift in Sources */,
+				F1E2D3C4B5A6978877665E68 /* MobileDeviceConnections.swift in Sources */,
+				F1E2D3C4B5A6978877665E61 /* DeviceSyncCompactView.swift in Sources */,
 				F1E2D3C4B5A697887766570D /* ClipboardHistory.swift in Sources */,
 				F1E2D3C4B5A697887766570A /* BluetoothDevice.swift in Sources */,
 				F1E2D3C4B5A6978877665707 /* MaxCapacityProbe.swift in Sources */,
@@ -1355,7 +1403,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1378,7 +1426,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

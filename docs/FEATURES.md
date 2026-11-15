@@ -2,7 +2,7 @@
 
 Detailed feature guide and settings reference. For installation and a quick overview, see the [README](../README.md). Implementation details are in [Technical Design](TECHNICAL_DESIGN.md).
 
-- **Version:** 1.0.0 (2026-11-15)
+- **Version:** 1.1.0 (2026-11-15)
 
 [Notch](#notch) · [AI Usage](#ai-usage) · [System panel](#system-panel) · [Side Notch](#side-notch) · [Lock screen](#lock-screen) · [Mouse scrolling](#mouse-scrolling) · [Privacy](#privacy) · [Permissions](#permissions) · [Settings](#settings) · [Known limits](#known-limits)
 
@@ -17,6 +17,7 @@ Hover the notch to open it, move away to close it. The closed island hugs the ca
 | Now Playing | Artwork on the left, waveform tinted to the artwork on the right |
 | Timer | Timer icon on the left, countdown and progress bar on the right |
 | Caps Lock | ⇪ indicator while Caps Lock is on |
+| Device sync | While an iPhone or iPad syncs with the Mac (cable or Wi-Fi): its name on the left, a turning sync icon on the right. While several devices sync at once it says Syncing 2 devices, and goes back to a name when one is left |
 | Volume / keyboard backlight | Replaces the macOS bezel with a ring HUD in the island |
 | Battery | Charging, low battery (with sound) and fully charged animations |
 | Bluetooth | A drop-down card when a device connects |
@@ -137,7 +138,7 @@ Open **Settings → Utilities → Mouse Scrolling** and turn on Smooth scrolling
 
 ## Privacy
 
-FreeTheNotch has no account or telemetry service of its own and does not run AI models. By default the notch, Side Notch, system panel and lock-screen widgets are hidden from screenshots, screen recordings and screen sharing. Calendar, reminders, clipboard and settings stay on this Mac. Network calls: Open-Meteo for weather and air quality, Cloudflare for a speed test you start, zenquotes.io when Quote of the Day uses the online source, and quota from OpenAI/Anthropic once a minute for enabled AI Usage providers, plus public OpenRouter prices at most daily. Claude Desktop quota can instead come from its local usage cache. AI Usage reads existing local login credentials and token counters; conversation text and local logs are never uploaded.
+FreeTheNotch has no account or telemetry service of its own and does not run AI models. By default the notch, Side Notch, system panel and lock-screen widgets are hidden from screenshots, screen recordings and screen sharing. Calendar, reminders, clipboard and settings stay on this Mac. Network calls: Open-Meteo for weather and air quality, Cloudflare for a speed test you start, zenquotes.io when Quote of the Day uses the online source, and quota from OpenAI/Anthropic once a minute for enabled AI Usage providers, plus public OpenRouter prices at most daily. Claude Desktop quota can instead come from its local usage cache. AI Usage reads existing local login credentials and token counters; conversation text and local logs are never uploaded. While an iPhone or iPad syncs, the device-sync activity reads the macOS sync service's own log lines that say which device started or finished; they are used to show the name and are not stored.
 
 ## Permissions
 
@@ -162,7 +163,7 @@ Open Settings from the gear in the open notch, from the system panel, or from th
 | General | Launch at login, which displays show the notch, hide in full screen, hover delay, remember last tab, hide from screen sharing |
 | Appearance | Liquid Glass, lunar date, notch tab order (drag ≡, Reset order), battery strip, Quote of the Day (source, interval) |
 | Skins | Skin picker with live previews, pet size (Custom remembers a size for each animation, up to 2.5×) and speed, Custom skin's animation (pick, import/delete your own Lottie files), hide while the notch is open |
-| Live Activities | Now Playing, Caps Lock, Bluetooth pop-up, AI session status and previews |
+| Live Activities | Now Playing, Caps Lock, Bluetooth pop-up, device sync, AI session status and previews |
 | Clipboard | History on/off, maximum items (5/10/25/50), retention |
 | AI Usage | Codex/Claude switches, account status, refresh/connect, session Live Activities and quota warnings |
 | HUD | Volume and keyboard-backlight HUD; power notifications (charging, low, full); AI quota warnings at 80%; low-battery threshold and sound; test buttons |

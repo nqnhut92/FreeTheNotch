@@ -32,6 +32,7 @@ struct SettingsStoreTests {
         #expect(store.lockArtworkWallpaper == false)
         #expect(store.lockMedia)
         #expect(store.hideInFullScreen)
+        #expect(store.deviceSyncEnabled)
         #expect(!store.hasPendingSave)
         #expect(suite.defaults.object(forKey: "ftn.hoverDelay") == nil)
     }
@@ -214,6 +215,7 @@ struct SettingsStoreTests {
         #expect(defaults.object(forKey: "ftn.sideNotchZoom") as? Double == 1)
         #expect(defaults.object(forKey: "ftn.lockArtworkWallpaper") as? Bool == false)
         #expect(defaults.object(forKey: "ftn.hideInFullScreen") as? Bool == true)
+        #expect(defaults.object(forKey: "ftn.deviceSyncEnabled") as? Bool == true)
         #expect(defaults.object(forKey: "ftn.idleAnimationName") as? String == "Orange Cat Peeping")
     }
 

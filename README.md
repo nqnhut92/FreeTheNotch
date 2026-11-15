@@ -2,7 +2,7 @@
 
 A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and widgets on the lock screen.
 
-- **Version:** 1.0.0
+- **Version:** 1.1.0
 - **Requires:** macOS 14 or later, Apple Silicon. Developed and tested on macOS 27.
 - **Interactive demo:** [freethenotch.nqnhut92.top](https://freethenotch.nqnhut92.top) ([web repo](https://github.com/nqnhut92/freethenotch-web))
 - **Docs:** [Screenshots](docs/GALLERY.md) · [Settings](docs/SETTINGS.md) · [Feature guide](docs/FEATURES.md) · [Technical Design](docs/TECHNICAL_DESIGN.md)
@@ -11,7 +11,7 @@ A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and 
 ## Features
 
 - **Notch:** media controls, calendar and reminders, clipboard history, timers, calculator and offline QR codes.
-- **Live activities:** Now Playing, timers, Caps Lock, volume, keyboard backlight, battery, Bluetooth and AI session status.
+- **Live activities:** Now Playing, timers, Caps Lock, volume, keyboard backlight, battery, Bluetooth, iPhone / iPad sync and AI session status.
 - **AI Usage:** Codex and Claude quota, reset times, local token totals, estimated API cost and quota warnings. Claude profiles made with [claude-multiprofile](https://github.com/jmdarre-v/claude-multiprofile) get their own row.
 - **System dashboard:** CPU/GPU, memory, network, disks, battery and Keep Awake.
 - **Side Notch:** optional screen-edge controls for Wi-Fi, sound, Bluetooth and the system dashboard. When enabled, either click on the menu bar icon opens quick actions; when disabled, left click opens the dashboard and right click opens quick actions.

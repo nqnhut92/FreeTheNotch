@@ -53,6 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let capsLock = CapsLockManager.shared
     let speedTest = SpeedTest()
     let fullScreenSpaces = FullScreenSpaceMonitor()
+    let deviceSync = DeviceSyncMonitor()
     lazy var aiUsage = AIUsageMonitor(settings: settings)
     lazy var aiActivities = AIActivityMonitor(settings: settings)
 
@@ -101,6 +102,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         media.startMonitoring()
         hud.start(settings: settings)
         batteryHUD.start(settings: settings)
+        deviceSync.configure(with: settings)
         ScreenCaptureVisibility.shared.start(settings: settings)
 
         NotificationCenter.default.addObserver(
@@ -160,6 +162,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         clipboard.handleAppQuit()
         clipboard.stopMonitoring()
         keepAwake.stop()
+        deviceSync.shutdown()
     }
 }
 
@@ -180,6 +183,7 @@ extension View {
             .environmentObject(services.smoothScroll)
             .environmentObject(services.aiUsage)
             .environmentObject(services.aiActivities)
+            .environmentObject(services.deviceSync)
             .environmentObject(services.system)
             .environmentObject(services.media)
             .environmentObject(services.timerStore)

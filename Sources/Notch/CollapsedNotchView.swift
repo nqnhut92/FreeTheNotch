@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Content inside the closed island (NotchRootView draws the shape so it can
 /// morph). One live activity at a time, by priority: HUD (volume/backlight)
-/// > AI quota warning > Caps Lock > AI session > media (playing) > timer. Idle stays empty.
+/// > AI quota warning > Caps Lock > device sync > AI session > media (playing) > timer. Idle stays empty.
 struct CollapsedNotchView: View {
     let screen: NSScreen
 
@@ -12,6 +12,7 @@ struct CollapsedNotchView: View {
     @EnvironmentObject var hud: HUDController
     @EnvironmentObject var capsLock: CapsLockManager
     @EnvironmentObject var aiActivities: AIActivityMonitor
+    @EnvironmentObject var deviceSync: DeviceSyncMonitor
 
     private var isNotch: Bool {
         DisplayGeometry.hasNotch(screen)
@@ -40,6 +41,10 @@ struct CollapsedNotchView: View {
                     .padding(.leading, 4)
                 Spacer()
             }
+        } else if settings.deviceSyncEnabled && deviceSync.isSyncing {
+            DeviceSyncCompactView(
+                label: deviceSync.label,
+                labelSlotWidth: DeviceSyncActivity.labelSlotWidth(labelWidth: deviceSync.labelWidth))
         } else if let activity = aiActivities.activities.first {
             AIActivityCompactView(activity: activity, count: aiActivities.activities.count)
         } else if settings.mediaEnabled && media.isPlaying {

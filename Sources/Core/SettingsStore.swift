@@ -121,6 +121,8 @@ final class SettingsStore: ObservableObject {
     @Published var clipboardEnabled = true
     @Published var capsLockEnabled = true
     @Published var bluetoothPopupEnabled = true
+    /// Live activity while an iPhone or iPad syncs with this Mac (DeviceSyncMonitor).
+    @Published var deviceSyncEnabled = true
 
     // MARK: Clipboard
     @Published var clipboardLimit = 25
@@ -198,6 +200,7 @@ final class SettingsStore: ObservableObject {
         PersistedSetting("mediaEnabled", \.mediaEnabled),
         PersistedSetting("clipboardEnabled", \.clipboardEnabled),
         PersistedSetting("capsLockEnabled", \.capsLockEnabled),
+        PersistedSetting("deviceSyncEnabled", \.deviceSyncEnabled),
         PersistedSetting("bluetoothPopupEnabled", \.bluetoothPopupEnabled),
         PersistedSetting("clipboardLimit", \.clipboardLimit),
         PersistedSetting("clipboardRetention", \.clipboardRetentionRaw),

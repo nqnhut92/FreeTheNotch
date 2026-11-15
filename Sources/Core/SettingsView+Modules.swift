@@ -15,11 +15,23 @@ extension SettingsView {
                     "Bluetooth popup", description: "Connection notification below the notch",
                     isOn: $settings.bluetoothPopupEnabled)
                 SettingsToggleRow(
+                    "Device sync",
+                    description:
+                        "The device's name and a turning sync icon while an iPhone or iPad syncs with this Mac",
+                    isOn: $settings.deviceSyncEnabled)
+                SettingsToggleRow(
                     "AI sessions", description: "Working, waiting and recently completed Codex / Claude Code turns",
                     isOn: $settings.aiLiveActivitiesEnabled, showDivider: false)
             }
             SettingsFootnote(
                 "Session state comes from local agent logs. Regular Claude Desktop chats do not expose this state.")
+            SettingsGroupHeader("Device Sync Test")
+            SettingsCard {
+                HUDTestRow(title: "Test device sync", icon: "arrow.triangle.2.circlepath", showDivider: false) {
+                    deviceSync.showTest()
+                }
+                .disabled(!settings.deviceSyncEnabled)
+            }
             SettingsGroupHeader("AI Session Tests")
             SettingsCard {
                 ForEach(settings.enabledAIUsageProviders) { provider in

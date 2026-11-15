@@ -20,6 +20,7 @@ struct NotchRootView: View {
     @EnvironmentObject var calendar: CalendarStore
     @EnvironmentObject var aiActivities: AIActivityMonitor
     @EnvironmentObject var aiUsage: AIUsageMonitor
+    @EnvironmentObject var deviceSync: DeviceSyncMonitor
 
     /// Atoll shows the battery HUD over the closed island only.
     private var batteryKind: BatteryHUDKind? {
@@ -70,6 +71,23 @@ struct NotchRootView: View {
             timerStore: timerStore, aiActivities: aiActivities)
     }
 
+    private var showingDeviceSync: Bool {
+        guard !hud.isHUDVisible, !panelState.isExpanded else { return false }
+        return Self.showsDeviceSync(settings: settings, capsLock: capsLock, deviceSync: deviceSync)
+    }
+
+    /// Whether the closed island shows the device-sync activity, which has
+    /// a width of its own (`DeviceSyncActivity.islandWidth`). Caps Lock
+    /// comes first; the sync comes before AI sessions, Now Playing and the
+    /// timer, because it is over in under a minute or two. The one source
+    /// for `CollapsedNotchView`, the shape and `applyHitSize`.
+    static func showsDeviceSync(
+        settings: SettingsStore, capsLock: CapsLockManager, deviceSync: DeviceSyncMonitor
+    ) -> Bool {
+        guard settings.deviceSyncEnabled, deviceSync.isSyncing else { return false }
+        return !(settings.capsLockEnabled && capsLock.isCapsLockActive)
+    }
+
     /// Whether the closed island widens to live-activity width. The one
     /// source for the shape here and the hit area in
     /// `NotchWindowController.applyHitSize`, so the two cannot drift. A
@@ -100,6 +118,9 @@ struct NotchRootView: View {
         }
         if quotaAlert != nil {
             return DisplayGeometry.aiQuotaHUDSize(notchWidth: notchWidth, notchHeight: notchHeight).width
+        }
+        if showingDeviceSync {
+            return DeviceSyncActivity.islandWidth(notchWidth: notchWidth, labelWidth: deviceSync.labelWidth)
         }
         if hud.isHUDVisible || showingLiveActivity {
             return DisplayGeometry.liveActivityWidth(notchWidth: notchWidth)
@@ -196,6 +217,8 @@ struct NotchRootView: View {
         .animation(.easeInOut(duration: 0.25), value: showsSkin)
         .animation(.easeInOut(duration: 0.25), value: settings.notchSkin)
         .animation(NotchStyle.morph, value: timerStore.isActive)
+        .animation(NotchStyle.morph, value: deviceSync.isSyncing)
+        .animation(NotchStyle.morph, value: deviceSync.labelWidth)
         .animation(NotchStyle.morph, value: aiActivities.activities.isEmpty)
         .animation(NotchStyle.morph, value: aiUsage.quotaAlert)
         .animation(NotchStyle.morph, value: batteryHUD.activeKind)

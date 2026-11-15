@@ -111,6 +111,7 @@ struct SettingsView: View {
     @EnvironmentObject var settings: SettingsStore
     @EnvironmentObject var aiUsage: AIUsageMonitor
     @EnvironmentObject var aiActivities: AIActivityMonitor
+    @EnvironmentObject var deviceSync: DeviceSyncMonitor
     @ObservedObject var dockSide = DockSide.shared
     @State var selection: SettingsSection = .general
     /// The row being dragged in Appearance → Notch Tabs and Side Notch → Cells.

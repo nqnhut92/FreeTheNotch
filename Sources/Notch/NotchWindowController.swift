@@ -16,71 +16,6 @@ final class NotchPanelState: ObservableObject {
     @Published var isOnScreen = true
 }
 
-// MARK: - Key-capable panel
-
-/// Atoll-style panel: can become key AND main so text fields accept
-/// typing/paste without NSApp.activate hacks. Floating panel behavior.
-final class KeyablePanel: NSPanel {
-    override var canBecomeKey: Bool { true }
-    override var canBecomeMain: Bool { true }
-
-    /// AppKit's default pulls windows down so they sit under the menu bar.
-    /// The notch has to occupy that band, so the frame we ask for is the frame we get.
-    override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
-        frameRect
-    }
-
-    /// A window that overlaps the menu bar gets a content rect that stops
-    /// below that band. The page icons are drawn in the band and then miss
-    /// every click. The content view has to cover the whole frame.
-    override var contentLayoutRect: NSRect {
-        NSRect(origin: .zero, size: frame.size)
-    }
-
-    override func setFrame(_ frameRect: NSRect, display displayFlag: Bool) {
-        super.setFrame(frameRect, display: displayFlag)
-        contentView?.frame = NSRect(origin: .zero, size: frame.size)
-    }
-}
-
-// MARK: - Hit-test view
-
-/// Hosting view that lets clicks pass through the transparent parts of the
-/// fixed-size window. Only the visible black shape is interactive.
-///
-/// The window stays 740 pt wide and tall enough for the tallest page; only
-/// the SwiftUI shape morphs (resizing the window, as Atoll does, broke the
-/// expand animation).
-///
-/// Clicks (Atoll's FirstMouseHostingView): outside the shape, hitTest
-/// returns nil so the click reaches the app underneath. Inside, SwiftUI's
-/// own hit-testing picks the target, so mouseDown and mouseUp both reach
-/// the same view and Buttons fire. acceptsFirstMouse lets the first click
-/// land without the panel being key.
-final class NotchHostingView<Content: View>: NSHostingView<Content> {
-    /// Current interactive size (the black shape), top-centered.
-    var hitSize = CGSize(width: DisplayGeometry.pillWidth, height: DisplayGeometry.pillHeight)
-
-    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
-
-    override func hitTest(_ point: NSPoint) -> NSView? {
-        shapeContains(point) ? super.hitTest(point) : nil
-    }
-
-    /// `point` arrives in the superview's (unflipped) coordinates while this
-    /// view is flipped, so it is converted before the shape, anchored to the
-    /// top, is tested.
-    private func shapeContains(_ point: NSPoint) -> Bool {
-        let local = convert(point, from: superview)
-        let rect = NSRect(
-            x: (bounds.width - hitSize.width) / 2,
-            y: isFlipped ? 0 : bounds.height - hitSize.height,
-            width: hitSize.width,
-            height: hitSize.height)
-        return rect.contains(local)
-    }
-}
-
 // MARK: - Window controller
 
 /// Owns one borderless panel per display, anchored top-center.
@@ -302,6 +237,7 @@ final class NotchWindowController: NSObject {
         .environmentObject(services.hud)
         .environmentObject(services.capsLock)
         .environmentObject(services.batteryHUD)
+        .environmentObject(services.deviceSync)
 
         let hosting = NotchHostingView(rootView: AnyView(rootView))
         hosting.autoresizingMask = [.width, .height]
@@ -355,6 +291,9 @@ final class NotchWindowController: NSObject {
             services.aiActivities.$activities.asTrigger,
             services.aiUsage.$quotaAlert.asTrigger,
             services.batteryHUD.$activeKind.asTrigger,
+            services.settings.$deviceSyncEnabled.removeDuplicates().asTrigger,
+            services.deviceSync.$isSyncing.asTrigger,
+            services.deviceSync.$labelWidth.asTrigger,
             // The timer widens the island through isRunning and
             // remainingSeconds together; objectWillChange fires before the
             // change and receive(on:) delivers after it.
@@ -378,6 +317,11 @@ final class NotchWindowController: NSObject {
             hosting.hitSize = kind.size(notchWidth: notchSize.width, notchHeight: notchSize.height)
         } else if services.aiUsage.quotaAlert != nil, !services.hud.isHUDVisible {
             hosting.hitSize = DisplayGeometry.aiQuotaHUDSize(notchWidth: notchSize.width, notchHeight: notchSize.height)
+        } else if !services.hud.isHUDVisible, isShowingDeviceSync {
+            hosting.hitSize = CGSize(
+                width: DeviceSyncActivity.islandWidth(
+                    notchWidth: notchSize.width, labelWidth: services.deviceSync.labelWidth),
+                height: notchSize.height)
         } else if services.hud.isHUDVisible || isLiveActivity {
             hosting.hitSize = CGSize(
                 width: DisplayGeometry.liveActivityWidth(notchWidth: notchSize.width),
@@ -385,6 +329,12 @@ final class NotchWindowController: NSObject {
         } else {
             hosting.hitSize = notchSize
         }
+    }
+
+    private var isShowingDeviceSync: Bool {
+        guard let services else { return false }
+        return NotchRootView.showsDeviceSync(
+            settings: services.settings, capsLock: services.capsLock, deviceSync: services.deviceSync)
     }
 
     private var isLiveActivity: Bool {
