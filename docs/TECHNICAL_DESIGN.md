@@ -2,7 +2,7 @@
 
 This is how the app is built and why. The user-facing feature guide is in [FEATURES.md](FEATURES.md); installation and a quick overview are in [README.md](../README.md). Rules for working on the code (for people and coding agents) are in [AGENTS.md](../AGENTS.md).
 
-- **Last updated:** 2026-11-15 (version 1.1.1)
+- **Last updated:** 2026-11-15 (version 1.1.2)
 - **Stack:** Swift 5, SwiftUI hosted in AppKit windows. Deployment target macOS 14, arm64 only, hardened runtime, not sandboxed.
 - **License:** GPL-3.0-or-later (`LICENSE`), the same as Atoll and Vorssaint. Notices for the MIT, BSD and Apache-2.0 projects it builds on are in `THIRD_PARTY_NOTICES.md`; add one there for any new project.
 - **Dependencies:** `lottie-ios` (Swift Package Manager, source package). The remaining dependencies are Apple frameworks, plus a few private symbols loaded at runtime (listed in [Private API use](#6-private-api-use)).
