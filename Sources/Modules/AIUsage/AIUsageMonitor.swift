@@ -4,7 +4,6 @@ import Combine
 import Foundation
 
 /// Shared between displays; refreshes enabled accounts once a minute, including while the notch is closed.
-/// Claude profiles from claude-multiprofile are re-read on every pass, so added or removed profiles follow.
 @MainActor
 final class AIUsageMonitor: ObservableObject {
     @Published private(set) var accounts: [AIUsageAccount] = []
@@ -17,10 +16,7 @@ final class AIUsageMonitor: ObservableObject {
     private var backgroundTask: Task<Void, Never>?
     private var hudSubscription: AnyCancellable?
     private var showsQuotaHUD = true
-    private let home = FileManager.default.homeDirectoryForCurrentUser
-    private let environment = ProcessInfo.processInfo.environment
     private let service: AIUsageService
-    private var profiles: [ClaudeProfile] = []
     private var tasks: [AIUsageAccount: Task<Void, Never>] = [:]
     private static let refreshInterval: TimeInterval = 60
 
@@ -31,9 +27,7 @@ final class AIUsageMonitor: ObservableObject {
         let directories = AIUsageDirectories(
             home: FileManager.default.homeDirectoryForCurrentUser, environment: ProcessInfo.processInfo.environment)
         let store = AIUsageCredentialStore()
-        service = AIUsageService(
-            logRoots: directories.logRoots, desktopCache: ClaudeDesktopUsageCache()
-        ) {
+        service = AIUsageService(logRoots: directories.logRoots, credentialSink: .live) {
             account, allowPrompt in try await store.load(account, allowPrompt: allowPrompt)
         }
         settingsSubscription = Publishers.CombineLatest(settings.$codexUsageEnabled, settings.$claudeUsageEnabled)
@@ -51,15 +45,9 @@ final class AIUsageMonitor: ObservableObject {
                 quotaAlert = nil
             }
         }
-        backgroundTask = Task { [weak self, home = self.home, environment = self.environment] in
+        backgroundTask = Task { [weak self] in
             while !Task.isCancelled {
-                let profiles = await Task.detached { ClaudeProfile.profiles(home: home, environment: environment) }
-                    .value
                 guard let self else { return }
-                if profiles != self.profiles {
-                    self.profiles = profiles
-                    updateAccounts()
-                }
                 for account in accounts { refresh(account) }
                 do { try await Task.sleep(for: .seconds(Self.refreshInterval)) } catch { return }
             }
@@ -74,10 +62,10 @@ final class AIUsageMonitor: ObservableObject {
         for account in accounts(for: provider) { refresh(account, force: force, allowPrompt: allowPrompt) }
     }
 
-    /// Keeps cards, readings and alerts only for enabled providers and profiles still in the registry.
+    /// Keeps cards, readings and alerts only for enabled providers.
     private func updateAccounts() {
         let previous = Set(accounts)
-        accounts = AIUsageAccount.all(profiles: profiles).filter { enabledProviders.contains($0.provider) }
+        accounts = AIUsageAccount.all.filter { enabledProviders.contains($0.provider) }
         let current = Set(accounts)
         for account in previous.subtracting(current) {
             tasks[account]?.cancel()
@@ -91,7 +79,6 @@ final class AIUsageMonitor: ObservableObject {
                 presentNextAlert()
             }
         }
-        Task { [service] in await service.retainAccounts(current) }
         for account in current.subtracting(previous) { refresh(account, force: true) }
     }
 

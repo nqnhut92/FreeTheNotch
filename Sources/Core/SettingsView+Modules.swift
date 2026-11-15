@@ -123,7 +123,7 @@ extension SettingsView {
             SettingsCard {
                 SettingsToggleRow(
                     "Quota warning at 80%",
-                    description: "One warning per Session / Week quota window; old data stays silent",
+                    description: "One warning per Session / Week quota window",
                     isOn: $settings.aiQuotaHUDEnabled, showDivider: false)
             }
             // Atoll's "HUD Tests" section: one tappable row per HUD.

@@ -12,6 +12,18 @@ struct SubprocessTests {
         #expect(output.text == "hello world\n")
     }
 
+    @Test func passesInputToTheToolsStandardInput() throws {
+        let output = try #require(Subprocess.run("/bin/cat", input: Data("from stdin\n".utf8), timeout: 5))
+        #expect(output.succeeded)
+        #expect(output.text == "from stdin\n")
+    }
+
+    @Test func aToolThatIgnoresItsInputDoesNotHangOrCrashTheCaller() throws {
+        let input = Data(repeating: 0x61, count: 8 * 1024)
+        let output = try #require(Subprocess.run("/usr/bin/true", input: input, timeout: 5))
+        #expect(!output.timedOut)
+    }
+
     @Test func reportsAFailingStatus() throws {
         let output = try #require(Subprocess.run("/usr/bin/false", timeout: 5))
         #expect(output.status == 1)

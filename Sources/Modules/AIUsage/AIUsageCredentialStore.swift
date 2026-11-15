@@ -22,28 +22,10 @@ actor AIUsageCredentialStore {
 
     func load(_ account: AIUsageAccount, allowPrompt: Bool) throws -> AIUsageCredentials {
         let provider = account.provider
-        let paths: [URL]
-        let accountFile: URL
-        var claudeService = ""
-        var claimedServices = Set<String>()
-        if let profile = account.profile {
-            // A Desktop-only profile has no Claude Code login; never borrow the default account's.
-            guard let credentialsFile = profile.codeCredentialsFile, let service = profile.codeKeychainService,
-                let profileAccountFile = profile.codeAccountFile
-            else { throw AIUsageError.signIn }
-            paths = [credentialsFile]
-            accountFile = profileAccountFile
-            claudeService = service
-        } else {
-            accountFile = home.appendingPathComponent(".claude.json")
-            claudeService = ClaudeProfile.keychainService(configDirectory: environment["CLAUDE_CONFIG_DIR"])
-            claimedServices = Set(
-                ClaudeProfile.profiles(home: home, environment: environment).compactMap(\.codeKeychainService))
-            paths = defaultPaths(provider)
-        }
         return try load(
-            provider, paths: paths, accountFile: accountFile, claudeService: claudeService,
-            fallsBack: account.profile == nil, claimedServices: claimedServices, allowPrompt: allowPrompt)
+            provider, paths: defaultPaths(provider), accountFile: home.appendingPathComponent(".claude.json"),
+            claudeService: AIUsageCredentials.keychainService(configDirectory: environment["CLAUDE_CONFIG_DIR"]),
+            allowPrompt: allowPrompt)
     }
 
     private func defaultPaths(_ provider: AIUsageProvider) -> [URL] {
@@ -65,14 +47,15 @@ actor AIUsageCredentialStore {
     }
 
     private func load(
-        _ provider: AIUsageProvider, paths: [URL], accountFile: URL, claudeService: String, fallsBack: Bool,
-        claimedServices: Set<String>, allowPrompt: Bool
+        _ provider: AIUsageProvider, paths: [URL], accountFile: URL, claudeService: String,
+        allowPrompt: Bool
     ) throws -> AIUsageCredentials {
         var expired: AIUsageCredentials?
         for path in paths {
             guard let data = try? Data(contentsOf: path),
-                let credentials = try? AIUsageCredentials.parse(data, provider: provider)
+                var credentials = try? AIUsageCredentials.parse(data, provider: provider)
             else { continue }
+            credentials.oauth?.source = .file(path)
             if let date = credentials.expiresAt, date <= Date() {
                 expired = credentials
             } else {
@@ -81,75 +64,89 @@ actor AIUsageCredentialStore {
         }
         let quietContext = LAContext()
         quietContext.interactionNotAllowed = true
+        guard provider == .claude else {
+            return try codexKeychainLogin(allowPrompt: allowPrompt, quietContext: quietContext, expired: expired)
+        }
+        let attributesQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecReturnAttributes as String: true,
+            kSecMatchLimit as String: kSecMatchLimitAll,
+            kSecUseAuthenticationContext as String: quietContext,
+        ]
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(attributesQuery as CFDictionary, &result)
+        guard status == errSecSuccess else {
+            Logger.modules.error("[FreeTheNotch] AI usage: Claude Keychain enumeration failed, status \(status)")
+            throw status == errSecInteractionNotAllowed ? AIUsageError.keychainAccess : AIUsageError.signIn
+        }
+        let items = (result as? [[String: Any]]) ?? (result as? [String: Any]).map { [$0] } ?? []
+        let candidates = items.compactMap { attributes -> AIUsageCredentials.KeychainItem? in
+            guard let service = attributes[kSecAttrService as String] as? String else { return nil }
+            return AIUsageCredentials.KeychainItem(
+                service: service, account: attributes[kSecAttrAccount as String] as? String,
+                modifiedAt: attributes[kSecAttrModificationDate as String] as? Date ?? .distantPast)
+        }
+        guard let newest = AIUsageCredentials.claudeItem(candidates, service: claudeService) else {
+            // The file's expired login can still be refreshed when the Keychain has nothing newer.
+            if let expired { return withIdentity(expired, provider: provider, accountFile: accountFile) }
+            throw AIUsageError.signIn
+        }
+        // The secret is read through Apple's `security` tool, the identity Claude Code created the item with and the
+        // one that rewrites it on a token refresh. A rewrite resets the item's partition list to that tool alone, so
+        // a native read by this app would be refused (and need another "Always Allow") after every refresh.
+        guard let data = Self.securityToolSecret(service: newest.service, account: newest.account) else {
+            if let expired { return withIdentity(expired, provider: provider, accountFile: accountFile) }
+            throw AIUsageError.keychainAccess
+        }
+        return withIdentity(
+            try parsed(data, provider: provider, item: newest), provider: provider, accountFile: accountFile)
+    }
+
+    private static let securityToolTimeout: TimeInterval = 15
+
+    private static func securityToolSecret(service: String, account: String?) -> Data? {
+        var arguments = ["find-generic-password", "-s", service]
+        if let account { arguments += ["-a", account] }
+        arguments.append("-w")
+        guard let output = Subprocess.run("/usr/bin/security", arguments: arguments, timeout: securityToolTimeout),
+            output.succeeded
+        else { return nil }
+        return AIUsageCredentials.keychainData(output.data)
+    }
+
+    /// Codex keeps its login in a Keychain item this app only reads; a prompt is allowed only for an explicit Connect.
+    private func codexKeychainLogin(
+        allowPrompt: Bool, quietContext: LAContext, expired: AIUsageCredentials?
+    ) throws -> AIUsageCredentials {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: "Codex Auth",
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne,
         ]
-        var selectedItem: AIUsageCredentials.KeychainItem?
-        if provider == .claude {
-            let attributesQuery: [String: Any] = [
-                kSecClass as String: kSecClassGenericPassword,
-                kSecReturnAttributes as String: true,
-                kSecReturnPersistentRef as String: true,
-                kSecMatchLimit as String: kSecMatchLimitAll,
-                kSecUseAuthenticationContext as String: quietContext,
-            ]
-            var result: CFTypeRef?
-            let status = SecItemCopyMatching(attributesQuery as CFDictionary, &result)
-            guard status == errSecSuccess else {
-                Logger.modules.error("[FreeTheNotch] AI usage: Claude Keychain enumeration failed, status \(status)")
-                throw status == errSecInteractionNotAllowed ? AIUsageError.keychainAccess : AIUsageError.signIn
-            }
-            let items = (result as? [[String: Any]]) ?? (result as? [String: Any]).map { [$0] } ?? []
-            let candidates = items.compactMap { attributes -> AIUsageCredentials.KeychainItem? in
-                guard let service = attributes[kSecAttrService as String] as? String else { return nil }
-                return AIUsageCredentials.KeychainItem(
-                    service: service, account: attributes[kSecAttrAccount as String] as? String,
-                    modifiedAt: attributes[kSecAttrModificationDate as String] as? Date ?? .distantPast,
-                    persistentReference: attributes[kSecValuePersistentRef as String] as? Data)
-            }
-            guard
-                let newest = AIUsageCredentials.claudeItem(
-                    candidates, service: claudeService, fallsBack: fallsBack, claimedServices: claimedServices)
-            else {
-                throw expired == nil ? AIUsageError.signIn : AIUsageError.expired
-            }
-            selectedItem = newest
-            if let reference = newest.persistentReference {
-                query[kSecValuePersistentRef as String] = reference
-            } else {
-                query[kSecAttrService as String] = newest.service
-                query[kSecAttrAccount as String] = newest.account
-            }
-        } else {
-            query[kSecAttrService as String] = "Codex Auth"
-        }
         if !allowPrompt { query[kSecUseAuthenticationContext as String] = quietContext }
         var result: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
-        if status != errSecSuccess, allowPrompt, let selectedItem {
-            var arguments = ["find-generic-password", "-s", selectedItem.service]
-            if let account = selectedItem.account { arguments += ["-a", account] }
-            arguments.append("-w")
-            if let output = Subprocess.run("/usr/bin/security", arguments: arguments, timeout: 30),
-                output.succeeded, let data = AIUsageCredentials.keychainData(output.data)
-            {
-                return withIdentity(
-                    try AIUsageCredentials.parse(data, provider: provider), provider: provider, accountFile: accountFile
-                )
-            }
-        }
         guard status == errSecSuccess, let data = result as? Data else {
             Logger.modules.error("[FreeTheNotch] AI usage: Keychain read failed, status \(status)")
+            if let expired { return expired }
             if status == errSecInteractionNotAllowed || status == errSecAuthFailed || status == errSecUserCanceled {
                 throw AIUsageError.keychainAccess
             }
-            throw expired == nil ? AIUsageError.signIn : AIUsageError.expired
+            throw AIUsageError.signIn
         }
-        return withIdentity(
-            try AIUsageCredentials.parse(data, provider: provider), provider: provider, accountFile: accountFile)
+        return try AIUsageCredentials.parse(data, provider: .codex)
     }
+
+    /// A Keychain secret, remembering which item it came from so a refreshed pair can go back to it.
+    private func parsed(
+        _ data: Data, provider: AIUsageProvider, item: AIUsageCredentials.KeychainItem?
+    ) throws -> AIUsageCredentials {
+        var credentials = try AIUsageCredentials.parse(data, provider: provider)
+        if let item { credentials.oauth?.source = .keychain(service: item.service, account: item.account) }
+        return credentials
+    }
+
     private func withIdentity(
         _ credentials: AIUsageCredentials, provider: AIUsageProvider, accountFile: URL
     ) -> AIUsageCredentials {

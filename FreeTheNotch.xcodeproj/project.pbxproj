@@ -7,10 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F1E2D3C4B5A69788776659A3 /* ClaudeDesktopUsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788776659A2 /* ClaudeDesktopUsageCache.swift */; };
-		F1E2D3C4B5A69788776659A4 /* ClaudeDesktopUsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788776659A2 /* ClaudeDesktopUsageCache.swift */; };
-		F1E2D3C4B5A69788776659A7 /* zstddeclib.c in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788776659A6 /* zstddeclib.c */; };
-		F1E2D3C4B5A69788776659A8 /* zstddeclib.c in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788776659A6 /* zstddeclib.c */; };
+		F1E2D3C4B5A6978877665F0E /* ClaudeTokenRefreshTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F0D /* ClaudeTokenRefreshTests.swift */; };
+		F1E2D3C4B5A6978877665F02 /* ClaudeOAuthRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F01 /* ClaudeOAuthRecord.swift */; };
+		F1E2D3C4B5A6978877665F03 /* ClaudeOAuthRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F01 /* ClaudeOAuthRecord.swift */; };
+		F1E2D3C4B5A6978877665F05 /* ClaudeTokenRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F04 /* ClaudeTokenRefresher.swift */; };
+		F1E2D3C4B5A6978877665F06 /* ClaudeTokenRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F04 /* ClaudeTokenRefresher.swift */; };
+		F1E2D3C4B5A6978877665F08 /* ClaudeKeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F07 /* ClaudeKeychainStore.swift */; };
+		F1E2D3C4B5A6978877665F09 /* ClaudeKeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F07 /* ClaudeKeychainStore.swift */; };
+		F1E2D3C4B5A6978877665F0B /* ClaudeCredentialSink.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F0A /* ClaudeCredentialSink.swift */; };
+		F1E2D3C4B5A6978877665F0C /* ClaudeCredentialSink.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F0A /* ClaudeCredentialSink.swift */; };
 		F1E2D3C4B5A69788776659A1 /* SettingsView+AIUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A69788776659A0 /* SettingsView+AIUsage.swift */; };
 		F1E2D3C4B5A6978877665961 /* AIUsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665960 /* AIUsageSnapshot.swift */; };
 		F1E2D3C4B5A6978877665962 /* AIUsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665960 /* AIUsageSnapshot.swift */; };
@@ -274,10 +279,7 @@
 		F1E2D3C4B5A6978877665D1A /* AIUsageResetFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D18 /* AIUsageResetFormat.swift */; };
 		F1E2D3C4B5A6978877665D14 /* AIUsageAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D13 /* AIUsageAccount.swift */; };
 		F1E2D3C4B5A6978877665D15 /* AIUsageAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D13 /* AIUsageAccount.swift */; };
-		F1E2D3C4B5A6978877665D11 /* ClaudeProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D10 /* ClaudeProfile.swift */; };
-		F1E2D3C4B5A6978877665D12 /* ClaudeProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D10 /* ClaudeProfile.swift */; };
 		F1E2D3C4B5A6978877665C13 /* AIProviderGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C12 /* AIProviderGlyph.swift */; };
-		F1E2D3C4B5A6978877665D17 /* ClaudeProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665D16 /* ClaudeProfileTests.swift */; };
 		F1E2D3C4B5A6978877665C17 /* AIQuotaAlertTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C15 /* AIQuotaAlertTests.swift */; };
 		F1E2D3C4B5A6978877665C1A /* AIActivityMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665C18 /* AIActivityMonitorTests.swift */; };
 		F1E2D3C4B5A6978877665B08 /* AIActivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665B06 /* AIActivityMonitor.swift */; };
@@ -313,9 +315,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		F1E2D3C4B5A69788776659A2 /* ClaudeDesktopUsageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeDesktopUsageCache.swift; sourceTree = "<group>"; };
-		F1E2D3C4B5A69788776659A5 /* AIUsageZstd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIUsageZstd.h; sourceTree = "<group>"; };
-		F1E2D3C4B5A69788776659A6 /* zstddeclib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = zstddeclib.c; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F0D /* ClaudeTokenRefreshTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeTokenRefreshTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F01 /* ClaudeOAuthRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeOAuthRecord.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F04 /* ClaudeTokenRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeTokenRefresher.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F07 /* ClaudeKeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeKeychainStore.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F0A /* ClaudeCredentialSink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeCredentialSink.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A69788776659A0 /* SettingsView+AIUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsView+AIUsage.swift"; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665960 /* AIUsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageSnapshot.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665963 /* AIUsagePricing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsagePricing.swift; sourceTree = "<group>"; };
@@ -515,12 +519,10 @@
 		F1E2D3C4B5A6978877665C06 /* AIUsageLimit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageLimit.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C09 /* AIUsageTotals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageTotals.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C0C /* AIUsageQuotaParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageQuotaParser.swift; sourceTree = "<group>"; };
-		F1E2D3C4B5A6978877665D10 /* ClaudeProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeProfile.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665D13 /* AIUsageAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageAccount.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665D18 /* AIUsageResetFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageResetFormat.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C0F /* AIUsageDirectories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageDirectories.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C12 /* AIProviderGlyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderGlyph.swift; sourceTree = "<group>"; };
-		F1E2D3C4B5A6978877665D16 /* ClaudeProfileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeProfileTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C15 /* AIQuotaAlertTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIQuotaAlertTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C18 /* AIActivityMonitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIActivityMonitorTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665C1B /* AIUsageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIUsageError.swift; sourceTree = "<group>"; };
@@ -576,25 +578,18 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		F1E2D3C4B5A69788776659A9 /* Zstd */ = {
-			isa = PBXGroup;
-			children = (
-				F1E2D3C4B5A69788776659A6 /* zstddeclib.c */,
-			);
-			path = Zstd;
-			sourceTree = "<group>";
-		};
 
 		F1E2D3C4B5A6978877665973 /* AIUsage */ = {
 			isa = PBXGroup;
 			children = (
-				F1E2D3C4B5A69788776659A2 /* ClaudeDesktopUsageCache.swift */,
-				F1E2D3C4B5A69788776659A5 /* AIUsageZstd.h */,
-				F1E2D3C4B5A69788776659A9 /* Zstd */,
 				F1E2D3C4B5A6978877665960 /* AIUsageSnapshot.swift */,
 				F1E2D3C4B5A6978877665963 /* AIUsagePricing.swift */,
 				F1E2D3C4B5A6978877665966 /* AIUsageLogParser.swift */,
 				F1E2D3C4B5A6978877665969 /* AIUsageCredentials.swift */,
+				F1E2D3C4B5A6978877665F01 /* ClaudeOAuthRecord.swift */,
+				F1E2D3C4B5A6978877665F04 /* ClaudeTokenRefresher.swift */,
+				F1E2D3C4B5A6978877665F07 /* ClaudeKeychainStore.swift */,
+				F1E2D3C4B5A6978877665F0A /* ClaudeCredentialSink.swift */,
 				F1E2D3C4B5A697887766596C /* AIUsageService.swift */,
 				F1E2D3C4B5A697887766596F /* AIUsageCredentialStore.swift */,
 				F1E2D3C4B5A6978877665971 /* AIUsageMonitor.swift */,
@@ -602,7 +597,6 @@
 				F1E2D3C4B5A6978877665C0F /* AIUsageDirectories.swift */,
 				F1E2D3C4B5A6978877665D18 /* AIUsageResetFormat.swift */,
 				F1E2D3C4B5A6978877665D13 /* AIUsageAccount.swift */,
-				F1E2D3C4B5A6978877665D10 /* ClaudeProfile.swift */,
 				F1E2D3C4B5A6978877665C0C /* AIUsageQuotaParser.swift */,
 				F1E2D3C4B5A6978877665C09 /* AIUsageTotals.swift */,
 				F1E2D3C4B5A6978877665C06 /* AIUsageLimit.swift */,
@@ -645,9 +639,9 @@
 			children = (
 				F1E2D3C4B5A6978877665D0B /* SmoothScrollTests.swift */,
 				F1E2D3C4B5A6978877665977 /* AIUsageTests.swift */,
+				F1E2D3C4B5A6978877665F0D /* ClaudeTokenRefreshTests.swift */,
 				F1E2D3C4B5A6978877665C18 /* AIActivityMonitorTests.swift */,
 				F1E2D3C4B5A6978877665C15 /* AIQuotaAlertTests.swift */,
-				F1E2D3C4B5A6978877665D16 /* ClaudeProfileTests.swift */,
 				F1E2D3C4B5A6978877665B12 /* AIActivityTests.swift */,
 				F1E2D3C4B5A6978877665E5C /* DeviceSyncActivityTests.swift */,
 				F1E2D3C4B5A6978877665E6B /* DeviceSyncLogTests.swift */,
@@ -1024,23 +1018,24 @@
 				F1E2D3C4B5A6978877665D0C /* SmoothScrollTests.swift in Sources */,
 				F1E2D3C4B5A6978877665D06 /* MouseScrollTarget.swift in Sources */,
 				F1E2D3C4B5A6978877665D03 /* SmoothScrollSupport.swift in Sources */,
-				F1E2D3C4B5A69788776659A4 /* ClaudeDesktopUsageCache.swift in Sources */,
-				F1E2D3C4B5A69788776659A8 /* zstddeclib.c in Sources */,
 				F1E2D3C4B5A6978877665962 /* AIUsageSnapshot.swift in Sources */,
 				F1E2D3C4B5A6978877665965 /* AIUsagePricing.swift in Sources */,
 				F1E2D3C4B5A6978877665968 /* AIUsageLogParser.swift in Sources */,
 				F1E2D3C4B5A697887766596B /* AIUsageCredentials.swift in Sources */,
+				F1E2D3C4B5A6978877665F03 /* ClaudeOAuthRecord.swift in Sources */,
+				F1E2D3C4B5A6978877665F06 /* ClaudeTokenRefresher.swift in Sources */,
+				F1E2D3C4B5A6978877665F09 /* ClaudeKeychainStore.swift in Sources */,
+				F1E2D3C4B5A6978877665F0C /* ClaudeCredentialSink.swift in Sources */,
 				F1E2D3C4B5A697887766596E /* AIUsageService.swift in Sources */,
 				F1E2D3C4B5A6978877665978 /* AIUsageTests.swift in Sources */,
+				F1E2D3C4B5A6978877665F0E /* ClaudeTokenRefreshTests.swift in Sources */,
 				F1E2D3C4B5A6978877665C1D /* AIUsageError.swift in Sources */,
 				F1E2D3C4B5A6978877665B08 /* AIActivityMonitor.swift in Sources */,
 				F1E2D3C4B5A6978877665C1A /* AIActivityMonitorTests.swift in Sources */,
 				F1E2D3C4B5A6978877665C17 /* AIQuotaAlertTests.swift in Sources */,
-				F1E2D3C4B5A6978877665D17 /* ClaudeProfileTests.swift in Sources */,
 				F1E2D3C4B5A6978877665C11 /* AIUsageDirectories.swift in Sources */,
 				F1E2D3C4B5A6978877665D1A /* AIUsageResetFormat.swift in Sources */,
 				F1E2D3C4B5A6978877665D15 /* AIUsageAccount.swift in Sources */,
-				F1E2D3C4B5A6978877665D12 /* ClaudeProfile.swift in Sources */,
 				F1E2D3C4B5A6978877665C0E /* AIUsageQuotaParser.swift in Sources */,
 				F1E2D3C4B5A6978877665C0B /* AIUsageTotals.swift in Sources */,
 				F1E2D3C4B5A6978877665C08 /* AIUsageLimit.swift in Sources */,
@@ -1156,12 +1151,14 @@
 				F1E2D3C4B5A6978877665D08 /* SmoothScrollService.swift in Sources */,
 				F1E2D3C4B5A6978877665D05 /* MouseScrollTarget.swift in Sources */,
 				F1E2D3C4B5A6978877665D02 /* SmoothScrollSupport.swift in Sources */,
-				F1E2D3C4B5A69788776659A3 /* ClaudeDesktopUsageCache.swift in Sources */,
-				F1E2D3C4B5A69788776659A7 /* zstddeclib.c in Sources */,
 				F1E2D3C4B5A6978877665961 /* AIUsageSnapshot.swift in Sources */,
 				F1E2D3C4B5A6978877665964 /* AIUsagePricing.swift in Sources */,
 				F1E2D3C4B5A6978877665967 /* AIUsageLogParser.swift in Sources */,
 				F1E2D3C4B5A697887766596A /* AIUsageCredentials.swift in Sources */,
+				F1E2D3C4B5A6978877665F02 /* ClaudeOAuthRecord.swift in Sources */,
+				F1E2D3C4B5A6978877665F05 /* ClaudeTokenRefresher.swift in Sources */,
+				F1E2D3C4B5A6978877665F08 /* ClaudeKeychainStore.swift in Sources */,
+				F1E2D3C4B5A6978877665F0B /* ClaudeCredentialSink.swift in Sources */,
 				F1E2D3C4B5A697887766596D /* AIUsageService.swift in Sources */,
 				F1E2D3C4B5A6978877665970 /* AIUsageCredentialStore.swift in Sources */,
 				F1E2D3C4B5A6978877665972 /* AIUsageMonitor.swift in Sources */,
@@ -1170,7 +1167,6 @@
 				F1E2D3C4B5A6978877665C10 /* AIUsageDirectories.swift in Sources */,
 				F1E2D3C4B5A6978877665D19 /* AIUsageResetFormat.swift in Sources */,
 				F1E2D3C4B5A6978877665D14 /* AIUsageAccount.swift in Sources */,
-				F1E2D3C4B5A6978877665D11 /* ClaudeProfile.swift in Sources */,
 				F1E2D3C4B5A6978877665C0D /* AIUsageQuotaParser.swift in Sources */,
 				F1E2D3C4B5A6978877665C0A /* AIUsageTotals.swift in Sources */,
 				F1E2D3C4B5A6978877665C07 /* AIUsageLimit.swift in Sources */,
@@ -1343,7 +1339,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
 			};
 			name = Debug;
 		};
@@ -1356,7 +1351,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
 			};
 			name = Release;
 		};
@@ -1371,7 +1365,6 @@
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
-			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
 			};
 			name = Debug;
 		};
@@ -1384,7 +1377,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
-			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
 			};
 			name = Release;
 		};
@@ -1403,11 +1395,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
 			};
 			name = Debug;
 		};
@@ -1426,11 +1417,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Modules/AIUsage/AIUsageZstd.h";
 			};
 			name = Release;
 		};

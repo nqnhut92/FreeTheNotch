@@ -68,9 +68,6 @@ extension SettingsView {
                     "CodeNotch", detail: "Side Notch, AI usage and session monitoring",
                     url: "https://github.com/vinzdg/codenotch")
                 creditRow(
-                    "Zstandard", detail: "Claude Desktop usage cache decoder",
-                    url: "https://github.com/facebook/zstd")
-                creditRow(
                     "LaunchAtLogin", detail: "Launch at login switch",
                     url: "https://github.com/sindresorhus/LaunchAtLogin-Modern")
                 creditRow(

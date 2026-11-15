@@ -38,7 +38,7 @@ extension SettingsView {
                 }
             }
             SettingsFootnote(
-                "For Claude Desktop, open Settings → Usage in Claude, then refresh here. Codex and Claude Code use their saved login; Connect allows a Keychain prompt if needed. Profiles made with claude-multiprofile get their own row."
+                "Claude quota needs the Claude Code login: run “claude auth login” in Terminal once, and FreeTheNotch renews the token itself afterwards. Claude Desktop alone is not enough. Codex uses its saved login. Connect allows a Keychain prompt if needed."
             )
             SettingsGroupHeader("Notch Notifications")
             SettingsCard {
@@ -79,10 +79,6 @@ extension SettingsView {
         guard let snapshot = aiUsage.snapshots[account] else { return "Not checked yet" }
         let account = snapshot.identity.map { $0.label + "\n" } ?? ""
         if let message = snapshot.quotaMessage { return account + message }
-        if let source = snapshot.quotaSource, let captured = snapshot.quotaCapturedAt {
-            return account + (snapshot.isQuotaStale(at: Date()) ? "Old data · " : source + " · Captured ")
-                + captured.formatted(.dateTime.month(.abbreviated).day().hour().minute())
-        }
         return account + "Connected · Updated " + snapshot.updatedAt.formatted(.dateTime.hour().minute())
     }
 }

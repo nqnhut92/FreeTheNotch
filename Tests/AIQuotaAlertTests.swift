@@ -32,14 +32,11 @@ struct AIQuotaAlertTests {
         #expect(policy.alerts(account: Self.codex, snapshot: snapshot, now: Self.now).isEmpty)
     }
 
-    @Test func oldCacheExpiredResetAndFailedFetchNeverWarn() {
+    @Test func failedFetchExpiredResetAndInvalidUsageNeverWarn() {
         var policy = AIQuotaAlertPolicy()
         var snapshot = AIUsageSnapshot()
         snapshot.updatedAt = Self.now
         snapshot.sessionLimit = AIUsageLimit(usedPercent: 95, resetsAt: Self.now.addingTimeInterval(3600))
-        snapshot.quotaCapturedAt = Self.now.addingTimeInterval(-1800)
-        #expect(policy.alerts(account: Self.claude, snapshot: snapshot, now: Self.now).isEmpty)
-        snapshot.quotaCapturedAt = Self.now
         snapshot.quotaMessage = "Unavailable"
         #expect(policy.alerts(account: Self.claude, snapshot: snapshot, now: Self.now).isEmpty)
         snapshot.quotaMessage = nil
@@ -50,21 +47,5 @@ struct AIQuotaAlertTests {
         snapshot.sessionLimit = AIUsageLimit(usedPercent: 80, resetsAt: nil)
         #expect(policy.alerts(account: Self.claude, snapshot: snapshot, now: Self.now).count == 1)
         #expect(policy.alerts(account: Self.claude, snapshot: snapshot, now: Self.now).isEmpty)
-    }
-
-    @Test func eachClaudeProfileWarnsSeparatelyFromTheDefaultLogin() {
-        var policy = AIQuotaAlertPolicy()
-        var snapshot = AIUsageSnapshot()
-        snapshot.updatedAt = Self.now
-        snapshot.sessionLimit = AIUsageLimit(usedPercent: 85, resetsAt: Self.now.addingTimeInterval(3600))
-        let profile = AIUsageAccount(
-            provider: .claude,
-            profile: ClaudeProfile(
-                name: "fixture", desktopDataDirectory: URL(fileURLWithPath: "/fixture/desktop"),
-                codeConfigDirectory: nil))
-        #expect(policy.alerts(account: Self.claude, snapshot: snapshot, now: Self.now).count == 1)
-        let alerts = policy.alerts(account: profile, snapshot: snapshot, now: Self.now)
-        #expect(alerts.map(\.account) == [profile])
-        #expect(policy.alerts(account: profile, snapshot: snapshot, now: Self.now).isEmpty)
     }
 }

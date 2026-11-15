@@ -31,7 +31,7 @@ struct AIQuotaAlertPolicy {
     private var announced: [Key: Announcement] = [:]
 
     mutating func alerts(account: AIUsageAccount, snapshot: AIUsageSnapshot, now: Date) -> [Alert] {
-        guard !snapshot.isQuotaStale(at: now), snapshot.quotaMessage == nil, !snapshot.requiresConnection,
+        guard snapshot.quotaMessage == nil, !snapshot.requiresConnection,
             (0..<Self.maximumSnapshotAge).contains(now.timeIntervalSince(snapshot.updatedAt))
         else { return [] }
         // Keep a small bounded history even when accounts or reset windows change.

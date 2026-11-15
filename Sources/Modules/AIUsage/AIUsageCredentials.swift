@@ -1,15 +1,18 @@
 // Adapted from Atoll (GPL-3.0-or-later): Quota/CodexQuotaClient.swift
 // and Quota/ClaudeQuotaClient.swift (credential payloads and source locations).
-// Identity labels mirror CodeNotch (MIT): Sources/Providers/CodexCredentials.swift and ClaudeProfile.swift.
+// Identity labels mirror CodeNotch (MIT): Sources/Providers/CodexCredentials.swift.
 
+import CryptoKit
 import Foundation
 
-/// Credentials stay in memory for one request; the app never rotates or rewrites shared tokens.
+/// One login as read from the provider's own storage. Only an expired Claude Code login is ever rewritten, after a
+/// token refresh (see `ClaudeTokenRefresher`).
 struct AIUsageCredentials: Sendable {
     let accessToken: String
     let accountID: String?
     let expiresAt: Date?
     var identity: Identity? = nil
+    var oauth: ClaudeOAuthRecord? = nil
 
     struct Identity: Equatable, Sendable {
         let name: String?
@@ -31,10 +34,9 @@ struct AIUsageCredentials: Sendable {
         return Identity(name: nonempty(claims["name"] as? String), email: email)
     }
 
-    static func claudeIdentity(_ data: Data, matchingOrganization: String? = nil) -> Identity? {
+    static func claudeIdentity(_ data: Data) -> Identity? {
         guard let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
             let account = root["oauthAccount"] as? [String: Any],
-            matchingOrganization == nil || account["organizationUuid"] as? String == matchingOrganization,
             let email = nonempty(account["emailAddress"] as? String)
         else { return nil }
         return Identity(name: nonempty(account["displayName"] as? String), email: email)
@@ -49,19 +51,26 @@ struct AIUsageCredentials: Sendable {
         let service: String
         let account: String?
         let modifiedAt: Date
-        let persistentReference: Data?
     }
 
-    /// The freshest item under the account's own service name. Only the default login falls back to other
-    /// Claude Code items (a CLAUDE_CONFIG_DIR set in a shell but not in the app), and never to one a profile owns.
-    static func claudeItem(
-        _ items: [KeychainItem], service: String, fallsBack: Bool, claimedServices: Set<String> = []
-    ) -> KeychainItem? {
+    /// The freshest item under the login's own service name, else the freshest other Claude Code item (a
+    /// CLAUDE_CONFIG_DIR set in a shell but not in the app).
+    static func claudeItem(_ items: [KeychainItem], service: String) -> KeychainItem? {
         let newest = { (candidates: [KeychainItem]) in candidates.max { $0.modifiedAt < $1.modifiedAt } }
         if let exact = newest(items.filter { $0.service == service }) { return exact }
-        guard fallsBack else { return nil }
-        return newest(
-            items.filter { $0.service.hasPrefix("Claude Code-credentials") && !claimedServices.contains($0.service) })
+        return newest(items.filter { $0.service.hasPrefix(defaultKeychainService) })
+    }
+
+    private static let defaultKeychainService = "Claude Code-credentials"
+    private static let keychainHashLength = 8
+
+    /// Claude Code suffixes its Keychain item with a short SHA-256 of a custom CLAUDE_CONFIG_DIR,
+    /// so each config folder has its own login.
+    static func keychainService(configDirectory: String?) -> String {
+        guard let configDirectory else { return defaultKeychainService }
+        let digest = SHA256.hash(data: Data(configDirectory.precomposedStringWithCanonicalMapping.utf8))
+        let hex = digest.map { String(format: "%02x", $0) }.joined()
+        return defaultKeychainService + "-" + hex.prefix(keychainHashLength)
     }
 
     /// Apple's security tool may return non-ASCII secrets as hexadecimal JSON.
@@ -102,7 +111,10 @@ struct AIUsageCredentials: Sendable {
                 let access = oauth["accessToken"] as? String, !access.isEmpty
             else { throw AIUsageError.signIn }
             let expires = (oauth["expiresAt"] as? Double).map { Date(timeIntervalSince1970: $0 / 1000) }
-            return AIUsageCredentials(accessToken: access, accountID: nil, expiresAt: expires)
+            let refresh = (oauth["refreshToken"] as? String).flatMap { $0.isEmpty ? nil : $0 }
+            return AIUsageCredentials(
+                accessToken: access, accountID: nil, expiresAt: expires,
+                oauth: refresh.map { ClaudeOAuthRecord(refreshToken: $0, raw: data, source: nil) })
         }
     }
 }

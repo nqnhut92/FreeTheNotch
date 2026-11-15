@@ -21,19 +21,30 @@ enum Subprocess {
     /// How long a terminated tool gets to exit before it is killed.
     private static let terminationGrace: TimeInterval = 2
 
-    /// Returns nil when the tool cannot be launched.
-    static func run(_ path: String, arguments: [String] = [], timeout: TimeInterval) -> Output? {
+    /// Returns nil when the tool cannot be launched. `input` is written to the tool's standard input, which is then
+    /// closed; keep it well under the pipe buffer so the write cannot block before the output is read.
+    static func run(_ path: String, arguments: [String] = [], input: Data? = nil, timeout: TimeInterval) -> Output? {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: path)
         process.arguments = arguments
         let pipe = Pipe()
         process.standardOutput = pipe
         process.standardError = FileHandle.nullDevice
-        process.standardInput = FileHandle.nullDevice
+        let inputPipe = input.map { _ in Pipe() }
+        process.standardInput = inputPipe ?? FileHandle.nullDevice
         do {
             try process.run()
         } catch {
             return nil
+        }
+        if let input, let inputPipe {
+            // Only the child keeps a reader, so a tool that exits early shows up as a failed write rather than a
+            // signal; the descriptor-local setting leaves signal handling elsewhere in the app alone.
+            try? inputPipe.fileHandleForReading.close()
+            let writer = inputPipe.fileHandleForWriting
+            _ = fcntl(writer.fileDescriptor, F_SETNOSIGPIPE, 1)
+            try? writer.write(contentsOf: input)
+            try? writer.close()
         }
 
         let timedOut = TimeoutFlag()

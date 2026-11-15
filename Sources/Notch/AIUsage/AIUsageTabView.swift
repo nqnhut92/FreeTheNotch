@@ -101,16 +101,7 @@ private struct AIUsageAccountCard: View {
 
     private var identity: some View {
         VStack(alignment: .leading, spacing: 2) {
-            HStack(spacing: 6) {
-                Text(account.provider.title).font(.system(size: 14, weight: .semibold))
-                if let profile = account.profile {
-                    Text(profile.name)
-                        .font(.system(size: 10, weight: .medium))
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 1)
-                        .background(.white.opacity(0.12), in: Capsule())
-                }
-            }
+            Text(account.provider.title).font(.system(size: 14, weight: .semibold))
             if let name = snapshot?.identity?.name {
                 Text(name).font(.system(size: 12))
             }
@@ -126,8 +117,8 @@ private struct AIUsageAccountCard: View {
         if let snapshot {
             VStack(alignment: .leading, spacing: Self.lineSpacing) {
                 if snapshot.sessionLimit != nil || snapshot.weekLimit != nil {
-                    if let limit = snapshot.sessionLimit { window("Session", limit, snapshot) }
-                    if let limit = snapshot.weekLimit { window("Week", limit, snapshot) }
+                    if let limit = snapshot.sessionLimit { window("Session", limit) }
+                    if let limit = snapshot.weekLimit { window("Week", limit) }
                 } else if let message = snapshot.quotaMessage {
                     HStack(spacing: 8) {
                         Text(message).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
@@ -144,8 +135,7 @@ private struct AIUsageAccountCard: View {
         }
     }
 
-    /// An old Desktop cache reading turns its status orange instead of carrying a separate source line.
-    private func window(_ title: String, _ limit: AIUsageLimit, _ snapshot: AIUsageSnapshot) -> some View {
+    private func window(_ title: String, _ limit: AIUsageLimit) -> some View {
         let now = Date()
         var status = limit.fraction.formatted(.percent.precision(.fractionLength(0))) + " used"
         if let reset = limit.resetsAt { status += " · Resets " + AIUsageResetFormat.text(reset, now: now) }
@@ -154,14 +144,12 @@ private struct AIUsageAccountCard: View {
             AIUsageQuotaBar(fraction: limit.fraction)
             Text(status)
                 .monospacedDigit()
-                .foregroundStyle(snapshot.isQuotaStale(at: now) ? .orange : .primary)
                 .lineLimit(1)
                 .minimumScaleFactor(Self.minimumTextScale)
                 .frame(width: Self.statusWidth, alignment: .leading)
         }
     }
 
-    /// A Desktop-only profile never has its own logs, so it shows no totals line at all.
     @ViewBuilder private func totals(_ snapshot: AIUsageSnapshot) -> some View {
         if snapshot.hasLocalLogs {
             HStack(spacing: 18) {
@@ -170,7 +158,7 @@ private struct AIUsageAccountCard: View {
             }
             .lineLimit(1)
             .minimumScaleFactor(Self.minimumTextScale)
-        } else if account.profile?.codeConfigDirectory != nil || account.profile == nil {
+        } else {
             Text(snapshot.logsMessage ?? "No local usage logs").foregroundStyle(.secondary)
         }
     }
