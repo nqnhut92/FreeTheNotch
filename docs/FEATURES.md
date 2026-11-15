@@ -2,7 +2,7 @@
 
 Detailed feature guide and settings reference. For installation and a quick overview, see the [README](../README.md). Implementation details are in [Technical Design](TECHNICAL_DESIGN.md).
 
-- **Version:** 0.3.0 (2026-10-21)
+- **Version:** 1.0.0 (2026-11-15)
 
 [Notch](#notch) · [AI Usage](#ai-usage) · [System panel](#system-panel) · [Side Notch](#side-notch) · [Lock screen](#lock-screen) · [Mouse scrolling](#mouse-scrolling) · [Privacy](#privacy) · [Permissions](#permissions) · [Settings](#settings) · [Known limits](#known-limits)
 
@@ -39,6 +39,10 @@ Home is always visible and first. You can reorder or hide the other page icons. 
 - **Timer:** quick presets. A running timer stays on the closed island.
 - **Calculator:** iOS-style keypad, keyboard input (click the display first), history, and click-to-copy.
 - **QR:** offline QR code generator. Copy the image or save it as PNG.
+
+### Full screen
+
+While an app is in full screen on a display (a video, a game, a presentation), the notch and the Side Notch hide on that display and stay on the others. The volume and keyboard-backlight HUD still appears there. Turn this off in Settings → General → Displays → Hide in full screen.
 
 ### Skins
 
@@ -155,7 +159,7 @@ Open Settings from the gear in the open notch, from the system panel, or from th
 
 | Section | Contents |
 |---|---|
-| General | Launch at login, which displays show the notch, hover delay, remember last tab, hide from screen sharing |
+| General | Launch at login, which displays show the notch, hide in full screen, hover delay, remember last tab, hide from screen sharing |
 | Appearance | Liquid Glass, lunar date, notch tab order (drag ≡, Reset order), battery strip, Quote of the Day (source, interval) |
 | Skins | Skin picker with live previews, pet size (Custom remembers a size for each animation, up to 2.5×) and speed, Custom skin's animation (pick, import/delete your own Lottie files), hide while the notch is open |
 | Live Activities | Now Playing, Caps Lock, Bluetooth pop-up, AI session status and previews |

@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import SwiftUI
 import os
 
@@ -51,6 +52,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let processes = ProcessMonitor()
     let capsLock = CapsLockManager.shared
     let speedTest = SpeedTest()
+    let fullScreenSpaces = FullScreenSpaceMonitor()
     lazy var aiUsage = AIUsageMonitor(settings: settings)
     lazy var aiActivities = AIActivityMonitor(settings: settings)
 
@@ -63,6 +65,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var sideNotch: SideNotchWindowController?
     private var lockScreenManager: LockScreenManager?
     private var settingsWindow: NSWindow?
+    private var fullScreenObserver: AnyCancellable?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AppDelegate.shared = self
@@ -78,6 +81,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         sideNotch = SideNotchWindowController(services: self)
         lockScreenManager = LockScreenManager(services: self)
         lockScreenManager?.start()
+        fullScreenObserver = Publishers.CombineLatest(
+            fullScreenSpaces.$fullScreenDisplays, settings.$hideInFullScreen
+        )
+        .map { displays, isEnabled in isEnabled ? displays : [] }
+        .removeDuplicates()
+        .receive(on: DispatchQueue.main)
+        .sink { [weak self] displays in
+            self?.notchController?.setFullScreenDisplays(displays)
+            self?.sideNotch?.setFullScreenDisplays(displays)
+        }
 
         clipboard.configure(with: settings)
         QuoteStore.shared.configure(with: settings)

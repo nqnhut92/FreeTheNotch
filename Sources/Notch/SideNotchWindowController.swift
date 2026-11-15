@@ -22,7 +22,13 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
     private typealias PopoverKind = SideNotchPopoverKind
 
     private weak var services: AppDelegate?
-    private var panels: [NSPanel] = []
+    /// One Side Notch panel and the display it sits on.
+    private struct EdgePanel {
+        let panel: NSPanel
+        let displayID: CGDirectDisplayID?
+    }
+
+    private var panels: [EdgePanel] = []
     /// Popovers that are open or closing. A closed popover is dropped with
     /// its content, so nothing hidden keeps observing the monitors.
     private var popovers: [PopoverKind: NSPopover] = [:]
@@ -31,6 +37,8 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
     private var lastClosed: (kind: PopoverKind, at: Date)?
     private var isEnabled = false
     private var isHiddenWhileLocked = false
+    /// Displays showing a full-screen app (Settings → General → Hide in full screen).
+    private var fullScreenDisplays: Set<CGDirectDisplayID> = []
     /// Edge the panels are on now (the setting, or the Dock rule's override).
     private var currentEdge: SideNotchEdge = .right
     private let wifi = WiFiMonitor()
@@ -106,8 +114,28 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
     func setHidden(_ hidden: Bool) {
         isHiddenWhileLocked = hidden
         if hidden { closePopovers() }
-        for panel in panels {
-            if hidden { panel.orderOut(nil) } else { panel.orderFrontRegardless() }
+        applyVisibility()
+    }
+
+    /// Hides the panels on these displays while they show a full-screen app.
+    func setFullScreenDisplays(_ displays: Set<CGDirectDisplayID>) {
+        guard displays != fullScreenDisplays else { return }
+        fullScreenDisplays = displays
+        applyVisibility()
+    }
+
+    private func isHidden(_ edgePanel: EdgePanel) -> Bool {
+        isHiddenWhileLocked || edgePanel.displayID.map(fullScreenDisplays.contains) ?? false
+    }
+
+    private func applyVisibility() {
+        for edgePanel in panels {
+            if isHidden(edgePanel) {
+                if popoverAnchor?.window === edgePanel.panel { closePopovers() }
+                edgePanel.panel.orderOut(nil)
+            } else if !edgePanel.panel.isVisible {
+                edgePanel.panel.orderFrontRegardless()
+            }
         }
     }
 
@@ -120,7 +148,7 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
 
     private func rebuildPanels() {
         closePopovers()
-        for panel in panels { panel.orderOut(nil) }
+        for edgePanel in panels { edgePanel.panel.orderOut(nil) }
         panels = []
         guard isEnabled, let services else { return }
         currentEdge = DockSide.shared.effectiveEdge(
@@ -128,9 +156,11 @@ final class SideNotchWindowController: NSObject, NSPopoverDelegate {
         for screen in targetScreens {
             let requestedZoom = CGFloat(services.settings.sideNotchZoom) * SideNotchLayout.baseScale
             let zoom = min(requestedZoom, screen.visibleFrame.height / SideNotchLayout.size.height)
-            let panel = makePanel(on: screen, zoom: zoom, edge: currentEdge, services: services)
-            if !isHiddenWhileLocked { panel.orderFrontRegardless() }
-            panels.append(panel)
+            let edgePanel = EdgePanel(
+                panel: makePanel(on: screen, zoom: zoom, edge: currentEdge, services: services),
+                displayID: screen.displayID)
+            if !isHidden(edgePanel) { edgePanel.panel.orderFrontRegardless() }
+            panels.append(edgePanel)
         }
     }
 

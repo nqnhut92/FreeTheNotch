@@ -11,8 +11,8 @@ final class NotchPanelState: ObservableObject {
     @Published var isExpanded = false
     /// Which tool the open island is showing. Drives the shape height.
     @Published var page: NotchPage = .home
-    /// False while the panel is hidden (screen locked) or the displays
-    /// sleep: nothing on it needs to animate.
+    /// False while the panel is hidden (screen locked, or a full-screen app
+    /// on its display) or the displays sleep: nothing on it needs to animate.
     @Published var isOnScreen = true
 }
 
@@ -109,7 +109,11 @@ final class NotchWindowController: NSObject {
     private var scopeObserver: AnyCancellable?
     private var tabObserver: AnyCancellable?
     private var sleepObservers: [AnyCancellable] = []
+    private var hudObserver: AnyCancellable?
     private var isHiddenWhileLocked = false
+    /// Displays showing a full-screen app, where the notch stays out of the
+    /// way (Settings → General → Hide in full screen).
+    private var fullScreenDisplays: Set<CGDirectDisplayID> = []
     private var areScreensAsleep = false
 
     /// Atoll's level: above the menu bar, below pop-up menus.
@@ -153,13 +157,20 @@ final class NotchWindowController: NSObject {
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in self?.setScreensAsleep(isAsleep) }
         }
+        // The volume and brightness HUDs replace the system's own overlay,
+        // so they still show over a full-screen app.
+        hudObserver = services.hud.$isHUDVisible
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self, !self.fullScreenDisplays.isEmpty else { return }
+                self.applyVisibility()
+            }
     }
 
     private func setScreensAsleep(_ isAsleep: Bool) {
         areScreensAsleep = isAsleep
-        for entry in entries.values {
-            entry.state.isOnScreen = !isHiddenWhileLocked && !isAsleep
-        }
+        applyVisibility()
     }
 
     deinit {
@@ -199,23 +210,61 @@ final class NotchWindowController: NSObject {
     /// Hide/show all notch panels (Atoll-style lock behavior).
     func setPanelsHidden(_ hidden: Bool) {
         isHiddenWhileLocked = hidden
-        for entry in entries.values {
-            entry.state.isOnScreen = !hidden && !areScreensAsleep
-            if hidden {
-                entry.panel.alphaValue = 0
-                entry.panel.orderOut(nil)
-            } else {
-                entry.panel.alphaValue = 1
-                entry.panel.orderFrontRegardless()
-            }
+        applyVisibility()
+    }
+
+    /// Hides the panels on these displays while they show a full-screen app
+    /// (Atoll's `hideOnClosed`, per screen).
+    func setFullScreenDisplays(_ displays: Set<CGDirectDisplayID>) {
+        guard displays != fullScreenDisplays else { return }
+        fullScreenDisplays = displays
+        applyVisibility()
+    }
+
+    private func isOverFullScreenApp(_ screen: NSScreen) -> Bool {
+        screen.displayID.map(fullScreenDisplays.contains) ?? false
+    }
+
+    private func isHidden(on screen: NSScreen) -> Bool {
+        if isHiddenWhileLocked { return true }
+        return isOverFullScreenApp(screen) && services?.hud.isHUDVisible != true
+    }
+
+    /// Orders every panel in or out to match the lock state and its
+    /// display's full-screen state.
+    private func applyVisibility() {
+        for id in Array(entries.keys) { applyVisibility(to: id) }
+    }
+
+    private func applyVisibility(to id: ObjectIdentifier) {
+        guard let entry = entries[id] else { return }
+        let hidden = isHidden(on: entry.screen)
+        let isOnScreen = !hidden && !areScreensAsleep
+        if entry.state.isOnScreen != isOnScreen { entry.state.isOnScreen = isOnScreen }
+        if hidden {
+            collapse(id)
+            entry.panel.alphaValue = 0
+            entry.panel.orderOut(nil)
+        } else if !entry.panel.isVisible {
+            entry.panel.alphaValue = 1
+            entry.panel.orderFrontRegardless()
         }
+    }
+
+    /// Closes the island and forgets the hover, for a panel going away.
+    private func collapse(_ id: ObjectIdentifier) {
+        entries[id]?.hoverTimer?.invalidate()
+        entries[id]?.hoverTimer = nil
+        guard let state = entries[id]?.state else { return }
+        if state.isHovered { state.isHovered = false }
+        if state.isExpanded { state.isExpanded = false }
     }
 
     private func makePanel(for screen: NSScreen) {
         guard let services else { return }
         let state = NotchPanelState()
         state.page = services.settings.visibleNotchTabs.first ?? .home
-        state.isOnScreen = !isHiddenWhileLocked && !areScreensAsleep
+        state.isOnScreen = !isHidden(on: screen) && !areScreensAsleep
 
         let frame = fixedFrame(for: screen, settings: services.settings)
         let panel = KeyablePanel(
@@ -278,7 +327,11 @@ final class NotchWindowController: NSObject {
             }
         entries[ObjectIdentifier(screen)] = entry
 
-        panel.orderFrontRegardless()
+        if isHidden(on: screen) {
+            panel.alphaValue = 0
+        } else {
+            panel.orderFrontRegardless()
+        }
     }
 
     /// Everything that changes the island's size, so the hit-test rect
@@ -375,6 +428,9 @@ final class NotchWindowController: NSObject {
         guard let services else { return }
         let mouse = NSEvent.mouseLocation
         for (id, entry) in entries {
+            // No island to open over a full-screen app, even while a HUD
+            // has the panel up.
+            if isOverFullScreenApp(entry.screen) { continue }
             let panel = entry.panel
             let state = entry.state
             pin(panel, to: entry.screen, settings: services.settings)

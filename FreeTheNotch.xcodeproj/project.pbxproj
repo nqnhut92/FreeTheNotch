@@ -114,6 +114,10 @@
 		F1E2D3C4B5A6978877665529 /* DuoGlyphPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766552A /* DuoGlyphPopover.swift */; };
 		F1E2D3C4B5A697887766552B /* SideNotchShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A697887766552C /* SideNotchShape.swift */; };
 		F1E2D3C4B5A6978877665527 /* SideNotchWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665528 /* SideNotchWindowController.swift */; };
+		F1E2D3C4B5A6978877665E54 /* FullScreenSpaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E51 /* FullScreenSpaces.swift */; };
+		F1E2D3C4B5A6978877665E55 /* FullScreenSpaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E51 /* FullScreenSpaces.swift */; };
+		F1E2D3C4B5A6978877665E56 /* FullScreenSpaceMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E52 /* FullScreenSpaceMonitor.swift */; };
+		F1E2D3C4B5A6978877665E57 /* FullScreenSpacesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E53 /* FullScreenSpacesTests.swift */; };
 		F1E2D3C4B5A6978877665525 /* DuoGlyphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665526 /* DuoGlyphView.swift */; };
 		F1E2D3C4B5A6978877665E46 /* NetworkSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E45 /* NetworkSymbol.swift */; };
 		F1E2D3C4B5A6978877665E47 /* NetworkSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665E45 /* NetworkSymbol.swift */; };
@@ -374,6 +378,9 @@
 		F1E2D3C4B5A697887766552A /* DuoGlyphPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuoGlyphPopover.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A697887766552C /* SideNotchShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNotchShape.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665528 /* SideNotchWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNotchWindowController.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E51 /* FullScreenSpaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenSpaces.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E52 /* FullScreenSpaceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenSpaceMonitor.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665E53 /* FullScreenSpacesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenSpacesTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665526 /* DuoGlyphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuoGlyphView.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665E45 /* NetworkSymbol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSymbol.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665E48 /* CleaningUnlockCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleaningUnlockCounter.swift; sourceTree = "<group>"; };
@@ -633,6 +640,7 @@
 				F1E2D3C4B5A697887766583D /* MarqueeTextTests.swift */,
 				F1E2D3C4B5A697887766583B /* NotchSkinTests.swift */,
 				F1E2D3C4B5A6978877665839 /* NotchGeometryTests.swift */,
+				F1E2D3C4B5A6978877665E53 /* FullScreenSpacesTests.swift */,
 				F1E2D3C4B5A6978877665837 /* NotchPageTests.swift */,
 				F1E2D3C4B5A6978877665748 /* SystemToolsTests.swift */,
 				F1E2D3C4B5A6978877665746 /* NetworkModuleTests.swift */,
@@ -677,6 +685,7 @@
 				F1E2D3C4B5A6978877665727 /* NotchPopoverTracker.swift */,
 				5D2CCE8038A39D5E0853964B /* NotchWindowController.swift */,
 				F1E2D3C4B5A6978877665528 /* SideNotchWindowController.swift */,
+				F1E2D3C4B5A6978877665E52 /* FullScreenSpaceMonitor.swift */,
 				F1E2D3C4B5A697887766552C /* SideNotchShape.swift */,
 				50AF03B971722F244F58D669 /* NotchRootView.swift */,
 				CBEE3772A077021721A278F6 /* CollapsedNotchView.swift */,
@@ -783,6 +792,7 @@
 				F1E2D3C4B5A6978877665817 /* SkinSettingsSection.swift */,
 				846A32C3BB81E3C29B621792 /* SettingsStore.swift */,
 				73C8EB5BB682575EC87A171A /* DisplayGeometry.swift */,
+				F1E2D3C4B5A6978877665E51 /* FullScreenSpaces.swift */,
 				C826A6FCE48478DCB74F2134 /* SettingsView.swift */,
 			);
 			name = Core;
@@ -1014,6 +1024,7 @@
 				F1E2D3C4B5A6978877665939 /* LockArtworkImageTests.swift in Sources */,
 				F1E2D3C4B5A6978877665937 /* LockScreenLayoutTests.swift in Sources */,
 				F1E2D3C4B5A6978877665935 /* DisplayGeometry.swift in Sources */,
+				F1E2D3C4B5A6978877665E55 /* FullScreenSpaces.swift in Sources */,
 				F1E2D3C4B5A6978877665934 /* SettingsStore.swift in Sources */,
 				F1E2D3C4B5A6978877665933 /* LockPreviewGeometry.swift in Sources */,
 				F1E2D3C4B5A6978877665924 /* ArtworkWallpaperFiles.swift in Sources */,
@@ -1030,6 +1041,7 @@
 				F1E2D3C4B5A697887766583E /* MarqueeTextTests.swift in Sources */,
 				F1E2D3C4B5A697887766583C /* NotchSkinTests.swift in Sources */,
 				F1E2D3C4B5A697887766583A /* NotchGeometryTests.swift in Sources */,
+				F1E2D3C4B5A6978877665E57 /* FullScreenSpacesTests.swift in Sources */,
 				F1E2D3C4B5A6978877665838 /* NotchPageTests.swift in Sources */,
 				F1E2D3C4B5A6978877665836 /* BatteryTiles.swift in Sources */,
 				F1E2D3C4B5A6978877665833 /* CalculatorModel.swift in Sources */,
@@ -1195,6 +1207,7 @@
 				86D3748421599E3E9C8FE21D /* FreeTheNotchApp.swift in Sources */,
 				A80270815FE85DF2FBDAA35A /* SettingsStore.swift in Sources */,
 				DF9C1E2A8A3C0ED16BFE1684 /* DisplayGeometry.swift in Sources */,
+				F1E2D3C4B5A6978877665E54 /* FullScreenSpaces.swift in Sources */,
 				9EF307590D273E34F98DFF7E /* SettingsView.swift in Sources */,
 				4C6428DA8099F4EFBACEA67C /* NotchWindowController.swift in Sources */,
 				7D1AFCC4F14A3E3E04D42F8A /* NotchRootView.swift in Sources */,
@@ -1236,6 +1249,7 @@
 				F1E2D3C4B5A6978877665503 /* BatteryHUDView.swift in Sources */,
 				F1E2D3C4B5A6978877665529 /* DuoGlyphPopover.swift in Sources */,
 				F1E2D3C4B5A6978877665527 /* SideNotchWindowController.swift in Sources */,
+				F1E2D3C4B5A6978877665E56 /* FullScreenSpaceMonitor.swift in Sources */,
 				F1E2D3C4B5A697887766552B /* SideNotchShape.swift in Sources */,
 				F1E2D3C4B5A6978877665525 /* DuoGlyphView.swift in Sources */,
 				F1E2D3C4B5A6978877665E46 /* NetworkSymbol.swift in Sources */,
@@ -1341,7 +1355,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.3.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1364,7 +1378,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.3.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

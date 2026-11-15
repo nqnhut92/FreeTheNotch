@@ -13,6 +13,13 @@ extension SettingsView {
             SettingsGroupHeader("Displays")
             DisplayScopeCards(selection: $settings.displayScope)
             SettingsFootnote("The notch and Side Notch show on these displays.")
+            SettingsCard {
+                SettingsToggleRow(
+                    "Hide in full screen",
+                    description:
+                        "Hide the notch and Side Notch on a display while an app is in full screen there",
+                    isOn: $settings.hideInFullScreen, showDivider: false)
+            }
             SettingsGroupHeader("Interaction")
             SettingsCard {
                 SettingsRow("Hover delay") {

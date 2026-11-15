@@ -60,6 +60,9 @@ final class SettingsStore: ObservableObject {
     /// Atoll's "Remember last tab" (`openLastTabByDefault`, default off):
     /// off = the notch and the menu-bar panel reopen on their first tab.
     @Published var rememberLastTab = false
+    /// Hide the notch and the Side Notch on a display while it shows a
+    /// full-screen app (FullScreenSpaceMonitor).
+    @Published var hideInFullScreen = true
     /// Atoll's `hideDynamicIslandFromScreenCapture`; on by default here.
     @Published var hideFromScreenCapture = true
 
@@ -170,6 +173,7 @@ final class SettingsStore: ObservableObject {
         PersistedSetting("liquidGlass", \.liquidGlass),
         PersistedSetting("rememberLastTab", \.rememberLastTab),
         PersistedSetting("hideFromScreenCapture", \.hideFromScreenCapture),
+        PersistedSetting("hideInFullScreen", \.hideInFullScreen),
         PersistedSetting("sideNotchEnabled", \.sideNotchEnabled),
         PersistedSetting("sideNotchZoom", \.sideNotchZoom),
         PersistedSetting("sideNotchEdge", \.sideNotchEdgeRaw),

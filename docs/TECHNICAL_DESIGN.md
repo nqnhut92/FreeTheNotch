@@ -2,7 +2,7 @@
 
 This is how the app is built and why. The user-facing feature guide is in [FEATURES.md](FEATURES.md); installation and a quick overview are in [README.md](../README.md). Rules for working on the code (for people and coding agents) are in [AGENTS.md](../AGENTS.md).
 
-- **Last updated:** 2026-11-07 (version 0.3.1)
+- **Last updated:** 2026-11-15 (version 1.0.0)
 - **Stack:** Swift 5, SwiftUI hosted in AppKit windows. Deployment target macOS 14, arm64 only, hardened runtime, not sandboxed.
 - **License:** GPL-3.0-or-later (`LICENSE`), the same as Atoll and Vorssaint. Notices for the MIT, BSD and Apache-2.0 projects it builds on are in `THIRD_PARTY_NOTICES.md`; add one there for any new project.
 - **Dependencies:** `lottie-ios` (Swift Package Manager, source package). A vendored Zstandard v1.5.7 decoder handles Claude Desktop cache compression (BSD-3-Clause). The remaining dependencies are Apple frameworks, plus a few private symbols loaded at runtime (listed in [Private API use](#6-private-api-use)).
@@ -47,6 +47,8 @@ AppDelegate (services: Settings, Media, Clipboard, Bluetooth, Calendar, System, 
 | Settings | Titled `NSWindow`, `isReleasedWhenClosed = false`, reused | Releasing it on close caused a crash when it was reopened. |
 
 **Displays** (Settings → General, card picker `DisplayScopeCards`) is one setting, `displayScopeRaw`, for both the notch and the Side Notch; `DisplayGeometry.targetScreens(for:)` resolves it. **Built-in** (raw `mainOnly`, kept for stored settings) is `DisplayGeometry.builtInScreen()`: the notch screen, else the built-in panel; with the lid closed there is none and nothing is shown (it used to fall back to the main display, which put both on the external monitor). **Main display** is `NSScreen.screens[0]`, the one with the menu bar (`NSScreen.main` follows the key window). **All displays** is every screen.
+
+**Hide in full screen** (`hideInFullScreen`, `ftn.hideInFullScreen`, default on; Settings → General → Displays) takes the notch and the Side Notch off a display while that display shows a native full-screen Space, and leaves the other displays alone. Atoll hides per screen too (`FullscreenMediaDetector.fullscreenStatus`, re-checked on Space and screen-parameter changes and again 0.5 s later), but finds full-screen apps with MacroVisionKit window frames plus the Accessibility `AXFullScreen` attribute. Here `FullScreenSpaceMonitor` asks the window server instead, as Vorssaint does (`SpaceWindowBridge.topology`): `CGSCopyManagedDisplaySpaces` lists each display's Spaces and its current one, and a current Space of type 4 is full screen (Split View included). `FullScreenSpaces` parses the reply (Foundation only, tested). It matches a display by its UUID, or by the shared entry `Main` when "Displays have separate Spaces" is off, where a full-screen app takes every display. It does not read `NSScreen.screensHaveSeparateSpaces`, so one display's full-screen app cannot hide the notch on another. `AppDelegate` combines the monitor with the setting and hands the display set to `NotchWindowController.setFullScreenDisplays` and `SideNotchWindowController.setFullScreenDisplays`, which order those panels out (the same path as the lock-screen hide) and skip hover polling there. One exception: the volume and brightness HUD replaces the system overlay, so while `hud.isHUDVisible` the notch panel on a full-screen display comes back for the HUD and leaves with it. Non-native full screen (a borderless window that covers the screen without its own Space) is not detected.
 
 ### 2.1 Notch window mechanics (`Sources/Notch/NotchWindowController.swift`, `NotchRootView.swift`)
 
@@ -172,7 +174,7 @@ The battery HUD (`BatteryHUDController`) overrides all of these while the island
 
 **Controller and window**
 
-- `SideNotchWindowController` (owned by `AppDelegate`) shows one borderless non-activating `NSPanel` per target screen (the notch's `displayScopeRaw`) while `settings.sideNotchEnabled` is on. Level `.statusBar`, all Spaces, stationary, not shown over full-screen apps, `animationBehavior = .none`, appearance `darkAqua`. Hidden while the screen is locked (`AppDelegate.setNotchHidden`).
+- `SideNotchWindowController` (owned by `AppDelegate`) shows one borderless non-activating `NSPanel` per target screen (the notch's `displayScopeRaw`) while `settings.sideNotchEnabled` is on. Level `.statusBar`, all Spaces, stationary, `animationBehavior = .none`, appearance `darkAqua`. Hidden while the screen is locked (`AppDelegate.setNotchHidden`) and, with Hide in full screen on, on a display that shows a full-screen app (`setFullScreenDisplays`, §2).
 - Frame: the shape's bounding box including the flares, rounded outward to whole points like CodeNotch `NotchGeometry.panelFrame`. The drawing receives those exact bounds so AppKit rounding cannot leave a strip at the screen edge; x on `screen.frame.maxX - width` (right) or `minX` (left), y centred on `screen.frame.midY`. The transparent flare corners stay inside the window (a small dead zone; CodeNotch's `ignoresMouseEvents` toggling was not ported).
 - Panels are rebuilt (not resized) on screen changes and when scope, zoom, edge, cell order or Dock side change. The top notch's "never resizes" rule is about its hover morph and does not apply here.
 - The Wi-Fi and volume monitors and the Dock timer run only while the Side Notch is on.
@@ -308,7 +310,7 @@ AI quota warnings use `AIUsageMonitor` / `AIUsageHUDView` (§3.5.3), with a four
   2. copies `media-bridge.pl`;
   3. stamps `CFBundleVersion` with the local build time, `date +%Y%m%d.%H%M%S` (a dot, not a dash: `CFBundleVersion` may only hold digits and dots).
 - **Version:**
-  - `CFBundleShortVersionString` = `$(MARKETING_VERSION)`, currently 0.3.0.
+  - `CFBundleShortVersionString` = `$(MARKETING_VERSION)`, currently 1.0.0.
   - About shows `Version <marketing> (build-<YYYYMMDD.HHMMSS>)`.
 - **Releases:** `scripts/release.sh` archives an unsigned Release build, signs it with a self-signed "FreeTheNotch Release" certificate and zips it for GitHub Releases. A personal Apple Development certificate would put the Apple ID's email address in every signature. The self-signed certificate keeps the designated requirement (`certificate leaf = H"…"`) the same across releases, so macOS keeps users' permissions when they update; an ad-hoc signature would change with every build. The script stops if the bundle contains a `/Users/<user>/` path or the signature contains an email address. The app is not notarized, so the first launch needs **Open Anyway**.
 - **Entitlements:** hardened runtime, no sandbox, Apple Events, Calendars, Location (like DuoBar). Without the Location entitlement, locationd silently drops the permission prompt under the hardened runtime ("doesn't have the entitlement, not sending #AuthPrompt"), so Wi-Fi names and local weather never get access.
@@ -326,6 +328,7 @@ These are loaded with `dlsym` or `@_silgen_name` (or, for the lock state, read a
 | MediaRemote (via the perl bridge) | `MediaBridge.c` | Now Playing info and commands |
 | `CGSSessionScreenIsLocked` key of the public `CGSessionCopyCurrentDictionary` | `LockScreenManager` | Reliable lock state |
 | SkyLight: `SLSMainConnectionID`, `SLSSpaceCreate`, `SLSSpaceSetAbsoluteLevel`, `SLSShowSpaces`, `SLSSpaceAddWindowsAndRemoveFromSpaces` | `SkyLightLockSpace` | Show widgets above the lock screen |
+| `CGSMainConnectionID`, `CGSCopyManagedDisplaySpaces` (`dlsym`) | `FullScreenSpaceMonitor` | Which displays show a full-screen Space; without them nothing is hidden in full screen |
 | AppleSMC user client | `SMCClient` | Temperatures and power |
 | `responsibility_get_pid_responsible_for_pid` | `ProcessMonitor` | Bill helper processes to their app |
 | `IOBluetoothPreferenceSetControllerPowerState` (IOBluetooth, `dlsym`) | `BluetoothMonitor.setPower` | Bluetooth on/off switch in the Side Notch menu (what `blueutil` calls); fallback opens Bluetooth settings |
