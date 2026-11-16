@@ -4,7 +4,7 @@ A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and 
 
 - **Version:** 1.1.2
 - **Requires:** macOS 14 or later, Apple Silicon. Developed and tested on macOS 27.
-- **Interactive demo:** [freethenotch.nqnhut92.top](https://freethenotch.nqnhut92.top) ([web repo](https://github.com/nqnhut92/freethenotch-web))
+- **Interactive demo:** [freethenotch.nqnhut92.top](https://freethenotch.nqnhut92.top)
 - **Docs:** [Screenshots](docs/GALLERY.md) · [Settings](docs/SETTINGS.md) · [Feature guide](docs/FEATURES.md) · [Technical Design](docs/TECHNICAL_DESIGN.md)
 - **Support:** [Ko-fi](https://ko-fi.com/nqnhut92) · [Vietnam QR](https://freethenotch.nqnhut92.top/#support-vn)
 
@@ -12,51 +12,29 @@ A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and 
 
 - **Notch:** media controls, calendar and reminders, clipboard history, timers, calculator and offline QR codes.
 - **Live activities:** Now Playing, timers, Caps Lock, volume, keyboard backlight, battery, Bluetooth, iPhone / iPad sync and AI session status.
-- **AI Usage:** Codex and Claude quota, reset times, local token totals, estimated API cost and quota warnings. Claude quota needs a Claude Code login: run `claude auth login` once in Terminal (Claude Desktop alone is not enough).
+- **AI Usage:** Codex and Claude quota, reset times, local token totals, estimated API cost and 80% quota warnings.
 - **System dashboard:** CPU/GPU, memory, network, disks, battery and Keep Awake.
-- **Side Notch:** optional screen-edge controls for Wi-Fi, sound, Bluetooth and the system dashboard. When enabled, either click on the menu bar icon opens quick actions; when disabled, left click opens the dashboard and right click opens quick actions.
+- **Side Notch:** optional screen-edge controls for Wi-Fi, sound, Bluetooth and the system dashboard.
 - **Lock screen:** media, timers, battery and weather widgets, calendar events, reminders and optional artwork wallpaper.
 - **Utilities and appearance:** smooth mouse scrolling, Cleaning Mode, skins and custom Lottie pets.
 
-### On your desktop
-
-The closed notch with the Jungle skin and Side Notch controls:
-
 ![Desktop overview with the Jungle notch skin and Side Notch controls](docs/images/desktop-overview.jpg)
-
-### Inside the notch
-
-Music, calendar, reminders and device batteries together. Artwork and track details are blurred.
 
 ![Open notch with music controls, sample calendar event and reminder, and battery levels](docs/images/notch-home.png)
 
-Try the [interactive web demo](https://freethenotch.nqnhut92.top), or explore the [feature screenshots](docs/GALLERY.md) for AI Usage, tools, system monitoring, connectivity and lock-screen widgets, or the [Settings gallery](docs/SETTINGS.md) for configuration. Controls, permissions and limits are in the [feature guide](docs/FEATURES.md).
-
-Calendar, clipboard, settings and local AI logs stay on your Mac. FreeTheNotch has no account or telemetry service of its own. Some features use external services for weather, quotes, speed tests, AI quota and model prices; see [Privacy](docs/FEATURES.md#privacy).
+Try the [interactive web demo](https://freethenotch.nqnhut92.top), or see the [screenshots](docs/GALLERY.md), [Settings gallery](docs/SETTINGS.md) and [feature & privacy guide](docs/FEATURES.md).
 
 ## Install
 
-1. **Download** `FreeTheNotch-<version>.zip` from the [latest release](https://github.com/nqnhut92/FreeTheNotch/releases/latest), unzip it, and drag `FreeTheNotch.app` into **Applications**.
-2. **Open it.** FreeTheNotch is not notarized by Apple, so macOS blocks the first launch. Click **Done**, then open **System Settings → Privacy & Security**, scroll down to the message about FreeTheNotch, click **Open Anyway** and confirm. You only do this once.
-3. **Grant permissions** when macOS asks. Each one is needed only by the features in the [permissions guide](docs/FEATURES.md#permissions); everything else works without it.
-4. **AI Usage (optional):** for Claude quota, sign in once with `claude auth login` in Terminal; FreeTheNotch then renews the token itself. Codex uses its own saved login.
-5. **Start at login (optional):** turn on **Settings → General → Launch at login**.
+1. Download `FreeTheNotch-<version>.zip` from the [latest release](https://github.com/nqnhut92/FreeTheNotch/releases/latest), unzip it, and move `FreeTheNotch.app` into **Applications**.
+2. First launch is blocked because the app is not notarized: click **Done**, then open **System Settings → Privacy & Security → Open Anyway**.
+3. Grant permissions only for the features you enable (see [Permissions](docs/FEATURES.md#permissions)); for Claude quota, run `claude auth login` once in Terminal.
 
-The app lives in the menu bar and the notch; it shows a Dock icon only while Settings is open. To update, quit FreeTheNotch (right-click the menu bar cup → Quit) and replace the app in Applications with the new one; permissions carry over. The About page shows the version and build you are running.
-
-### Build from source
-
-Open `FreeTheNotch.xcodeproj` in Xcode, select the FreeTheNotch target → **Signing & Capabilities** and choose your own Team (a free Apple ID works). Then choose **Product → Archive → Distribute App → Custom → Copy App** and move the copy to Applications. A copy you build yourself is signed differently from a release, so macOS asks for permissions again when you switch between them.
+To update, quit FreeTheNotch (right-click the menu bar icon → Quit) and replace the app in Applications. To build from source, open `FreeTheNotch.xcodeproj`, set your Team under **Signing & Capabilities**, and archive via **Product → Archive → Distribute App → Custom → Copy App**.
 
 ## Development
 
-Open `FreeTheNotch.xcodeproj`. Application code lives in `Sources/`; tests live in `Tests/`. Follow [AGENTS.md](AGENTS.md) and [Technical Design](docs/TECHNICAL_DESIGN.md). Validate changes from the shell:
-
-```sh
-xcodebuild -project FreeTheNotch.xcodeproj -scheme FreeTheNotch -configuration Debug test CODE_SIGNING_ALLOWED=NO
-xcodebuild -project FreeTheNotch.xcodeproj -scheme FreeTheNotch -configuration Release build CODE_SIGNING_ALLOWED=NO
-swift format lint -r Sources Tests
-```
+Open `FreeTheNotch.xcodeproj`. Application code lives in `Sources/`; tests live in `Tests/`. See [Technical Design](docs/TECHNICAL_DESIGN.md) for architecture and build details.
 
 ## Credits
 
