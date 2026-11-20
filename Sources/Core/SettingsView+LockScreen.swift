@@ -10,7 +10,7 @@ extension SettingsView {
                 SettingsToggleRow(
                     "Artwork wallpaper",
                     description:
-                        "While music plays, the lock screen wallpaper becomes the artwork. Click the artwork to switch. Your wallpaper comes back when you unlock.",
+                        "While music plays, the lock screen wallpaper becomes the artwork. Click the artwork to switch; the lock screen keeps the mode you leave it in. Your wallpaper comes back when you unlock.",
                     isOn: $settings.lockArtworkWallpaper
                 )
                 .disabled(!settings.lockMedia)

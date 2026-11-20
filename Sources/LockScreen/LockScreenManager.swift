@@ -40,7 +40,9 @@ final class LockScreenManager {
     /// This lock's artwork switch, for rebuilding the widget root on realign.
     private var currentArtworkSwitch: LockArtworkSwitch?
     private var artworkWatch: AnyCancellable?
+    private var artworkModePersist: AnyCancellable?
     private var artworkClick: LockArtworkClickWindow?
+    private var vinylWindow: LockVinylWindow?
     /// The lock notch window (SkyLight space), on the notch screen only.
     private var lockNotchWindow: NSWindow?
     private let lockNotchModel = LockNotchModel()
@@ -129,11 +131,17 @@ final class LockScreenManager {
         let artworkSwitch = LockArtworkSwitch(isOn: services.settings.lockArtworkWallpaper)
         currentArtworkSwitch = artworkSwitch
         watchArtworkWallpaper(artworkSwitch)
+        // The mode the lock screen was left in is the one the next lock starts in, and Settings shows it.
+        artworkModePersist = artworkSwitch.$isOn
+            .dropFirst()
+            .removeDuplicates()
+            .sink { [weak settings = services.settings] isOn in settings?.lockArtworkWallpaper = isOn }
         // Main display only: macOS draws the clock and password field there,
         // so the widgets sit under that clock.
         if let screen = NSScreen.lockScreenMain {
             artworkClick = LockArtworkClickWindow(
                 screen: screen, artworkSwitch: artworkSwitch, media: services.media)
+            vinylWindow = LockVinylWindow(screen: screen, artworkSwitch: artworkSwitch, media: services.media)
             widgetWindow = makeWidgetWindow(on: screen, artworkSwitch: artworkSwitch)
         }
         Logger.lockScreen.notice(
@@ -180,8 +188,11 @@ final class LockScreenManager {
         // Give the wallpaper back, crossfading on the desktop (Atoll's
         // desktop-level transition window).
         artworkWatch = nil
+        artworkModePersist = nil
         artworkClick?.close()
         artworkClick = nil
+        vinylWindow?.close()
+        vinylWindow = nil
         LockArtworkWallpaper.shared.restore(on: NSScreen.lockScreenMain, lockScreen: false)
     }
 
@@ -189,7 +200,8 @@ final class LockScreenManager {
 
     private func makeWidgetWindow(on screen: NSScreen, artworkSwitch: LockArtworkSwitch) -> NSWindow {
         let placement = LockScreenLayout.widgetPlacement(onScreenFrame: screen.frame)
-        let window = NSWindow(contentRect: placement.frame, styleMask: .borderless, backing: .buffered, defer: false)
+        let frame = LockScreenLayout.withOutputPanelRoom(placement.frame)
+        let window = NSWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false)
         window.isReleasedWhenClosed = false
         window.isOpaque = false
         window.backgroundColor = .clear
@@ -201,7 +213,7 @@ final class LockScreenManager {
         window.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]
         let hosting = NSHostingView(
             rootView: widgetRoot(artworkSwitch: artworkSwitch, controlsOffset: placement.controlsOffset))
-        hosting.frame = NSRect(origin: .zero, size: placement.frame.size)
+        hosting.frame = NSRect(origin: .zero, size: frame.size)
         hosting.autoresizingMask = [.width, .height]
         window.contentView = hosting
         // The window needs a number before SkyLight will adopt it.
@@ -227,13 +239,15 @@ final class LockScreenManager {
         let screen = NSScreen.lockScreenMain
         if let screen, let window = widgetWindow, let artworkSwitch = currentArtworkSwitch {
             let placement = LockScreenLayout.widgetPlacement(onScreenFrame: screen.frame)
-            if window.frame != placement.frame {
-                window.setFrame(placement.frame, display: true)
+            let frame = LockScreenLayout.withOutputPanelRoom(placement.frame)
+            if window.frame != frame {
+                window.setFrame(frame, display: true)
             }
             (window.contentView as? NSHostingView<AnyView>)?.rootView =
                 widgetRoot(artworkSwitch: artworkSwitch, controlsOffset: placement.controlsOffset)
         }
         artworkClick?.relayout()
+        vinylWindow?.relayout()
         realignLockNotch()
         Logger.lockScreen.notice(
             "[FreeTheNotch] lock-screen windows realigned (\(reason, privacy: .public)) on \(screen?.localizedName ?? "no screen", privacy: .public)"
@@ -251,29 +265,31 @@ final class LockScreenManager {
         guard let services else { return }
         let settings = services.settings
         let media = services.media
-        artworkWatch = Publishers.CombineLatest3(artworkSwitch.$isOn, media.$isPlaying, media.$artwork)
-            .debounce(for: Self.artworkDebounce, scheduler: DispatchQueue.main)
-            .sink { [weak self] isOn, isPlaying, artwork in
-                guard let self, self.isLocked else { return }
-                let wallpaper = LockArtworkWallpaper.shared
-                if isOn, isPlaying, settings.lockMedia, settings.mediaEnabled, let artwork,
-                    let screen = NSScreen.lockScreenMain
-                {
-                    let started = wallpaper.apply(
-                        artwork, screen: screen,
-                        onShown: { artworkSwitch.presentation = .artwork },
-                        onFailed: { artworkSwitch.presentation = .widgets })
-                    // A new song while the artwork is up keeps the controls.
-                    if started, artworkSwitch.presentation != .artwork { artworkSwitch.presentation = .switching }
-                } else {
-                    let wasUp = wallpaper.restore(
-                        on: NSScreen.lockScreenMain, lockScreen: true,
-                        onRevealed: { artworkSwitch.presentation = .widgets })
-                    // Paused or switched off: the artwork controls go at
-                    // once; the widgets return with the user's wallpaper.
-                    artworkSwitch.presentation = wasUp ? .switching : .widgets
-                }
+        artworkWatch = Publishers.CombineLatest4(
+            artworkSwitch.$isOn, media.$isPlaying, media.$artwork, media.$bundleIdentifier
+        )
+        .debounce(for: Self.artworkDebounce, scheduler: DispatchQueue.main)
+        .sink { [weak self] isOn, isPlaying, artwork, _ in
+            guard let self, self.isLocked else { return }
+            let wallpaper = LockArtworkWallpaper.shared
+            if isOn, isPlaying, settings.lockMedia, settings.mediaEnabled, let artwork,
+                let screen = NSScreen.lockScreenMain
+            {
+                let started = wallpaper.apply(
+                    artwork, screen: screen, drawsArtwork: !media.showsVinyl,
+                    onShown: { artworkSwitch.presentation = .artwork },
+                    onFailed: { artworkSwitch.presentation = .widgets })
+                // A new song while the artwork is up keeps the controls.
+                if started, artworkSwitch.presentation != .artwork { artworkSwitch.presentation = .switching }
+            } else {
+                let wasUp = wallpaper.restore(
+                    on: NSScreen.lockScreenMain, lockScreen: true,
+                    onRevealed: { artworkSwitch.presentation = .widgets })
+                // Paused or switched off: the artwork controls go at
+                // once; the widgets return with the user's wallpaper.
+                artworkSwitch.presentation = wasUp ? .switching : .widgets
             }
+        }
     }
 
     // MARK: Lock notch (Atoll's LockScreenLiveActivityWindowManager)

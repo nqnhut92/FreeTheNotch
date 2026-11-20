@@ -15,7 +15,7 @@ final class LockArtworkClickWindow {
     private let window: NSWindow
     private var screen: NSScreen
     private var watch: AnyCancellable?
-    private var lastState: (show: Bool, artwork: NSImage?) = (false, nil)
+    private var lastState: (show: Bool, artwork: NSImage?, showsVinyl: Bool) = (false, nil, false)
 
     init(screen: NSScreen, artworkSwitch: LockArtworkSwitch, media: MediaRemoteAdapter) {
         self.screen = screen
@@ -38,10 +38,10 @@ final class LockArtworkClickWindow {
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.white.withAlphaComponent(Self.clickableAlpha).cgColor
         window.contentView = view
-        watch = Publishers.CombineLatest(artworkSwitch.$presentation, media.$artwork)
+        watch = Publishers.CombineLatest3(artworkSwitch.$presentation, media.$artwork, media.$bundleIdentifier)
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] presentation, artwork in
-                self?.update(show: presentation == .artwork, artwork: artwork)
+            .sink { [weak self] presentation, artwork, _ in
+                self?.update(show: presentation == .artwork, artwork: artwork, showsVinyl: media.showsVinyl)
             }
     }
 
@@ -53,19 +53,26 @@ final class LockArtworkClickWindow {
     /// Displays changed while locked: follow the current main display.
     func relayout() {
         if let main = NSScreen.lockScreenMain { screen = main }
-        update(show: lastState.show, artwork: lastState.artwork)
+        update(show: lastState.show, artwork: lastState.artwork, showsVinyl: lastState.showsVinyl)
     }
 
-    private func update(show: Bool, artwork: NSImage?) {
-        lastState = (show, artwork)
+    private func update(show: Bool, artwork: NSImage?, showsVinyl: Bool) {
+        lastState = (show, artwork, showsVinyl)
         guard show, let art = artwork?.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
             window.orderOut(nil)
             return
         }
-        // Same canvas as LockArtworkWallpaper.apply: the screen in pixels.
-        let hit = LockArtworkImage.visibleRect(
-            artworkPixels: CGSize(width: art.width, height: art.height),
-            screenSize: screen.frame.size, scale: screen.backingScaleFactor)
+        let hit: (rect: CGRect, cornerRadius: CGFloat)
+        if showsVinyl {
+            // The record is a circle.
+            let record = LockVinylLayout.recordFrame(in: screen.frame.size)
+            hit = (record, record.width / 2)
+        } else {
+            // Same canvas as LockArtworkWallpaper.apply: the screen in pixels.
+            hit = LockArtworkImage.visibleRect(
+                artworkPixels: CGSize(width: art.width, height: art.height),
+                screenSize: screen.frame.size, scale: screen.backingScaleFactor)
+        }
         window.setFrame(
             NSRect(
                 x: screen.frame.minX + hit.rect.minX,

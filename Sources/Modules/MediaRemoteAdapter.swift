@@ -19,6 +19,8 @@ final class MediaRemoteAdapter: ObservableObject {
     @Published private(set) var artworkColor: Color = .white
     /// Bundle ID of the now-playing app (Music, Spotify, browser...). Atoll-style.
     @Published private(set) var bundleIdentifier: String?
+    /// Whether the song is shown on a spinning record rather than a square cover.
+    var showsVinyl: Bool { VinylSource.isRecordPlayer(bundleIdentifier: bundleIdentifier) }
     @Published private(set) var playbackFraction: Double = 0
     @Published private(set) var duration: Double = 0
     @Published private(set) var elapsed: Double = 0
@@ -50,6 +52,8 @@ final class MediaRemoteAdapter: ObservableObject {
     /// it 0). Drives the skin pet's dance tempo; nil = use a default tempo.
     @Published private(set) var trackBPM: Int?
     private var lastBPMTitle: String?
+    /// The title whose cover was last asked of Music over AppleScript, so one song is asked about once.
+    private var musicArtworkRequestedTitle: String?
 
     /// After a tap, the app takes a moment to republish its mode. Keep the
     /// optimistic value until then so the button does not flicker back.
@@ -173,7 +177,7 @@ final class MediaRemoteAdapter: ObservableObject {
             remoteElapsed: remoteElapsed, remoteElapsedChanged: remoteElapsedChanged,
             duration: duration, playing: playing, trackChanged: trackChanged, now: Date())
         if reconciled != clock { clock = reconciled }
-        isPlaying = playing
+        setPlaying(playing)
         self.title = title
         artist = snapshot.artist
         // Atoll's approach: resolve bundle ID from PID via NSRunningApplication.
@@ -205,18 +209,96 @@ final class MediaRemoteAdapter: ObservableObject {
         playbackFraction = clock.fraction(at: Date())
         if let encoded = snapshot.artwork, let data = Data(base64Encoded: encoded), let image = NSImage(data: data) {
             artwork = image
+            artworkIsStale = false
             // Atoll-style: tint the waveform to the artwork's average color.
             artworkColor = Color(nsColor: image.quickAverageColor())
         } else if trackChanged {
             // Atoll (NowPlayingController, non-diff payload): a new track
-            // without art drops the old cover instead of keeping it on screen.
-            artwork = nil
-            artworkColor = .white
+            // without art drops the old cover. Here the old one stays until the new one arrives (or a moment
+            // passes), so the cover does not flash empty between two songs.
+            artworkIsStale = true
+            dropStaleArtwork(after: Self.staleArtworkDelay, for: title)
+        }
+        // Music started in the background (by another app) can play a song and publish no cover to MediaRemote.
+        // Not in Atoll; our own addition: ask Music for the cover itself.
+        if resolvedBundleID == Self.musicBundleID, artwork == nil || artworkIsStale {
+            loadMusicArtworkFallback(title: title)
         }
     }
 
+    /// Reads the current song's cover from Music over AppleScript, a few times, since Music may not have loaded it
+    /// yet when the song starts.
+    private func loadMusicArtworkFallback(title: String) {
+        guard musicArtworkRequestedTitle != title else { return }
+        musicArtworkRequestedTitle = title
+        scriptQueue.async { [weak self] in
+            for attempt in 0..<Self.musicArtworkAttempts {
+                if attempt > 0 { Thread.sleep(forTimeInterval: Self.musicArtworkRetryDelay) }
+                let source = """
+                    tell application "Music"
+                        try
+                            return raw data of artwork 1 of current track
+                        end try
+                        return ""
+                    end tell
+                    """
+                var error: NSDictionary?
+                let data = NSAppleScript(source: source)?.executeAndReturnError(&error).data
+                guard let image = data.flatMap({ NSImage(data: $0) }) else { continue }
+                DispatchQueue.main.async {
+                    // Only while the song is still the one asked about and MediaRemote has given no cover.
+                    guard let self, self.title == title, self.artwork == nil || self.artworkIsStale else { return }
+                    self.artwork = image
+                    self.artworkIsStale = false
+                    self.artworkColor = Color(nsColor: image.quickAverageColor())
+                }
+                return
+            }
+        }
+    }
+
+    /// Whether `artwork` is the previous song's, kept on screen until the new one arrives.
+    private var artworkIsStale = false
+    private static let staleArtworkDelay: Duration = .seconds(2)
+
+    private func dropStaleArtwork(after delay: Duration, for title: String) {
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: delay)
+            guard let self, self.artworkIsStale, self.title == title else { return }
+            self.artwork = nil
+            self.artworkColor = .white
+            self.artworkIsStale = false
+        }
+    }
+
+    /// A song change makes the player report "paused" for a few milliseconds before "playing". Passing that on made
+    /// the lock-screen player vanish and return, so a stop is published only if it lasts.
+    private func setPlaying(_ playing: Bool) {
+        pendingStop?.cancel()
+        pendingStop = nil
+        if playing || !isPlaying {
+            isPlaying = playing
+            return
+        }
+        pendingStop = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: Self.stopDebounce)
+            guard !Task.isCancelled, let self else { return }
+            self.isPlaying = false
+            self.pendingStop = nil
+        }
+    }
+
+    private var pendingStop: Task<Void, Never>?
+    private static let stopDebounce: Duration = .milliseconds(300)
+
+    private static let musicArtworkAttempts = 6
+    private static let musicArtworkRetryDelay = 1.0
+
     private func clear() {
         guard isPlaying || title != nil else { return }
+        pendingStop?.cancel()
+        pendingStop = nil
+        artworkIsStale = false
         isPlaying = false
         title = nil
         artist = nil
@@ -227,6 +309,7 @@ final class MediaRemoteAdapter: ObservableObject {
         upNextArtwork = nil
         lastUpNextKey = ""
         lastRemoteElapsed = -1
+        musicArtworkRequestedTitle = nil
         playbackFraction = 0
         duration = 0
         elapsed = 0
@@ -234,8 +317,29 @@ final class MediaRemoteAdapter: ObservableObject {
     }
 
     func togglePlayPause() { send("toggle\n") }
-    func nextTrack() { send("next\n") }
-    func previousTrack() { send("prev\n") }
+    func nextTrack() {
+        if bundleIdentifier == Self.musicBundleID {
+            runMusicScriptSource(MusicSkipScripts.skip(by: 1))
+        } else {
+            send("next\n")
+        }
+    }
+
+    func previousTrack() {
+        guard bundleIdentifier == Self.musicBundleID else {
+            send("prev\n")
+            return
+        }
+        switch MusicSkipScripts.previousAction(elapsed: clock.elapsed(at: Date())) {
+        case .restart:
+            runMusicScriptSource(MusicSkipScripts.restart)
+            // Music does not republish its position after this, so the bar moves by itself.
+            clock = clock.seeked(to: 0, at: Date())
+            elapsed = 0
+            playbackFraction = 0
+        case .previousSong: runMusicScriptSource(MusicSkipScripts.skip(by: -1))
+        }
+    }
 
     /// Atoll's NowPlayingController.toggleShuffle: set off (1) or tracks (3).
     /// Music goes through AppleScript (Atoll's AppleMusicController).
@@ -344,9 +448,13 @@ extension MediaRemoteAdapter {
     // MARK: Music (AppleScript, Atoll's AppleMusicController)
 
     private func runMusicScript(_ command: String) {
+        runMusicScriptSource("tell application \"Music\" to \(command)")
+    }
+
+    private func runMusicScriptSource(_ source: String) {
         scriptQueue.async {
             var error: NSDictionary?
-            NSAppleScript(source: "tell application \"Music\" to \(command)")?.executeAndReturnError(&error)
+            NSAppleScript(source: source)?.executeAndReturnError(&error)
             if let error { Logger.media.error("[FreeTheNotch] Music script failed: \(error, privacy: .public)") }
         }
     }

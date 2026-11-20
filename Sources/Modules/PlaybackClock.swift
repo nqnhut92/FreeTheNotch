@@ -25,6 +25,12 @@ struct PlaybackClock: Equatable {
         return min(1, elapsed(at: date) / duration)
     }
 
+    /// The clock after this app moved the position itself (a restart over AppleScript). The player does not always
+    /// republish its position after that, so the bar must not wait for it.
+    func seeked(to seconds: Double, at now: Date) -> PlaybackClock {
+        PlaybackClock(anchorElapsed: seconds, anchorDate: now, duration: duration, playing: playing)
+    }
+
     /// The clock after a bridge sample. A new track or a seek (a changed
     /// remote value far from the prediction) re-anchors on the reported
     /// position; play/pause re-anchors on the predicted one; a new duration

@@ -32,7 +32,13 @@ final class LockArtworkWallpaper {
     /// it changed was superseded and stops before touching the wallpaper.
     private let applyGeneration = ArtworkApplyGeneration()
     /// Artwork currently applied, so a repeat does nothing.
-    private var appliedArtwork: ObjectIdentifier?
+    private var appliedArtwork: AppliedArtwork?
+
+    /// What was put up: the artwork, and whether its sharp copy is drawn (not when a record stands in its place).
+    private struct AppliedArtwork: Equatable {
+        let id: ObjectIdentifier
+        let drawsArtwork: Bool
+    }
     /// The artwork is (being) put up.
     private var isUp = false
     /// The artwork wallpaper as shown: the cover on the way back.
@@ -46,13 +52,13 @@ final class LockArtworkWallpaper {
     /// the real wallpaper (WallpaperAgent restart) under it, and lifts it
     /// once the new agent is drawing. `onShown` when the artwork covers the
     /// screen, `onFailed` if nothing changed. Returns false if this artwork
-    /// is already up or being put up.
+    /// is already up or being put up. `drawsArtwork` false leaves the blurred fill alone, for a record drawn over it.
     @discardableResult
     func apply(
-        _ artwork: NSImage, screen: NSScreen,
+        _ artwork: NSImage, screen: NSScreen, drawsArtwork: Bool = true,
         onShown: @escaping () -> Void, onFailed: @escaping () -> Void
     ) -> Bool {
-        let id = ObjectIdentifier(artwork)
+        let id = AppliedArtwork(id: ObjectIdentifier(artwork), drawsArtwork: drawsArtwork)
         guard appliedArtwork != id,
             let cgArt = artwork.cgImage(forProposedRect: nil, context: nil, hints: nil)
         else { return false }
@@ -81,7 +87,7 @@ final class LockArtworkWallpaper {
             }
         }
         queue.async {
-            guard let image = LockArtworkImage.render(cgArt, canvas: canvas),
+            guard let image = LockArtworkImage.render(cgArt, canvas: canvas, drawsArtwork: drawsArtwork),
                 let imageURL = files.writePNG(image)
             else {
                 Logger.artworkWallpaper.error("[FreeTheNotch] artwork wallpaper: render failed")

@@ -6,6 +6,8 @@ struct LockMediaInfo {
     let artist: String
     let artwork: NSImage?
     let appIcon: NSImage?
+    /// The song is on a spinning record (`VinylSource`), not a square cover.
+    var showsVinyl = false
     let tint: Color
     let clock: PlaybackClock
     let isPlaying: Bool
@@ -32,6 +34,7 @@ struct LockScreenMediaCard: View {
     var onArtworkTap: (() -> Void)?
     @Environment(\.lockAnimationsPaused) private var animationsPaused
     @Environment(\.lockFrameInterval) private var frameInterval
+    @State private var showsOutputs = false
 
     private static let accent = Color(red: 0.20, green: 0.55, blue: 1.0)
     /// Row heights for the scrolling title and artist (point size × 1.3).
@@ -39,8 +42,28 @@ struct LockScreenMediaCard: View {
     private static let artistHeight: CGFloat = 17
     private static let artworkSide: CGFloat = 76
     private static let cornerRadius: CGFloat = 26
+    /// From the card's right edge to the middle of the output button: the card's padding plus half of the last of
+    /// six equal slots (the card is 420 pt wide).
+    private static let outputButtonInset: CGFloat = 16 + (420 - 32) / 12
+    /// The card's width, which `LockScreenView` gives it.
+    private static let width: CGFloat = 420
+    /// Negative: the arrow tip reaches up under the buttons.
+    private static let panelGap: CGFloat = -4
 
     var body: some View {
+        VStack(spacing: Self.panelGap) {
+            card
+            if showsOutputs {
+                LockOutputPanel(
+                    usesMusicAirPlay: media.bundleIdentifier == MediaRemoteAdapter.musicBundleID,
+                    arrowInset: Self.outputButtonInset
+                )
+                .frame(width: Self.width, alignment: .trailing)
+            }
+        }
+    }
+
+    private var card: some View {
         VStack(spacing: 10) {
             HStack(alignment: .center, spacing: 14) {
                 artwork
@@ -95,7 +118,22 @@ struct LockScreenMediaCard: View {
         .shadow(color: .black.opacity(0.3), radius: 14, y: 6)
     }
 
+    @ViewBuilder
     private var artwork: some View {
+        if info.showsVinyl {
+            VinylRecordView(artwork: info.artwork, isSpinning: info.isPlaying && !animationsPaused)
+                .frame(width: Self.artworkSide, height: Self.artworkSide)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if info.artwork != nil { onArtworkTap?() }
+                }
+                .help(onArtworkTap == nil ? "" : "Click to use the artwork as the wallpaper, or to go back")
+        } else {
+            coverArtwork
+        }
+    }
+
+    private var coverArtwork: some View {
         ZStack(alignment: .bottomTrailing) {
             Group {
                 if let art = info.artwork {
@@ -155,13 +193,16 @@ struct LockScreenMediaCard: View {
             button("shuffle", size: 13, color: info.isShuffled ? Self.accent : .white.opacity(0.85)) {
                 media.toggleShuffle()
             }
+            button("backward.fill", size: 16) { media.previousTrack() }
+            button(info.isPlaying ? "pause.fill" : "play.fill", size: 24) { media.togglePlayPause() }
+            button("forward.fill", size: 16) { media.nextTrack() }
             button(
                 info.repeatMode == .one ? "repeat.1" : "repeat", size: 13,
                 color: info.repeatMode == .off ? .white.opacity(0.85) : Self.accent
             ) { media.toggleRepeat() }
-            button("backward.fill", size: 16) { media.previousTrack() }
-            button(info.isPlaying ? "pause.fill" : "play.fill", size: 24) { media.togglePlayPause() }
-            button("forward.fill", size: 16) { media.nextTrack() }
+            button("airplayaudio", size: 14, color: showsOutputs ? OutputCheckbox.tint : .white.opacity(0.85)) {
+                showsOutputs.toggle()
+            }
         }
         .buttonStyle(.plain)
     }
@@ -197,8 +238,28 @@ struct LockScreenArtworkControls: View {
 
     /// Width of each time label: fits "62:05".
     private static let timeLabelWidth: CGFloat = 36
+    /// From the right edge to the middle of the output button: half of the last of six equal slots.
+    private static let outputButtonInset: CGFloat = 400.0 / 12
+    private static let width: CGFloat = 400
+    /// Negative: the arrow tip reaches up under the buttons.
+    private static let panelGap: CGFloat = -4
+    @State private var showsOutputs = false
 
     var body: some View {
+        VStack(spacing: Self.panelGap) {
+            controls
+            if showsOutputs {
+                LockOutputPanel(
+                    usesMusicAirPlay: media.bundleIdentifier == MediaRemoteAdapter.musicBundleID,
+                    arrowInset: Self.outputButtonInset
+                )
+                // Wider than the controls: it grows to the left.
+                .frame(width: Self.width, alignment: .trailing)
+            }
+        }
+    }
+
+    private var controls: some View {
         VStack(spacing: 10) {
             // Centred; long names scroll (MarqueeText, as in the notch).
             VStack(spacing: 2) {
@@ -233,11 +294,12 @@ struct LockScreenArtworkControls: View {
                     info.repeatMode == .one ? "repeat.1" : "repeat", size: 14,
                     isActive: info.repeatMode != .off
                 ) { media.toggleRepeat() }
+                button("airplayaudio", size: 15) { showsOutputs.toggle() }
             }
         }
         .foregroundStyle(.white)
         .shadow(color: .black.opacity(0.4), radius: 10, y: 3)
-        .frame(width: 400)
+        .frame(width: Self.width)
     }
 
     private var seekBar: some View {
@@ -325,7 +387,7 @@ enum LockScreenSamples {
     static var song: LockMediaInfo {
         LockMediaInfo(
             title: "Sunset Drive", artist: "Sample Artist", artwork: artwork,
-            appIcon: nil, tint: Color(red: 1.0, green: 0.55, blue: 0.45),
+            appIcon: nil, showsVinyl: true, tint: Color(red: 1.0, green: 0.55, blue: 0.45),
             clock: PlaybackClock(anchorElapsed: 62, anchorDate: start, duration: 214, playing: true),
             isPlaying: true, isShuffled: false, repeatMode: .off, isSample: true)
     }

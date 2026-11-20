@@ -240,6 +240,7 @@ struct LockScreenView: View {
             return LockMediaInfo(
                 title: media.title ?? "", artist: media.artist ?? "", artwork: media.artwork,
                 appIcon: media.bundleIdentifier.flatMap(MediaTabView.appIcon(for:)),
+                showsVinyl: media.showsVinyl,
                 tint: media.artworkColor, clock: media.clock, isPlaying: true,
                 isShuffled: media.isShuffled, repeatMode: media.repeatMode, isSample: false)
         }

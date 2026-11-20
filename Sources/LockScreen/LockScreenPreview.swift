@@ -42,6 +42,9 @@ struct LockScreenPreview: View {
     /// The artwork wallpaper image (LockArtworkImage) and which artwork it is.
     @State private var artworkImage: NSImage?
     @State private var artworkKey: ObjectIdentifier?
+    /// Whether `artworkImage` was rendered for a spinning record (`VinylSource`), which stands where the sharp
+    /// artwork would.
+    @State private var artworkHasVinyl = false
 
     /// Display picked in the preview's screen menu (shown with 2+ displays).
     /// On the real lock screen only the main display gets the widgets.
@@ -154,7 +157,10 @@ struct LockScreenPreview: View {
             wallpaper.load(for: screen)
         }
         .onChange(of: settings.lockArtworkWallpaper) { _, isOn in artworkSwitch.isOn = isOn }
+        // A click on the preview's artwork changes the mode, as on the lock screen: Settings follows.
+        .onChange(of: artworkSwitch.isOn) { _, isOn in settings.lockArtworkWallpaper = isOn }
         .onChange(of: targetArtworkID) { _, _ in updateArtworkImage(screenSize: screenSize) }
+        .onChange(of: showsVinyl) { _, _ in updateArtworkImage(screenSize: screenSize) }
         .onAppear {
             artworkSwitch.isOn = settings.lockArtworkWallpaper
             wallpaper.load(for: screen)
@@ -245,6 +251,15 @@ struct LockScreenPreview: View {
                     .frame(width: size.width, height: size.height)
                     .transition(.opacity)
             }
+            if artworkHasVinyl {
+                // The record and tonearm, where the sharp artwork would be (LockVinylWindow).
+                let frame = LockVinylLayout.turntableFrame(in: size)
+                TurntableView(artwork: targetArtwork, isPlaying: true, setPlaying: { _ in })
+                    .frame(width: frame.width, height: frame.height)
+                    .position(x: frame.midX, y: frame.midY)
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
             // The lock screen dims and softens the wallpaper.
             Color.black.opacity(showsLockScreen ? 0.18 : 0)
 
@@ -280,9 +295,13 @@ struct LockScreenPreview: View {
             if artworkImage != nil, artworkSwitch.isOn,
                 let art = targetArtwork?.cgImage(forProposedRect: nil, context: nil, hints: nil)
             {
-                let hit = LockArtworkImage.visibleRect(
-                    artworkPixels: CGSize(width: art.width, height: art.height),
-                    screenSize: size, scale: 1)
+                let record = LockVinylLayout.recordFrame(in: size)
+                let hit =
+                    artworkHasVinyl
+                    ? (rect: record, cornerRadius: record.width / 2)
+                    : LockArtworkImage.visibleRect(
+                        artworkPixels: CGSize(width: art.width, height: art.height),
+                        screenSize: size, scale: 1)
                 RoundedRectangle(cornerRadius: hit.cornerRadius, style: .continuous)
                     .fill(Color.clear)
                     .contentShape(RoundedRectangle(cornerRadius: hit.cornerRadius, style: .continuous))
@@ -313,23 +332,35 @@ struct LockScreenPreview: View {
 
     private var targetArtworkID: ObjectIdentifier? { targetArtwork.map(ObjectIdentifier.init) }
 
+    /// Whether the song is shown on a record: the real player's, or the sample's.
+    private var showsVinyl: Bool {
+        media.isPlaying ? media.showsVinyl : fillsWithSamples
+    }
+
     /// Crossfades to the artwork wallpaper, or back to the real one.
     private func updateArtworkImage(screenSize: CGSize) {
         guard let artwork = targetArtwork,
             let cgArt = artwork.cgImage(forProposedRect: nil, context: nil, hints: nil)
         else {
             artworkKey = nil
-            withAnimation(.easeInOut(duration: 0.8)) { artworkImage = nil }
+            withAnimation(.easeInOut(duration: 0.8)) {
+                artworkImage = nil
+                artworkHasVinyl = false
+            }
             return
         }
         let key = ObjectIdentifier(artwork)
         artworkKey = key
+        let vinyl = showsVinyl
         DispatchQueue.global(qos: .userInitiated).async {
-            let image = LockArtworkImage.render(cgArt, canvas: screenSize)
+            let image = LockArtworkImage.render(cgArt, canvas: screenSize, drawsArtwork: !vinyl)
                 .map { NSImage(cgImage: $0, size: screenSize) }
             DispatchQueue.main.async {
                 guard artworkKey == key, let image else { return }
-                withAnimation(.easeInOut(duration: 0.8)) { artworkImage = image }
+                withAnimation(.easeInOut(duration: 0.8)) {
+                    artworkImage = image
+                    artworkHasVinyl = vinyl
+                }
             }
         }
     }

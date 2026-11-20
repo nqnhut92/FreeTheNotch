@@ -2,7 +2,7 @@
 
 A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and widgets on the lock screen.
 
-- **Version:** 1.1.2
+- **Version:** 1.2.0
 - **Requires:** macOS 14 or later, Apple Silicon. Developed and tested on macOS 27.
 - **Interactive demo:** [freethenotch.nqnhut92.top](https://freethenotch.nqnhut92.top)
 - **Docs:** [Screenshots](docs/GALLERY.md) · [Settings](docs/SETTINGS.md) · [Feature guide](docs/FEATURES.md) · [Technical Design](docs/TECHNICAL_DESIGN.md)
@@ -10,7 +10,7 @@ A Dynamic Island for the MacBook notch, a system dashboard in the menu bar, and 
 
 ## Features
 
-- **Notch:** media controls, calendar and reminders, clipboard history, timers, calculator and offline QR codes.
+- **Notch:** media controls (a spinning record for Apple Music), calendar and reminders, clipboard history, timers, calculator and offline QR codes.
 - **Live activities:** Now Playing, timers, Caps Lock, volume, keyboard backlight, battery, Bluetooth, iPhone / iPad sync and AI session status.
 - **AI Usage:** Codex and Claude quota, reset times, local token totals, estimated API cost and 80% quota warnings.
 - **System dashboard:** CPU/GPU, memory, network, disks, battery and Keep Awake.

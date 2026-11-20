@@ -36,6 +36,16 @@ enum LockScreenLayout {
         return CGRect(x: (screenSize.width - widgetWidth) / 2, y: top, width: widgetWidth, height: height)
     }
 
+    /// Room under the widgets for the output list, which opens below the player's buttons. The window is
+    /// transparent there, and fully transparent pixels let clicks through to the lock screen.
+    static let outputPanelRoom: CGFloat = 260
+
+    /// `frame` (AppKit coordinates, origin bottom-left) with `outputPanelRoom` more below it.
+    static func withOutputPanelRoom(_ frame: CGRect) -> CGRect {
+        CGRect(
+            x: frame.minX, y: frame.minY - outputPanelRoom, width: frame.width, height: frame.height + outputPanelRoom)
+    }
+
     /// Top of LockScreenArtworkControls in artwork mode: just under the
     /// largest artwork LockArtworkImage draws, but never so low that the
     /// controls leave the widget window.
@@ -88,5 +98,43 @@ enum LockNotchLayout {
         CGRect(
             x: screenFrame.midX - size.width / 2, y: screenFrame.maxY - size.height,
             width: size.width, height: size.height)
+    }
+}
+
+/// Where the spinning record stands when the artwork wallpaper is up and the song comes from a record player
+/// (`VinylSource`): in the place of the sharp artwork, a little lower, with the tonearm to its right. Points from the screen's
+/// top-left. The constants match `TurntableView`'s 300 × 300 drawing space.
+enum LockVinylLayout {
+    /// The record's diameter as a fraction of the largest artwork `LockArtworkImage` draws. Smaller than the
+    /// artwork's sharp part, so the record stays clear of the clock.
+    static let recordFraction: CGFloat = 0.6
+    private static let recordCenterInTurntable = CGPoint(x: 130, y: 150)
+    private static let recordDiameterInTurntable: CGFloat = 248
+    private static let turntableSide: CGFloat = 300
+    /// How far below the artwork's centre the record stands, which leaves the clock above it clear.
+    static let drop: CGFloat = 50
+
+    /// Drawing points per turntable unit.
+    private static func scale(forScreenHeight height: CGFloat) -> CGFloat {
+        height * LockArtworkImage.maxSideFraction * recordFraction / recordDiameterInTurntable
+    }
+
+    /// The square the turntable (record and tonearm) is drawn in.
+    static func turntableFrame(in screenSize: CGSize) -> CGRect {
+        let scale = scale(forScreenHeight: screenSize.height)
+        let center = recordFrame(in: screenSize)
+        return CGRect(
+            x: center.midX - recordCenterInTurntable.x * scale,
+            y: center.midY - recordCenterInTurntable.y * scale,
+            width: turntableSide * scale, height: turntableSide * scale)
+    }
+
+    /// The record itself, centred where the artwork is.
+    static func recordFrame(in screenSize: CGSize) -> CGRect {
+        let diameter = recordDiameterInTurntable * scale(forScreenHeight: screenSize.height)
+        return CGRect(
+            x: (screenSize.width - diameter) / 2,
+            y: screenSize.height * LockArtworkImage.centerFromTop + drop - diameter / 2,
+            width: diameter, height: diameter)
     }
 }

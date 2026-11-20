@@ -65,7 +65,8 @@ enum LockArtworkImage {
         CGSize(width: (pointSize.width * scale).rounded(), height: (pointSize.height * scale).rounded())
     }
 
-    static func render(_ art: CGImage, canvas: CGSize) -> CGImage? {
+    /// `drawsArtwork` false leaves just the blurred fill: the spinning record stands where the artwork would.
+    static func render(_ art: CGImage, canvas: CGSize, drawsArtwork: Bool = true) -> CGImage? {
         let rect = CGRect(origin: .zero, size: canvas)
         let source = CIImage(cgImage: art)
         let extent = source.extent
@@ -94,6 +95,8 @@ enum LockArtworkImage {
                 ]
             )
             .cropped(to: rect)
+
+        if !drawsArtwork { return context.createCGImage(background, from: rect) }
 
         let (topLeftRect, side) = artRect(artworkSize: extent.size, canvas: canvas)
         let fit = side / min(extent.width, extent.height)

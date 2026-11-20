@@ -74,6 +74,9 @@ enum LockScreenLevel {
     static let notch = NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
     /// The widget window, over the notch.
     static let widgets = NSWindow.Level(rawValue: notch.rawValue + 1)
+    /// The spinning record over the artwork wallpaper: under the widgets, so the output list opened from the
+    /// player draws over it.
+    static let vinyl = notch
     /// The artwork's click target, over the widgets.
     static let artworkClick = NSWindow.Level(rawValue: notch.rawValue + 2)
     /// The wallpaper transition's cover, under everything of ours.

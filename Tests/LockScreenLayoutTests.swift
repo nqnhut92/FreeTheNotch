@@ -43,6 +43,14 @@ struct LockScreenLayoutTests {
         #expect(LockScreenLayout.artworkControlsTop(in: CGSize(width: 800, height: 600)) == 164)
     }
 
+    @Test func outputPanelRoomExtendsTheWindowDownwardKeepingItsTop() {
+        let frame = CGRect(x: 100, y: 500, width: 460, height: 300)
+        let taller = LockScreenLayout.withOutputPanelRoom(frame)
+        #expect(taller.maxY == frame.maxY)
+        #expect(taller.minY == 500 - LockScreenLayout.outputPanelRoom)
+        #expect(taller.width == 460)
+    }
+
     @Test func widgetPlacementInAppKitCoordinates() {
         let screen = CGRect(x: 1512, y: -200, width: 1512, height: 982)
         let placement = LockScreenLayout.widgetPlacement(onScreenFrame: screen)

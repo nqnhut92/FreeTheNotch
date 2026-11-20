@@ -7,6 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F1E2D3C4B5A6978877665F2B /* LockOutputPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F2A /* LockOutputPanel.swift */; };
+		F1E2D3C4B5A6978877665F29 /* MediaOutputList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F28 /* MediaOutputList.swift */; };
+		F1E2D3C4B5A6978877665F27 /* VinylTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F26 /* VinylTests.swift */; };
+		F1E2D3C4B5A6978877665F25 /* LockVinylWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F24 /* LockVinylWindow.swift */; };
+		F1E2D3C4B5A6978877665F23 /* TurntableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F22 /* TurntableView.swift */; };
+		F1E2D3C4B5A6978877665F21 /* TonearmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F20 /* TonearmView.swift */; };
+		F1E2D3C4B5A6978877665F1F /* VinylRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F1E /* VinylRecordView.swift */; };
+		F1E2D3C4B5A6978877665F1D /* TonearmGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F1B /* TonearmGeometry.swift */; };
+		F1E2D3C4B5A6978877665F1C /* TonearmGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F1B /* TonearmGeometry.swift */; };
+		F1E2D3C4B5A6978877665F1A /* VinylSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F18 /* VinylSpin.swift */; };
+		F1E2D3C4B5A6978877665F19 /* VinylSpin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F18 /* VinylSpin.swift */; };
+		F1E2D3C4B5A6978877665F17 /* VinylSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F15 /* VinylSource.swift */; };
+		F1E2D3C4B5A6978877665F16 /* VinylSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F15 /* VinylSource.swift */; };
+		F1E2D3C4B5A6978877665F14 /* MusicSkipScriptsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F13 /* MusicSkipScriptsTests.swift */; };
+		F1E2D3C4B5A6978877665F12 /* MusicSkipScripts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F10 /* MusicSkipScripts.swift */; };
+		F1E2D3C4B5A6978877665F11 /* MusicSkipScripts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F10 /* MusicSkipScripts.swift */; };
 		F1E2D3C4B5A6978877665F0E /* ClaudeTokenRefreshTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F0D /* ClaudeTokenRefreshTests.swift */; };
 		F1E2D3C4B5A6978877665F02 /* ClaudeOAuthRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F01 /* ClaudeOAuthRecord.swift */; };
 		F1E2D3C4B5A6978877665F03 /* ClaudeOAuthRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978877665F01 /* ClaudeOAuthRecord.swift */; };
@@ -315,6 +331,18 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F1E2D3C4B5A6978877665F2A /* LockOutputPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockOutputPanel.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F28 /* MediaOutputList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaOutputList.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F26 /* VinylTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VinylTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F24 /* LockVinylWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockVinylWindow.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F22 /* TurntableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurntableView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F20 /* TonearmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonearmView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F1E /* VinylRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VinylRecordView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F1B /* TonearmGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonearmGeometry.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F18 /* VinylSpin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VinylSpin.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F15 /* VinylSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VinylSource.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F13 /* MusicSkipScriptsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicSkipScriptsTests.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978877665F10 /* MusicSkipScripts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicSkipScripts.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665F0D /* ClaudeTokenRefreshTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeTokenRefreshTests.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665F01 /* ClaudeOAuthRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeOAuthRecord.swift; sourceTree = "<group>"; };
 		F1E2D3C4B5A6978877665F04 /* ClaudeTokenRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeTokenRefresher.swift; sourceTree = "<group>"; };
@@ -669,6 +697,8 @@
 				F1E2D3C4B5A6978877665744 /* QuoteTests.swift */,
 				F1E2D3C4B5A6978877665742 /* TimerStoreTests.swift */,
 				F1E2D3C4B5A6978877665740 /* PlaybackClockTests.swift */,
+				F1E2D3C4B5A6978877665F26 /* VinylTests.swift */,
+				F1E2D3C4B5A6978877665F13 /* MusicSkipScriptsTests.swift */,
 				F1E2D3C4B5A697887766573E /* ClipboardHistoryTests.swift */,
 				F1E2D3C4B5A697887766573C /* BluetoothToolParserTests.swift */,
 				F1E2D3C4B5A697887766573A /* ProcessMonitorTests.swift */,
@@ -702,6 +732,10 @@
 				F1E2D3C4B5A6978877665E64 /* NotchHostingView.swift */,
 				F1E2D3C4B5A6978877665E5B /* DeviceSyncCompactView.swift */,
 				F1E2D3C4B5A6978877665807 /* NotchShape.swift */,
+				F1E2D3C4B5A6978877665F28 /* MediaOutputList.swift */,
+				F1E2D3C4B5A6978877665F22 /* TurntableView.swift */,
+				F1E2D3C4B5A6978877665F20 /* TonearmView.swift */,
+				F1E2D3C4B5A6978877665F1E /* VinylRecordView.swift */,
 				F1E2D3C4B5A6978877665805 /* NotchStyle.swift */,
 				F1E2D3C4B5A6978877665803 /* NotchPageIcon.swift */,
 				F1E2D3C4B5A6978877665800 /* NotchPage.swift */,
@@ -829,6 +863,8 @@
 				F1E2D3C4B5A697887766592F /* LockScreenMediaCard.swift */,
 				F1E2D3C4B5A697887766592D /* LockNotch.swift */,
 				F1E2D3C4B5A697887766592B /* LockArtworkClickWindow.swift */,
+				F1E2D3C4B5A6978877665F2A /* LockOutputPanel.swift */,
+				F1E2D3C4B5A6978877665F24 /* LockVinylWindow.swift */,
 				F1E2D3C4B5A6978877665929 /* LockArtworkWallpaper.swift */,
 				F1E2D3C4B5A6978877665927 /* SkyLightLockSpace.swift */,
 				F1E2D3C4B5A6978877665925 /* LockWallpaperTransition.swift */,
@@ -859,6 +895,10 @@
 				F1E2D3C4B5A6978877665518 /* IdleAnimationManager.swift */,
 				F1E2D3C4B5A6978877665718 /* SystemSettings.swift */,
 				F1E2D3C4B5A6978877665715 /* PlaybackClock.swift */,
+				F1E2D3C4B5A6978877665F1B /* TonearmGeometry.swift */,
+				F1E2D3C4B5A6978877665F18 /* VinylSpin.swift */,
+				F1E2D3C4B5A6978877665F15 /* VinylSource.swift */,
+				F1E2D3C4B5A6978877665F10 /* MusicSkipScripts.swift */,
 				F1E2D3C4B5A6978877665712 /* Quote.swift */,
 				F1E2D3C4B5A697887766570F /* DurationFormat.swift */,
 				F1E2D3C4B5A6978877665E58 /* DeviceSyncActivity.swift */,
@@ -1140,6 +1180,12 @@
 				F1E2D3C4B5A6978877665E22 /* SkinMotionCurve.swift in Sources */,
 				F1E2D3C4B5A6978877665E26 /* SkinMotionCurveTests.swift in Sources */,
 				F1E2D3C4B5A6978877665E42 /* SkinDecorationGeometry.swift in Sources */,
+				F1E2D3C4B5A6978877665F12 /* MusicSkipScripts.swift in Sources */,
+				F1E2D3C4B5A6978877665F14 /* MusicSkipScriptsTests.swift in Sources */,
+				F1E2D3C4B5A6978877665F17 /* VinylSource.swift in Sources */,
+				F1E2D3C4B5A6978877665F1A /* VinylSpin.swift in Sources */,
+				F1E2D3C4B5A6978877665F1D /* TonearmGeometry.swift in Sources */,
+				F1E2D3C4B5A6978877665F27 /* VinylTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1324,6 +1370,16 @@
 				F1E2D3C4B5A6978877665E24 /* CoreAnimationMotion.swift in Sources */,
 				F1E2D3C4B5A6978877665E41 /* SkinDecorationGeometry.swift in Sources */,
 				F1E2D3C4B5A6978877665E44 /* SkinDecorationLayers.swift in Sources */,
+				F1E2D3C4B5A6978877665F11 /* MusicSkipScripts.swift in Sources */,
+				F1E2D3C4B5A6978877665F16 /* VinylSource.swift in Sources */,
+				F1E2D3C4B5A6978877665F19 /* VinylSpin.swift in Sources */,
+				F1E2D3C4B5A6978877665F1C /* TonearmGeometry.swift in Sources */,
+				F1E2D3C4B5A6978877665F1F /* VinylRecordView.swift in Sources */,
+				F1E2D3C4B5A6978877665F21 /* TonearmView.swift in Sources */,
+				F1E2D3C4B5A6978877665F23 /* TurntableView.swift in Sources */,
+				F1E2D3C4B5A6978877665F25 /* LockVinylWindow.swift in Sources */,
+				F1E2D3C4B5A6978877665F29 /* MediaOutputList.swift in Sources */,
+				F1E2D3C4B5A6978877665F2B /* LockOutputPanel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1395,7 +1451,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1417,7 +1473,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freethenotch.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

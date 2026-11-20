@@ -88,3 +88,15 @@ struct PlaybackClockTests {
         #expect(DurationFormat.playback(seconds) == expected)
     }
 }
+
+struct PlaybackClockSeekTests {
+    @Test func seekingToTheStartRestartsTheRunningBarFromZero() {
+        let start = Date(timeIntervalSinceReferenceDate: 1_000)
+        let clock = PlaybackClock(anchorElapsed: 5, anchorDate: start, duration: 120, playing: true)
+        let now = start.addingTimeInterval(0.5)
+        let seeked = clock.seeked(to: 0, at: now)
+        #expect(seeked.elapsed(at: now) == 0)
+        #expect(abs(seeked.elapsed(at: now.addingTimeInterval(2)) - 2) < 0.001)
+        #expect(seeked.duration == 120)
+    }
+}
